@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:addStatesFromChildren="true"
+	android:gravity="center_vertical"
+	android:paddingRight="0dip"
+	android:paddingBottom="1dip"
+	>
+    <TextView
+        android:id="@+id/volume_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:padding="5dip"
+        android:text="120003"
+    />
+	<TextView
+		android:id="@+id/volume_amount"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textColor="#ffffff"
+		android:padding="5dip"
+		android:text="330ml"
+	/>
+	<TextView
+		android:id="@+id/volume_price"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textColor="#ffffff"
+		android:padding="5dip"
+		android:text="12,9 kr"
+	/>
+</LinearLayout>

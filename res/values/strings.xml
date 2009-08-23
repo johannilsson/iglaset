@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, SearchActivity!</string>
+    <string name="app_name">iGlaset</string>
+    <string name="search_label">Sök</string>
+    <string name="search_hint">Namn eller varunummer</string>
+    <string name="search_invoke">Starta sökning</string><!-- TODO: How is this used? -->
+    <string name="search_results">Sökresultat</string>
+    <string name="no_search_result">Sökningen gav inga träffar</string>
+</resources>

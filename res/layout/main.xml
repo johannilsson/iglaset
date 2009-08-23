@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="10dip"
+    >
+    <TextView 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="iGlaset.se"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+    />
+    <TextView 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="?android:attr/textColorSecondary"
+        android:text="Sök i sveriges största dryckesdatabas med betyg och kommentarer."
+        android:paddingBottom="10dip"
+        android:paddingTop="10dip"
+    />
+    <ImageButton
+        android:id="@+id/btn_search"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_search_category_default"
+        />
+</LinearLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    android:background="#999999"
+        >
+        <include layout="@layout/drink_detail" />
+    </LinearLayout>
+    <!--
+    <TextView
+        android:id="@+id/drink_description"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:linksClickable="true"
+        android:lines="10"  
+        android:lineSpacingExtra="4dip"
+    />
+     -->
+    <ListView 
+        android:id="@+id/android:list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:dividerHeight="0.1dip"
+        android:divider="#4A4A4A"
+        />
+</LinearLayout>
