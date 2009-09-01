@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dip"
+    >
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="5dip"
+        >
+	    <TextView
+	        android:id="@+id/comment_nickname"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="#ffffff"
+	        android:textStyle="bold"
+	        android:paddingRight="15dip"
+	        android:text="johanjohan"
+	        />
+	    <TextView
+	        android:id="@+id/comment_created"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="#B0B0B0"
+	        android:text="Sat 23 May 2009"
+	        />
+    </LinearLayout>
+	<TextView
+	    android:id="@+id/comment_comment"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:textColor="#ffffff"
+	    android:text="Usch!!!"
+		/>
+</LinearLayout>
