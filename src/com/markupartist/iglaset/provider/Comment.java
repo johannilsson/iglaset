@@ -1,15 +1,14 @@
 package com.markupartist.iglaset.provider;
 
-import android.text.format.Time;
 
 public class Comment {
     private int mDrinkId;
     private int mUserId;
-    private Time mCreated;
+    private String mCreated;
     private String mComment;
+    private String mNickname;
 
-    public Comment() {
-        
+    public Comment() {        
     }
 
     public int getDrinkId() {
@@ -24,10 +23,10 @@ public class Comment {
     public void setUserId(int userId) {
         this.mUserId = userId;
     }
-    public Time getCreated() {
+    public String getCreated() {
         return mCreated;
     }
-    public void setCreated(Time created) {
+    public void setCreated(String created) {
         this.mCreated = created;
     }
     public String getComment() {
@@ -37,8 +36,18 @@ public class Comment {
         this.mComment = comment;
     }
 
+    public String getNickname() {
+        return mNickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.mNickname = nickname;
+    }
+
     @Override
     public String toString() {
-        return mComment;
+        return "Comment [mComment=" + mComment + ", mCreated=" + mCreated
+                + ", mDrinkId=" + mDrinkId + ", mNickname=" + mNickname
+                + ", mUserId=" + mUserId + "]";
     }
 }

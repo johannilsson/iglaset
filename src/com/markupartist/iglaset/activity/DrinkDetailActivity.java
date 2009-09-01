@@ -2,6 +2,7 @@ package com.markupartist.iglaset.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import android.app.ListActivity;
 import android.os.AsyncTask;
@@ -25,7 +26,9 @@ import com.markupartist.iglaset.provider.Drink.Volume;
 public class DrinkDetailActivity extends ListActivity {
     static String TAG = "DrinkDetailActivity";
     private CommentsStore mCommentsStore = new CommentsStore();
-    private ArrayAdapter<Comment> mCommentsAdapter;
+    //private ArrayAdapter<Comment> mCommentsAdapter;
+    private SimpleAdapter mCommentsAdapter;
+    private ArrayList<Comment> mComments;
 
     /** Called when the activity is first created. */
     @Override
@@ -94,19 +97,60 @@ public class DrinkDetailActivity extends ListActivity {
             mSectionedAdapter.addSection(1, "Förpackningar", volumeAdapter);
         }
 
-        new SearchCommentsTask().execute(drink.getId());
-
-        mCommentsAdapter = new ArrayAdapter<Comment>(this, R.layout.simple_row);
-        mSectionedAdapter.addSection(2, "Kommentarer", mCommentsAdapter);
+        // Check if already have some data, used if screen is rotated.
+        @SuppressWarnings("unchecked")
+        final ArrayList<Comment> comments = (ArrayList<Comment>) getLastNonConfigurationInstance();
+        if (comments == null) {
+            new GetCommentsTask().execute(drink.getId());
+        } else {
+            updateComments(comments);
+        }
 
         setListAdapter(mSectionedAdapter);
     }
 
-    private void updateComments(ArrayList<Comment> result) {
-        for (Comment comment : result) {
-            mCommentsAdapter.add(comment);
+    /**
+     * Called before this activity is destroyed, returns the previous search 
+     * result. This list is used if the screen is rotated. Then we don't need
+     * to search for it again.
+     */
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        return mComments;
+    }
+
+    /**
+     * Update comments view.
+     * @param comments the comments
+     */
+    private void updateComments(ArrayList<Comment> comments) {
+        // Save the result to return it from onRetainNonConfigurationInstance.
+        mComments = comments;
+
+        ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (Comment comment : comments) {
+            Log.d(TAG, "comment: " + comment);
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("nickname", comment.getNickname());
+            map.put("created", comment.getCreated());
+            map.put("comment", comment.getComment());
+            list.add(map);
         }
-        mSectionedAdapter.notifyDataSetChanged();
+
+        mCommentsAdapter = new SimpleAdapter(this, list, 
+                R.layout.comment_row,
+                new String[] { "nickname", "created", "comment" },
+                new int[] { 
+                    R.id.comment_nickname,
+                    R.id.comment_created, 
+                    R.id.comment_comment
+                }
+        );
+
+        mSectionedAdapter.addSection(2, "Kommentarer", mCommentsAdapter);
+        // This is really ugly, but notifyDataSetChanged is crashing on some items...
+        setListAdapter(mSectionedAdapter);
+        //mSectionedAdapter.notifyDataSetChanged();
     }
 
     SectionedAdapter mSectionedAdapter = new SectionedAdapter() {
@@ -122,7 +166,7 @@ public class DrinkDetailActivity extends ListActivity {
         }
     };
 
-    private class SearchCommentsTask extends AsyncTask<Integer, Void, ArrayList<Comment>> {
+    private class GetCommentsTask extends AsyncTask<Integer, Void, ArrayList<Comment>> {
 
         @Override
         protected ArrayList<Comment> doInBackground(Integer... params) {
