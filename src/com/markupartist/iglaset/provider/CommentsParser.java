@@ -75,7 +75,8 @@ class CommentsParser extends DefaultHandler {
                 throws SAXException {
         if (mCurrentComment != null) {
             if (name.trim().equals("comment") && !TextUtils.isEmpty(mCurrentCommentString)) {
-                mCurrentComment.setComment(mCurrentCommentString.trim());
+                mCurrentComment.setComment(mCurrentCommentString.trim().replaceAll("\n", ""));
+                mInComment = false;
             }
         }
 
