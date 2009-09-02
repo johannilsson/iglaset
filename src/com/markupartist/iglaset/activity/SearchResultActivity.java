@@ -66,6 +66,11 @@ public class SearchResultActivity extends ListActivity {
     }
 
     private void updateList(ArrayList<Drink> drinks) {
+        if (drinks.isEmpty()) {
+            TextView emptyResult = (TextView) findViewById(R.id.search_empty);
+            emptyResult.setVisibility(View.VISIBLE);
+        }
+
         ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (Drink drink : drinks) {
             Map<String, Object> map = new HashMap<String, Object>();
