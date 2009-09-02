@@ -65,7 +65,9 @@ class CommentsParser extends DefaultHandler {
         mCurrentText = (new String(ch).substring(start, start + length).trim());
 
         if (mInComment) {
-            mCurrentCommentString += mCurrentText.replaceAll("\n", "");;
+            mCurrentCommentString += mCurrentText.replaceAll("\n", "");
+        } else {
+            mCurrentCommentString = "";
         }
     }
 
@@ -73,8 +75,7 @@ class CommentsParser extends DefaultHandler {
                 throws SAXException {
         if (mCurrentComment != null) {
             if (name.trim().equals("comment") && !TextUtils.isEmpty(mCurrentCommentString)) {
-                mCurrentComment.setComment(mCurrentCommentString);
-                mCurrentCommentString = "";
+                mCurrentComment.setComment(mCurrentCommentString.trim());
             }
         }
 
