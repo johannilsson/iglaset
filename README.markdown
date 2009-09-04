@@ -24,3 +24,6 @@ TODO
 
 Changelog
 ---------
+
+* NEXT RELEASE
+    * User rating in comments
