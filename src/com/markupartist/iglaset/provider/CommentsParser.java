@@ -53,11 +53,9 @@ class CommentsParser extends DefaultHandler {
             mCurrentComment.setUserId(Integer.parseInt(atts.getValue("user_id").trim()));
             mCurrentComment.setNickname(atts.getValue("nickname").trim());
             mCurrentComment.setCreated(atts.getValue("created").trim());
+            mCurrentComment.setRating(Integer.parseInt(atts.getValue("user_rating").trim()));
 
             mInComment = true;
-            // TODO: Set Time later on...
-            //Time created = new Time();
-            //created.parse(s);
         }
     }
 

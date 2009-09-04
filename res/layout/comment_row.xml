@@ -11,7 +11,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="5dip"
         >
 	    <TextView
 	        android:id="@+id/comment_nickname"
@@ -30,6 +29,15 @@
 	        android:text="Sat 23 May 2009"
 	        />
     </LinearLayout>
+    <RatingBar
+        android:id="@+id/comment_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="10"
+        android:stepSize="1"
+        style="?android:attr/ratingBarStyleSmall"
+        android:paddingBottom="5dip"
+    />
 	<TextView
 	    android:id="@+id/comment_comment"
 	    android:layout_width="fill_parent"

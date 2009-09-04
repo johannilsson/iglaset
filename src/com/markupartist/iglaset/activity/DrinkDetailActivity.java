@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.ListActivity;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.SimpleAdapter.ViewBinder;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.Comment;
@@ -134,18 +136,46 @@ public class DrinkDetailActivity extends ListActivity {
             map.put("nickname", comment.getNickname());
             map.put("created", comment.getCreated());
             map.put("comment", comment.getComment());
+            map.put("rating", comment.getRating());
             list.add(map);
         }
 
         mCommentsAdapter = new SimpleAdapter(this, list, 
                 R.layout.comment_row,
-                new String[] { "nickname", "created", "comment" },
+                new String[] { "nickname", "created", "comment", "rating" },
                 new int[] { 
                     R.id.comment_nickname,
                     R.id.comment_created, 
-                    R.id.comment_comment
+                    R.id.comment_comment,
+                    R.id.comment_rating
                 }
         );
+
+        mCommentsAdapter.setViewBinder(new ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Object data,
+                    String textRepresentation) {
+                switch (view.getId()) {
+                case R.id.comment_nickname:
+                    TextView nicknameView = (TextView) view;
+                    nicknameView.setText(textRepresentation);
+                    return true;
+                case R.id.comment_created:
+                    TextView createdView = (TextView) view;
+                    createdView.setText(textRepresentation);
+                    return true;
+                case R.id.comment_comment:
+                    TextView commentView = (TextView) view;
+                    commentView.setText(textRepresentation);
+                    return true;
+                case R.id.comment_rating:
+                    RatingBar rateView = (RatingBar) view;
+                    rateView.setRating(Float.parseFloat(textRepresentation));
+                    return true;
+                }
+                return false;
+            }
+        });
 
         mSectionedAdapter.addSection(2, "Kommentarer", mCommentsAdapter);
         // This is really ugly, but notifyDataSetChanged is crashing on some items...

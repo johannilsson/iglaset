@@ -7,6 +7,7 @@ public class Comment {
     private String mCreated;
     private String mComment;
     private String mNickname;
+    private int mRating = 0;
 
     public Comment() {        
     }
@@ -35,13 +36,17 @@ public class Comment {
     public void setComment(String comment) {
         this.mComment = comment;
     }
-
     public String getNickname() {
         return mNickname;
     }
-
     public void setNickname(String nickname) {
         this.mNickname = nickname;
+    }
+    public int getRating() {
+        return mRating;
+    }
+    public void setRating(int rating) {
+        this.mRating = rating;
     }
 
     @Override
