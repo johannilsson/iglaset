@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, SearchActivity!</string>
-    <string name="app_name">iGlaset</string>
+    <string name="app_name">iglaset</string>
     <string name="search_label">Sök</string>
     <string name="search_hint">Namn eller valfri text</string>
     <string name="search_invoke">Starta sökning</string><!-- TODO: How is this used? -->
