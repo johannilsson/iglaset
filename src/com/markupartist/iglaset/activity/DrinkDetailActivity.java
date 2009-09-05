@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.ListActivity;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -162,7 +162,7 @@ public class DrinkDetailActivity extends ListActivity {
                     return true;
                 case R.id.comment_created:
                     TextView createdView = (TextView) view;
-                    createdView.setText(textRepresentation);
+                    createdView.setText(((Time) data).format("%Y-%m-%d"));
                     return true;
                 case R.id.comment_comment:
                     TextView commentView = (TextView) view;

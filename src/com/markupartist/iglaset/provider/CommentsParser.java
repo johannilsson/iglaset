@@ -15,6 +15,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.text.TextUtils;
+import android.text.format.Time;
 import android.util.Log;
 
 class CommentsParser extends DefaultHandler {
@@ -52,7 +53,10 @@ class CommentsParser extends DefaultHandler {
             mCurrentComment.setDrinkId(Integer.parseInt(atts.getValue("article_id").trim()));
             mCurrentComment.setUserId(Integer.parseInt(atts.getValue("user_id").trim()));
             mCurrentComment.setNickname(atts.getValue("nickname").trim());
-            mCurrentComment.setCreated(atts.getValue("created").trim());
+            Time created = new Time();
+            // The api returns the created time as RFC 2445.
+            created.parse(atts.getValue("created").trim());
+            mCurrentComment.setCreated(created);
             mCurrentComment.setRating(Integer.parseInt(atts.getValue("user_rating").trim()));
 
             mInComment = true;
