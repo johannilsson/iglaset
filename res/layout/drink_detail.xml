@@ -48,7 +48,8 @@
 		                android:textStyle="bold"
 		                android:textColor="#ffffff"
 		                android:scrollHorizontally="true"
-		                android:text="Name"
+		                android:maxLength="25"
+		                android:text="Pinot Noir Domaine Hudelot-Baillet"
 		                />
 		            <TextView
 		                android:id="@+id/drink_year"
@@ -56,7 +57,7 @@
 		                android:layout_height="wrap_content"
 		                android:textStyle="normal"
 		                android:textColor="#ffffff"
-		                android:text="2008"
+		                android:text="2004"
 		                />
                     </LinearLayout>
                 </TableRow>
