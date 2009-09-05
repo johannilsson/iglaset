@@ -5,27 +5,19 @@
     android:layout_height="fill_parent"
     android:padding="10dip"
     >
-    <TextView 
+    <ImageView
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="iGlaset.se"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:src="@drawable/iglaset"
     />
-    <TextView 
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textColor="?android:attr/textColorSecondary"
-        android:text="Sök i sveriges största dryckesdatabas med betyg och kommentarer."
-        android:paddingBottom="10dip"
-        android:paddingTop="10dip"
-    />
-    <ImageButton
+    <Button
         android:id="@+id/btn_search"
         android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_search_category_default"
+        android:layout_width="80dip" 
+        android:layout_height="80dip"
+        android:paddingTop="15dip"
+        android:text="Sök"
+        android:drawableTop="@android:drawable/ic_search_category_default"
         />
 </LinearLayout>

@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
+import android.widget.Button;
 
 import com.markupartist.iglaset.R;
 
@@ -14,9 +14,9 @@ public class StartActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
-        ImageButton imageButton = (ImageButton) findViewById(R.id.btn_search);
-        imageButton.setOnClickListener(new OnClickListener() {
+
+        Button searchButton = (Button) findViewById(R.id.btn_search);
+        searchButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 onSearchRequested();
