@@ -26,6 +26,9 @@ TODO and wish list
 
 Changelog
 ---------
+* NEXT RELEASE
+    * Changed name of the link to iglaset.se
+    * Fixed bug that caused user ratings in comments to be hidden
 * 0.7
     * Added link to iglaset.se from drink detail activity
 * 0.6
