@@ -38,6 +38,7 @@ public class DrinkDetailActivity extends ListActivity {
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        requestWindowFeature(Window.FEATURE_NO_TITLE); 
 
         setContentView(R.layout.drink_details);
 
