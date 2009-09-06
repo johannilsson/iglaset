@@ -14,8 +14,8 @@ Setting up the project
 Once forked and imported to Eclipse you need to run "Fix Project Properties".
 This is found under Android Tools. 
 
-TODO
-----
+TODO and wish list
+------------------
 
 * Comment on drinks
 * Set ratings
@@ -27,5 +27,9 @@ TODO
 Changelog
 ---------
 
-* NEXT RELEASE
-    * User rating in comments
+* 0.4
+    * User rating now visible in comments
+    * Added about dialog
+    * Added search history
+    * Added preferences activity
+    * Possible to remove search search history
