@@ -6,6 +6,8 @@
     <string name="search_invoke">Starta sökning</string><!-- TODO: How is this used? -->
     <string name="search_results">Sökresultat</string>
     <string name="no_search_result">Sökningen gav inga träffar</string>
+    <string name="packings">Förpackningar</string>
+    <string name="comments">Kommentarer</string>
     <string name="about">Om</string>
     <string name="about_this_app">www.iglaset.se är en av Sveriges största dryckesdatabaser med kommentarer och betyg.\n\nDen här appen är utvecklad av Johan Nilsson.\n\niglaset@markupartist.com</string>
 </resources>

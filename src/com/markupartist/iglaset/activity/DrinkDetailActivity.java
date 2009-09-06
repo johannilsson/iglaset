@@ -97,7 +97,7 @@ public class DrinkDetailActivity extends ListActivity {
                     }
             );
 
-            mSectionedAdapter.addSection(1, "Förpackningar", volumeAdapter);
+            mSectionedAdapter.addSection(1, (String) getText(R.string.packings), volumeAdapter);
         }
 
         // Check if already have some data, used if screen is rotated.
@@ -178,7 +178,7 @@ public class DrinkDetailActivity extends ListActivity {
             }
         });
 
-        mSectionedAdapter.addSection(2, "Kommentarer", mCommentsAdapter);
+        mSectionedAdapter.addSection(2, (String) getText(R.string.comments), mCommentsAdapter);
         // This is really ugly, but notifyDataSetChanged is crashing on some items...
         setListAdapter(mSectionedAdapter);
         //mSectionedAdapter.notifyDataSetChanged();
