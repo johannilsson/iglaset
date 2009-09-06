@@ -26,6 +26,8 @@ TODO and wish list
 
 Changelog
 ---------
+* 0.7
+    * Added link to iglaset.se from drink detail activity
 * 0.6
     * Added maxLength to origin and country to prevent text overflows
 * 0.5
