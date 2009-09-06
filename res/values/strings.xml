@@ -17,5 +17,5 @@
     <string name="clear_search_history_preference">Radera sökhistorik</string>
     <string name="clear_search_history_summary_preference">Raderar tidigare sökhistorik</string>
     <string name="search_history_cleared">Sökhistorik raderad</string>
-    <string name="goto_iglaset">På iglaset.se</string>
+    <string name="goto_iglaset">Till iglaset.se</string>
 </resources>
