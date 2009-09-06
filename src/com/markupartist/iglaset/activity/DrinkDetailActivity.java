@@ -1,14 +1,21 @@
 package com.markupartist.iglaset.activity;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.app.ListActivity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -31,6 +38,7 @@ public class DrinkDetailActivity extends ListActivity {
     //private ArrayAdapter<Comment> mCommentsAdapter;
     private SimpleAdapter mCommentsAdapter;
     private ArrayList<Comment> mComments;
+    private Drink mDrink;
 
     /** Called when the activity is first created. */
     @Override
@@ -110,6 +118,7 @@ public class DrinkDetailActivity extends ListActivity {
         }
 
         setListAdapter(mSectionedAdapter);
+        mDrink = drink;
     }
 
     /**
@@ -196,6 +205,26 @@ public class DrinkDetailActivity extends ListActivity {
             return (result);
         }
     };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu_drink_detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_goto_iglaset:
+                String name = URLEncoder.encode(mDrink.getName());
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, 
+                        Uri.parse("http://www.iglaset.se/dryck/" + name + "/" + mDrink.getId()));
+                startActivity(browserIntent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private class GetCommentsTask extends AsyncTask<Integer, Void, ArrayList<Comment>> {
 
