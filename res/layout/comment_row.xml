@@ -10,6 +10,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:gravity="fill"
         android:orientation="horizontal"
         >
 	    <TextView
@@ -19,25 +20,39 @@
 	        android:textColor="#ffffff"
 	        android:textStyle="bold"
 	        android:paddingRight="15dip"
+	        android:maxLength="13"
 	        android:text="johanjohan"
 	        />
 	    <TextView
 	        android:id="@+id/comment_created"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:paddingRight="5dip"
 	        android:textColor="#B0B0B0"
-	        android:text="Sat 23 May 2009"
+	        android:text="2009"
+	        android:layout_weight="1"
 	        />
+	    <!-- 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="5dip"
+            android:textColor="#B0B0B0"
+            android:text="right"
+            android:gravity="right"
+            />
+         --> 
+	    <RatingBar
+	        android:id="@+id/comment_rating"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:paddingTop="2dip"
+	        android:gravity="right"
+	        android:numStars="10"
+	        android:stepSize="1"
+	        style="?android:attr/ratingBarStyleSmall"
+	    />
     </LinearLayout>
-    <RatingBar
-        android:id="@+id/comment_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:numStars="10"
-        android:stepSize="1"
-        style="?android:attr/ratingBarStyleSmall"
-        android:paddingBottom="5dip"
-    />
 	<TextView
 	    android:id="@+id/comment_comment"
 	    android:layout_width="fill_parent"
