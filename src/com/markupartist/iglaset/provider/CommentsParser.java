@@ -59,7 +59,7 @@ class CommentsParser extends DefaultHandler {
             mCurrentComment.setCreated(created);
             
             int rating = 0;
-            if (!TextUtils.isDigitsOnly(atts.getValue("user_rating").trim())) {
+            if (!TextUtils.isEmpty(atts.getValue("user_rating").trim())) {
                 rating = Integer.parseInt(atts.getValue("user_rating").trim());
             }
             mCurrentComment.setRating(rating);
