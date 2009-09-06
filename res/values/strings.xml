@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">iglaset</string>
     <string name="search_label">Sök</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nej</string>
     <string name="search_hint">Namn eller valfri text</string>
     <string name="search_invoke">Starta sökning</string><!-- TODO: How is this used? -->
     <string name="search_results">Sökresultat</string>
@@ -10,4 +12,9 @@
     <string name="comments">Kommentarer</string>
     <string name="about">Om</string>
     <string name="about_this_app">www.iglaset.se är en av Sveriges största dryckesdatabaser med kommentarer och betyg.\n\nDen här appen är utvecklad av Johan Nilsson.\n\niglaset@markupartist.com</string>
+    <string name="settings">Inställningar</string>
+    <string name="search_preferences">Sök</string>
+    <string name="clear_search_history_preference">Radera sökhistorik</string>
+    <string name="clear_search_history_summary_preference">Raderar tidigare sökhistorik</string>
+    <string name="search_history_cleared">Sökhistorik raderad</string>
 </resources>

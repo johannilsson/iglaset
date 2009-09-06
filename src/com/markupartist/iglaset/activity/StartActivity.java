@@ -2,6 +2,7 @@ package com.markupartist.iglaset.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -18,6 +19,7 @@ import com.markupartist.iglaset.R;
 
 public class StartActivity extends Activity {
     private static final int DIALOG_ABOUT = 0;
+    private static final int DIALOG_PREFERENCES = 1;
     private static final String TAG = "StartActivity";
 
     /** Called when the activity is first created. */
@@ -53,6 +55,10 @@ public class StartActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.about:
                 showDialog(DIALOG_ABOUT);
+                return true;
+            case R.id.menu_preferences:
+                Intent launchPreferencesIntent = new Intent().setClass(this, BasicPreferenceActivity.class);
+                startActivity(launchPreferencesIntent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
