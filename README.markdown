@@ -26,7 +26,8 @@ TODO and wish list
 
 Changelog
 ---------
-
+* 0.5
+    * Fixed force close if user rating in comments was missing
 * 0.4
     * User rating now visible in comments
     * Added about dialog

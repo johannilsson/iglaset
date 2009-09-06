@@ -57,7 +57,12 @@ class CommentsParser extends DefaultHandler {
             // The api returns the created time as RFC 2445.
             created.parse(atts.getValue("created").trim());
             mCurrentComment.setCreated(created);
-            mCurrentComment.setRating(Integer.parseInt(atts.getValue("user_rating").trim()));
+            
+            int rating = 0;
+            if (!TextUtils.isDigitsOnly(atts.getValue("user_rating").trim())) {
+                rating = Integer.parseInt(atts.getValue("user_rating").trim());
+            }
+            mCurrentComment.setRating(rating);
 
             mInComment = true;
         }
