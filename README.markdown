@@ -26,7 +26,7 @@ TODO and wish list
 
 Changelog
 ---------
-* NEXT RELEASE
+* 0.8
     * Changed name of the link to iglaset.se
     * Fixed bug that caused user ratings in comments to be hidden
     * Added a progress bar in the middle of the activity when searching
