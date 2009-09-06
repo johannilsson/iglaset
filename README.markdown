@@ -26,6 +26,8 @@ TODO and wish list
 
 Changelog
 ---------
+* 0.6
+    * Added maxLength to origin and country to prevent text overflows
 * 0.5
     * Fixed force close if user rating in comments was missing
 * 0.4
