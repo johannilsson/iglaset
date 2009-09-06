@@ -67,17 +67,17 @@
                         android:layout_height="fill_parent"
                         android:layout_margin="0dip"
                         >
+                    <TextView
+                        android:id="@+id/drink_origin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="normal"
+                        android:textColor="#EBEBEB"
+                        android:paddingRight="4dip"
+                        android:text="Sverige"
+                        />
 		            <TextView
 		                android:id="@+id/drink_origin_country"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:textStyle="normal"
-		                android:textColor="#EBEBEB"
-		                android:paddingRight="4dip"
-		                android:text="Sverige"
-		                />
-		            <TextView
-		                android:id="@+id/drink_origin"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
 		                android:textStyle="normal"
