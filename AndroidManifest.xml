@@ -16,9 +16,9 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.SAMPLE_CODE" />
             </intent-filter>
-            
+
             <!-- This intent-filter identifies this activity as "searchable" -->
-            
+
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -30,7 +30,14 @@
             <meta-data android:name="android.app.searchable"
                        android:resource="@xml/searchable" />
         </activity>
+
+        <!-- This provider declaration informs the Search Manager that you have a provider of -->
+        <!-- Search suggestions, and provides information about how to access it. -->        
+        <provider android:name=".activity.SearchSuggestionProvider"
+                  android:authorities="com.markupartist.iglaset.activity.SuggestionProvider" />
+
         <activity android:name=".activity.DrinkDetailActivity"></activity>
+
 </application>
     <uses-sdk android:minSdkVersion="3" />
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>

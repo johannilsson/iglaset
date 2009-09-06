@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -45,8 +46,15 @@ public class SearchResultActivity extends ListActivity {
             final Intent queryIntent = getIntent();
             final String queryAction = queryIntent.getAction();
             if (Intent.ACTION_SEARCH.equals(queryAction)) {
+                final String queryString = queryIntent.getStringExtra(SearchManager.QUERY);
+                Log.d(TAG, "Saving " + queryString);
+                // Record the query string in the recent queries suggestions provider.
+                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this, 
+                        SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+                suggestions.saveRecentQuery(queryString, null);
+
                 //doSearchQuery(queryIntent.getStringExtra(SearchManager.QUERY));
-                new SearchDrinksTask().execute(queryIntent.getStringExtra(SearchManager.QUERY));
+                new SearchDrinksTask().execute(queryString);
             } else {
                 Log.d(TAG, "no ACTION_SEARCH intent");
             }            
