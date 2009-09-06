@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -78,6 +80,9 @@ public class SearchResultActivity extends ListActivity {
             TextView emptyResult = (TextView) findViewById(R.id.search_empty);
             emptyResult.setVisibility(View.VISIBLE);
         }
+
+        LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);
+        progressBar.setVisibility(View.GONE);
 
         ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (Drink drink : drinks) {
