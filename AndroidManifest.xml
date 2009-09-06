@@ -23,10 +23,10 @@
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            
+
             <!-- This metadata entry provides further configuration details for searches -->
             <!-- that are handled by this activity. -->
-            
+
             <meta-data android:name="android.app.searchable"
                        android:resource="@xml/searchable" />
         </activity>
