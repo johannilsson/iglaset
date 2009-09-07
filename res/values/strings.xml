@@ -4,6 +4,7 @@
     <string name="search_label">Sök</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
+    <string name="searching">Söker...</string>
     <string name="search_hint">Namn eller valfri text</string>
     <string name="search_invoke">Starta sökning</string><!-- TODO: How is this used? -->
     <string name="search_results">Sökresultat</string>

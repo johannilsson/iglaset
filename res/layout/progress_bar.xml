@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/search_progress"
+    android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:gravity="center_horizontal|center_vertical"
     >
-    <include layout="@layout/progress_bar" />
-    <ListView 
-        android:id="@+id/android:list"
-        android:layout_width="fill_parent"
+    <ProgressBar 
+        android:indeterminate="true"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:dividerHeight="0.1dip"
-        android:divider="#4A4A4A"
+        style="?android:attr/progressBarStyleSmall"
     />
-    <TextView android:id="@+id/search_empty"
+    <TextView android:id="@+id/search_progress_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#ffffff"
         android:padding="5dip"
-        android:visibility="gone"
-        android:text="@string/no_search_result"
+        android:text="@string/searching"
     />
 </LinearLayout>
