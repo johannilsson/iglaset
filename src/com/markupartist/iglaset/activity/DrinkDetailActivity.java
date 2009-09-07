@@ -1,6 +1,5 @@
 package com.markupartist.iglaset.activity;
 
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +34,6 @@ import com.markupartist.iglaset.provider.Drink.Volume;
 public class DrinkDetailActivity extends ListActivity {
     static String TAG = "DrinkDetailActivity";
     private CommentsStore mCommentsStore = new CommentsStore();
-    //private ArrayAdapter<Comment> mCommentsAdapter;
     private SimpleAdapter mCommentsAdapter;
     private ArrayList<Comment> mComments;
     private Drink mDrink;
@@ -46,7 +44,8 @@ public class DrinkDetailActivity extends ListActivity {
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        requestWindowFeature(Window.FEATURE_NO_TITLE); 
+        // Remove when we have progress bar near the comments
+        //requestWindowFeature(Window.FEATURE_NO_TITLE); 
 
         setContentView(R.layout.drink_details);
 
