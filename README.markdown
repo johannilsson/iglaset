@@ -26,6 +26,10 @@ TODO and wish list
 
 Changelog
 ---------
+* NEXT
+    * Separated the custom progress bar from search_result.xml to a separate
+      reusable layout
+    * Added a title for the detail activity
 * 0.8
     * Changed name of the link to iglaset.se
     * Fixed bug that caused user ratings in comments to be hidden
