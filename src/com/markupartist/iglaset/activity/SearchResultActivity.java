@@ -17,7 +17,6 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -49,13 +48,14 @@ public class SearchResultActivity extends ListActivity {
             final String queryAction = queryIntent.getAction();
             if (Intent.ACTION_SEARCH.equals(queryAction)) {
                 final String queryString = queryIntent.getStringExtra(SearchManager.QUERY);
-                Log.d(TAG, "Saving " + queryString);
                 // Record the query string in the recent queries suggestions provider.
                 SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this, 
                         SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
                 suggestions.saveRecentQuery(queryString, null);
 
-                //doSearchQuery(queryIntent.getStringExtra(SearchManager.QUERY));
+                TextView searchText = (TextView) findViewById(R.id.search_progress_text);
+                searchText.setText(searchText.getText() + " '" + queryString + "'");
+
                 new SearchDrinksTask().execute(queryString);
             } else {
                 Log.d(TAG, "no ACTION_SEARCH intent");
@@ -76,6 +76,8 @@ public class SearchResultActivity extends ListActivity {
     }
 
     private void updateList(ArrayList<Drink> drinks) {
+        mDrinks = drinks;
+
         if (drinks.isEmpty()) {
             TextView emptyResult = (TextView) findViewById(R.id.search_empty);
             emptyResult.setVisibility(View.VISIBLE);
@@ -85,6 +87,7 @@ public class SearchResultActivity extends ListActivity {
         progressBar.setVisibility(View.GONE);
 
         ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+
         for (Drink drink : drinks) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("name", drink.getName());
@@ -150,7 +153,6 @@ public class SearchResultActivity extends ListActivity {
             }
         });
 
-        mDrinks = drinks;
         setListAdapter(mListAdapter);
     }
 
