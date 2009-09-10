@@ -1,9 +1,9 @@
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"	
+    android:id="@+id/simple_row_text"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:textColor="#ffffff"
-    android:text="sddd"
     android:paddingTop="7dip"
     android:paddingRight="5dip"
     android:paddingBottom="7dip"
