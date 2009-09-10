@@ -45,7 +45,7 @@ public class DrinkDetailActivity extends ListActivity {
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         // Remove when we have progress bar near the comments
-        //requestWindowFeature(Window.FEATURE_NO_TITLE); 
+        requestWindowFeature(Window.FEATURE_NO_TITLE); 
 
         setContentView(R.layout.drink_details);
 
@@ -116,6 +116,9 @@ public class DrinkDetailActivity extends ListActivity {
             updateComments(comments);
         }
 
+        // This is temporary till we have fixed a proper comments adapter. 
+        mSectionedAdapter.addSection(2, (String) getText(R.string.comments), createLoadCommentsAdapter());
+
         setListAdapter(mSectionedAdapter);
         mDrink = drink;
     }
@@ -130,6 +133,22 @@ public class DrinkDetailActivity extends ListActivity {
         return mComments;
     }
 
+    private SimpleAdapter createLoadCommentsAdapter() {
+        ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("text", getText(R.string.loading_comments));
+        list.add(map);
+
+        SimpleAdapter commentsAdapter = new SimpleAdapter(this, list, 
+                R.layout.progress_bar,
+                new String[] { "text" },
+                new int[] { 
+                    R.id.search_progress_text
+                }
+        );
+        return commentsAdapter;
+    }
+    
     /**
      * Update comments view.
      * @param comments the comments
@@ -138,54 +157,70 @@ public class DrinkDetailActivity extends ListActivity {
         // Save the result to return it from onRetainNonConfigurationInstance.
         mComments = comments;
 
-        ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        for (Comment comment : comments) {
-            Log.d(TAG, "comment: " + comment);
+        if (comments.isEmpty()) {
+            ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put("nickname", comment.getNickname());
-            map.put("created", comment.getCreated());
-            map.put("comment", comment.getComment());
-            map.put("rating", comment.getRating());
+            map.put("text", getText(R.string.no_comments));
             list.add(map);
+
+            mCommentsAdapter = new SimpleAdapter(this, list, 
+                    R.layout.simple_row,
+                    new String[] { "text" },
+                    new int[] { 
+                        R.id.simple_row_text
+                    }
+            );
+        } else {
+            ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+            for (Comment comment : comments) {
+                Log.d(TAG, "comment: " + comment);
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("nickname", comment.getNickname());
+                map.put("created", comment.getCreated());
+                map.put("comment", comment.getComment());
+                map.put("rating", comment.getRating());
+                list.add(map);
+            }
+    
+            mCommentsAdapter = new SimpleAdapter(this, list, 
+                    R.layout.comment_row,
+                    new String[] { "nickname", "created", "comment", "rating" },
+                    new int[] { 
+                        R.id.comment_nickname,
+                        R.id.comment_created, 
+                        R.id.comment_comment,
+                        R.id.comment_rating
+                    }
+            );
+    
+            mCommentsAdapter.setViewBinder(new ViewBinder() {
+                @Override
+                public boolean setViewValue(View view, Object data,
+                        String textRepresentation) {
+                    switch (view.getId()) {
+                    case R.id.comment_nickname:
+                        TextView nicknameView = (TextView) view;
+                        nicknameView.setText(textRepresentation);
+                        return true;
+                    case R.id.comment_created:
+                        TextView createdView = (TextView) view;
+                        createdView.setText(((Time) data).format("%Y-%m-%d"));
+                        return true;
+                    case R.id.comment_comment:
+                        TextView commentView = (TextView) view;
+                        commentView.setText(textRepresentation);
+                        return true;
+                    case R.id.comment_rating:
+                        RatingBar rateView = (RatingBar) view;
+                        rateView.setRating(Float.parseFloat(textRepresentation));
+                        return true;
+                    }
+                    return false;
+                }
+            });
         }
 
-        mCommentsAdapter = new SimpleAdapter(this, list, 
-                R.layout.comment_row,
-                new String[] { "nickname", "created", "comment", "rating" },
-                new int[] { 
-                    R.id.comment_nickname,
-                    R.id.comment_created, 
-                    R.id.comment_comment,
-                    R.id.comment_rating
-                }
-        );
-
-        mCommentsAdapter.setViewBinder(new ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Object data,
-                    String textRepresentation) {
-                switch (view.getId()) {
-                case R.id.comment_nickname:
-                    TextView nicknameView = (TextView) view;
-                    nicknameView.setText(textRepresentation);
-                    return true;
-                case R.id.comment_created:
-                    TextView createdView = (TextView) view;
-                    createdView.setText(((Time) data).format("%Y-%m-%d"));
-                    return true;
-                case R.id.comment_comment:
-                    TextView commentView = (TextView) view;
-                    commentView.setText(textRepresentation);
-                    return true;
-                case R.id.comment_rating:
-                    RatingBar rateView = (RatingBar) view;
-                    rateView.setRating(Float.parseFloat(textRepresentation));
-                    return true;
-                }
-                return false;
-            }
-        });
-
+        mSectionedAdapter.removeSection(2);
         mSectionedAdapter.addSection(2, (String) getText(R.string.comments), mCommentsAdapter);
         // This is really ugly, but notifyDataSetChanged is crashing on some items...
         setListAdapter(mSectionedAdapter);
