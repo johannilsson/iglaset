@@ -26,10 +26,12 @@ TODO and wish list
 
 Changelog
 ---------
-* NEXT
+* 1.0.0
     * Separated the custom progress bar from search_result.xml to a separate
-      reusable layout
-    * Added a title for the detail activity
+      more reusable layout
+    * Added loading comments adapter
+    * Added no comments yet text when no comments is set
+    * Added a removeSection method to the SectionedAdapter
 * 0.8
     * Changed name of the link to iglaset.se
     * Fixed bug that caused user ratings in comments to be hidden
