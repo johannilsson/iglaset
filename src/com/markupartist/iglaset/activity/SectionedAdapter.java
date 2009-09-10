@@ -19,12 +19,13 @@
 
 package com.markupartist.iglaset.activity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Sectioned adapter groups several adapters into one.
@@ -42,6 +43,14 @@ abstract public class SectionedAdapter extends BaseAdapter {
 
     public void addSection(int id, String caption, Adapter adapter) {
         sections.add(new Section(id, caption, adapter));
+    }
+
+    public void removeSection(int id) {
+        for (Section section : sections) {
+            if (section.id == id) {
+                sections.remove(section);
+            }
+        }
     }
 
     /**
