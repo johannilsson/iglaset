@@ -107,6 +107,9 @@ public class DrinkDetailActivity extends ListActivity {
             mSectionedAdapter.addSection(1, (String) getText(R.string.packings), volumeAdapter);
         }
 
+        // This is temporary till we have fixed a proper comments adapter. 
+        mSectionedAdapter.addSection(2, (String) getText(R.string.comments), createLoadCommentsAdapter());
+
         // Check if already have some data, used if screen is rotated.
         @SuppressWarnings("unchecked")
         final ArrayList<Comment> comments = (ArrayList<Comment>) getLastNonConfigurationInstance();
@@ -115,9 +118,6 @@ public class DrinkDetailActivity extends ListActivity {
         } else {
             updateComments(comments);
         }
-
-        // This is temporary till we have fixed a proper comments adapter. 
-        mSectionedAdapter.addSection(2, (String) getText(R.string.comments), createLoadCommentsAdapter());
 
         setListAdapter(mSectionedAdapter);
         mDrink = drink;
