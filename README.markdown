@@ -26,6 +26,9 @@ TODO and wish list
 
 Changelog
 ---------
+* 1.0.1
+    * Fixed issue 1, comment section duplicated when screen was rotated.
+
 * 1.0.0
     * Separated the custom progress bar from search_result.xml to a separate
       more reusable layout
