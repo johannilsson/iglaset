@@ -241,6 +241,12 @@ public class DrinkDetailActivity extends ListActivity {
     };
 
     @Override
+    public boolean onSearchRequested() {
+        startSearch(null, false, null, false);
+        return true;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu_drink_detail, menu);
@@ -255,6 +261,9 @@ public class DrinkDetailActivity extends ListActivity {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, 
                         Uri.parse("http://www.iglaset.se/dryck/" + name + "/" + mDrink.getId()));
                 startActivity(browserIntent);
+                return true;
+            case R.id.menu_search:
+                onSearchRequested();
                 return true;
         }
         return super.onOptionsItemSelected(item);

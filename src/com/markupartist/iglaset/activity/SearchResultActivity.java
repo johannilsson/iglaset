@@ -12,6 +12,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -166,6 +169,29 @@ public class SearchResultActivity extends ListActivity {
         i.putExtra("com.markupartist.iglaset.Drink", drink);
 
         startActivity(i);
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        startSearch(null, false, null, false);
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu_search_result, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_search:
+                onSearchRequested();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private class SearchDrinksTask extends AsyncTask<String, Void, ArrayList<Drink>> {
