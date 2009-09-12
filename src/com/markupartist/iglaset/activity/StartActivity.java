@@ -19,7 +19,6 @@ import com.markupartist.iglaset.R;
 
 public class StartActivity extends Activity {
     private static final int DIALOG_ABOUT = 0;
-    private static final int DIALOG_PREFERENCES = 1;
     private static final String TAG = "StartActivity";
 
     /** Called when the activity is first created. */
