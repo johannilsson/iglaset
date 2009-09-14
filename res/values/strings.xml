@@ -21,4 +21,5 @@
     <string name="clear_search_history_summary_preference">Raderar tidigare sökhistorik</string>
     <string name="search_history_cleared">Sökhistorik raderad</string>
     <string name="goto_iglaset">Visa på iglaset.se</string>
+    <string name="rate">Sätt betyg</string>
 </resources>
