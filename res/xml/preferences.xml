@@ -2,11 +2,33 @@
 
 <PreferenceScreen
         xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+            android:title="Användardetaljer">
+        <EditTextPreference 
+            android:key="preference_username"
+            android:title="Användarnamn"
+            android:summary="Ditt användarnamn på iglaset.se"
+        />
+        <EditTextPreference 
+            android:key="preference_password"
+            android:title="Lösenord"
+            android:summary="Ditt lösenord på iglaset.se"
+            android:dependency="preference_username"
+            android:password="true"
+        />
 
+        <!-- 
+        <Preference
+            android:key="preference_login_details"
+            android:title="Login"
+            android:summary="Avändarnamn och lösenord på iglaset.se"
+            />
+         -->
+    </PreferenceCategory>
     <PreferenceCategory
             android:title="@string/search_preferences">
-        <Preference 
-	        android:key="clear_search_history_preference"
+        <Preference
+	        android:key="preference_clear_search_history"
 	        android:title="@string/clear_search_history_preference"
 	        android:summary="@string/clear_search_history_summary_preference"
 	        />
