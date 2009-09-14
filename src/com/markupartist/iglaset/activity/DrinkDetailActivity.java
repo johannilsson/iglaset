@@ -7,9 +7,11 @@ import java.util.Map;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
@@ -26,9 +28,12 @@ import android.widget.TextView;
 import android.widget.SimpleAdapter.ViewBinder;
 
 import com.markupartist.iglaset.R;
+import com.markupartist.iglaset.provider.AuthStore;
+import com.markupartist.iglaset.provider.Authenticate;
 import com.markupartist.iglaset.provider.Comment;
 import com.markupartist.iglaset.provider.CommentsStore;
 import com.markupartist.iglaset.provider.Drink;
+import com.markupartist.iglaset.provider.DrinksStore;
 import com.markupartist.iglaset.provider.Drink.Volume;
 
 public class DrinkDetailActivity extends ListActivity {
@@ -264,6 +269,24 @@ public class DrinkDetailActivity extends ListActivity {
                 return true;
             case R.id.menu_search:
                 onSearchRequested();
+                return true;
+            case R.id.menu_rate:
+                new DrinksStore().rateDrink(mDrink, 8, new Authenticate() {
+                    @Override
+                    public String authenticate() {
+                        
+                        // FIXA DET HÄR
+                        // Lägga till en Application, som håller token och ser till 
+                        // det skapas en ny om den är för gammal typ
+                        // getExpiringToken
+                        // TODO: Check if we have prefs or not..
+                        SharedPreferences sharedPreferences = PreferenceManager
+                            .getDefaultSharedPreferences(DrinkDetailActivity.this);
+                        String username = sharedPreferences.getString("preference_username", "");
+                        String password = sharedPreferences.getString("preference_password", "");
+                        return new AuthStore().authenticateUser(username, password);
+                    }
+                });
                 return true;
         }
         return super.onOptionsItemSelected(item);
