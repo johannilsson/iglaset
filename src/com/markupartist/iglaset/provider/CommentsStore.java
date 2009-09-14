@@ -21,7 +21,10 @@ public class CommentsStore {
         } catch (IOException e) {
             Log.d(TAG, "Failed to read data: " + e.getMessage());
         }
-
         return comments;
+    }
+
+    public void addComment(String comment, Authenticate authCallback) {
+        
     }
 }
