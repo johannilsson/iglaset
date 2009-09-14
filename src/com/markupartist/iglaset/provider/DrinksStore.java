@@ -27,4 +27,22 @@ public class DrinksStore {
 
         return drinks;
     }
+
+    public void rateDrink(Drink drink, int grade, Authenticate authCallback) {
+        String token = authCallback.authenticate();
+        Log.d(TAG, "TOKEN " + token);
+        try {
+            URL endpoint = new URL("http://api.iglaset.se/api/rate/" 
+                    + drink.getId() + "/" + grade + "/" + token);
+            // TODO: Parse response...
+            endpoint.openStream();
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            Log.d(TAG, "Malformed URL: " + e.getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.d(TAG, "Failed to read data: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }
