@@ -3,7 +3,6 @@ package com.markupartist.iglaset.provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -105,8 +104,6 @@ class DrinksParser extends DefaultHandler {
             } else if (name.equals("small") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.setImageUrl(mCurrentText);
             }
-            
-            
         }
 
         if (name.trim().equals("article")) {
