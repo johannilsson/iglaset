@@ -23,6 +23,7 @@ TODO and wish list
 * Find a systembolag near you
 * Sort by category
 * Sort by rating
+* more more
 
 Changelog
 ---------
