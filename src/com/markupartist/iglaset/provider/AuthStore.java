@@ -6,33 +6,46 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
+
+import com.markupartist.iglaset.util.HttpManager;
 
 import android.util.Log;
 
 public class AuthStore {
     private static final String TAG = "AuthStore";
+    private static final String AUTH_BASE_URI = "http://api.iglaset.se/api/authenticate/";
 
     public String authenticateUser(String username, String password) {
         String token = null;
+        final HttpPost post = new HttpPost(AUTH_BASE_URI + username + "/" + password);
+        HttpEntity entity = null;
 
         try {
-            URL endpoint = new URL("http://api.iglaset.se/api/authenticate/"
-                    + username + "/" + password);
-            token = parseResponse(endpoint.openStream());
-            if (token.equals("")) {
-                token = null; // Replace with exception...
-            }
-            Log.d(TAG, "token: " + token);
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            final HttpResponse response = HttpManager.execute(post);
+            //if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            Log.d(TAG, "status: " + response.getStatusLine().getStatusCode());
+                entity = response.getEntity();
+                Log.d(TAG, "about to parse response");
+                token = parseResponse(entity.getContent());
+                if (token.equals("")) {
+                    token = null; // Replace with exception...
+                }
+            //}
+            Log.d(TAG, "parse done");
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        Log.d(TAG, "token: " + token);
         return token;
     }
 
