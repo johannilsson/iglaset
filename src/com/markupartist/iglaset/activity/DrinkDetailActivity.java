@@ -7,11 +7,9 @@ import java.util.Map;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
@@ -28,13 +26,11 @@ import android.widget.TextView;
 import android.widget.SimpleAdapter.ViewBinder;
 
 import com.markupartist.iglaset.R;
-import com.markupartist.iglaset.provider.AuthStore;
-import com.markupartist.iglaset.provider.Authenticate;
 import com.markupartist.iglaset.provider.Comment;
 import com.markupartist.iglaset.provider.CommentsStore;
 import com.markupartist.iglaset.provider.Drink;
-import com.markupartist.iglaset.provider.DrinksStore;
 import com.markupartist.iglaset.provider.Drink.Volume;
+import com.markupartist.iglaset.util.ImageLoader;
 
 public class DrinkDetailActivity extends ListActivity {
     static String TAG = "DrinkDetailActivity";
@@ -76,7 +72,8 @@ public class DrinkDetailActivity extends ListActivity {
         drinkRatingBar.setRating(Float.parseFloat(drink.getRating()));
 
         ImageView imageView = (ImageView) findViewById(R.id.drink_image);
-        imageView.setImageBitmap(drink.loadImage());
+        ImageLoader.getInstance().load(imageView, drink.getImageUrl(), 
+                true, R.drawable.noimage);
 
         //TextView descriptionTextView = (TextView) findViewById(R.id.drink_description);
         //descriptionTextView.setText(Html.fromHtml(drink.getDescription()));
@@ -270,6 +267,8 @@ public class DrinkDetailActivity extends ListActivity {
             case R.id.menu_search:
                 onSearchRequested();
                 return true;
+            /*
+            SAVED FOR LATER...
             case R.id.menu_rate:
                 new DrinksStore().rateDrink(mDrink, 8, new Authenticate() {
                     @Override
@@ -288,6 +287,7 @@ public class DrinkDetailActivity extends ListActivity {
                     }
                 });
                 return true;
+            */
         }
         return super.onOptionsItemSelected(item);
     }

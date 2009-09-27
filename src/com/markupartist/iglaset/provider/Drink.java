@@ -3,13 +3,11 @@ package com.markupartist.iglaset.provider;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.markupartist.iglaset.util.ImageUtilities;
-
 public class Drink implements Parcelable {
+    private static String THUMB_RESIZE_BASE_URL = "http://api.iglaset.se/resizely/crop/50x50/?url=";
     private int mId;
     private String mName;
     private String mOrigin;
@@ -113,16 +111,9 @@ public class Drink implements Parcelable {
     }
 
     public String getImageUrl() {
-        //http://api.iglaset.se/resizely/crop/50x50/?url=http://static.iglaset.se/articleimages/2657.jpg
-        //return "http://api.iglaset.se/resizely/crop/50x50/?url=http://static.iglaset.se/articleimages/"+ mId +".jpg";
-        return mImageUrl;
+        return THUMB_RESIZE_BASE_URL + mImageUrl;
     }
 
-    public Bitmap loadImage() {
-        Bitmap bitmap = ImageUtilities.load(mId, getImageUrl());
-        return bitmap;
-    }
-    
     public int getId() {
         return mId;
     }

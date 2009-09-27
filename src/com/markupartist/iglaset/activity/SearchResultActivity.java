@@ -1,13 +1,14 @@
 package com.markupartist.iglaset.activity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import android.app.ListActivity;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
@@ -16,24 +17,25 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ImageView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RatingBar;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.SimpleAdapter.ViewBinder;
+import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.DrinksStore;
+import com.markupartist.iglaset.util.ImageLoader;
 
 public class SearchResultActivity extends ListActivity {
     static String TAG = "SearchResultActivity";
     DrinksStore drinksStore = new DrinksStore();
-    private SimpleAdapter mListAdapter;
+    private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
+    private static String sSearchQuery;    
 
     /** Called when the activity is first created. */
     @Override
@@ -58,13 +60,13 @@ public class SearchResultActivity extends ListActivity {
 
                 TextView searchText = (TextView) findViewById(R.id.search_progress_text);
                 searchText.setText(searchText.getText() + " '" + queryString + "'");
-
-                new SearchDrinksTask().execute(queryString);
+                sSearchQuery = queryString;
+                new SearchDrinksTask().execute(queryString, "1");
             } else {
                 Log.d(TAG, "no ACTION_SEARCH intent");
             }            
         } else {
-            updateList(data);
+            initList(data);
         }
     }
 
@@ -78,7 +80,7 @@ public class SearchResultActivity extends ListActivity {
         return mDrinks;
     }
 
-    private void updateList(ArrayList<Drink> drinks) {
+    private void initList(ArrayList<Drink> drinks) {
         mDrinks = drinks;
 
         if (drinks.isEmpty()) {
@@ -89,72 +91,7 @@ public class SearchResultActivity extends ListActivity {
         LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);
         progressBar.setVisibility(View.GONE);
 
-        ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-
-        for (Drink drink : drinks) {
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("name", drink.getName());
-            map.put("origin", drink.getOrigin());
-            map.put("country", drink.getOriginCountry());
-            map.put("rating", drink.getRating());
-            map.put("year", String.valueOf(drink.getYear()));
-            map.put("alcoholPercent", drink.getAlcoholPercent());
-            map.put("image_url", drink.loadImage());
-            list.add(map);
-        }
-
-        mListAdapter = new SimpleAdapter(this, list, 
-                R.layout.drink_detail,
-                new String[] { "name", "origin", "country", "rating", "year", "alcoholPercent", "image_url" },
-                new int[] { 
-                    R.id.drink_name,
-                    R.id.drink_origin, 
-                    R.id.drink_origin_country, 
-                    R.id.drink_rating,
-                    R.id.drink_year,
-                    R.id.drink_alcohol_percent,
-                    R.id.drink_image
-                }
-        );
-
-        mListAdapter.setViewBinder(new ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Object data,
-                    String textRepresentation) {
-                switch (view.getId()) {
-                case R.id.drink_name:
-                    TextView nameView = (TextView) view;
-                    nameView.setText(textRepresentation);
-                    return true;
-                case R.id.drink_year:
-                    TextView yearView = (TextView) view;
-                    textRepresentation = textRepresentation.equals("0") ? "" : textRepresentation; 
-                    yearView.setText(textRepresentation);
-                    return true;
-                case R.id.drink_origin:
-                    TextView originView = (TextView) view;
-                    originView.setText(textRepresentation);
-                    return true;
-                case R.id.drink_origin_country:
-                    TextView originCountryView = (TextView) view;
-                    originCountryView.setText(textRepresentation);
-                    return true;
-                case R.id.drink_rating:
-                    RatingBar rateView = (RatingBar) view;
-                    rateView.setRating(Float.parseFloat(textRepresentation));
-                    return true;
-                case R.id.drink_alcohol_percent:
-                    TextView alcoholView = (TextView) view;
-                    alcoholView.setText(textRepresentation);
-                    return true;
-                case R.id.drink_image:
-                    ImageView imageView = (ImageView) view;
-                    imageView.setImageBitmap((Bitmap) data);
-                    return true;
-                }
-                return false;
-            }
-        });
+        mListAdapter = new DrinkAdapter(this, drinks);
 
         setListAdapter(mListAdapter);
     }
@@ -194,12 +131,16 @@ public class SearchResultActivity extends ListActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Background task to search for drinks.
+     */
     private class SearchDrinksTask extends AsyncTask<String, Void, ArrayList<Drink>> {
 
         @Override
         protected ArrayList<Drink> doInBackground(String... params) {
             publishProgress();
-            return drinksStore.searchDrinks(params[0]);
+            int page = Integer.parseInt(params[1]);
+            return drinksStore.searchDrinks(params[0], page);
         }
 
         @Override
@@ -210,7 +151,104 @@ public class SearchResultActivity extends ListActivity {
         @Override
         protected void onPostExecute(ArrayList<Drink> result) {
             setProgressBarIndeterminateVisibility(false);
-            updateList(result);
+            initList(result);
+        }
+    }
+
+    /**
+     * List adapter for drinks. Deals with pagination internally.
+     */
+    class DrinkAdapter extends ArrayAdapter<Drink> {
+        private AtomicBoolean mShouldAppend = new AtomicBoolean(true);
+        private AtomicInteger mPage = new AtomicInteger(1);
+        private int mMaxResult = 100;
+
+        public DrinkAdapter(Context context, List<Drink> objects) {
+            super(context, R.layout.drink_detail, objects);
+        }
+
+        private boolean shouldAppend(int position) {
+            return (position == super.getCount() - 1 
+                    && mShouldAppend.get()
+                    && super.getCount() >= 10
+                    && super.getCount() <= mMaxResult);
+        }
+        
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            DrinkViewHolder dvh = null;
+            if (shouldAppend(position)) {
+                Toast.makeText(SearchResultActivity.this, "Hämtar", Toast.LENGTH_LONG).show();
+                mPage.addAndGet(1);
+                new AppendTask().execute();
+            }
+
+            if (convertView == null) {
+                    convertView = getLayoutInflater().inflate(R.layout.drink_detail, null);
+                    dvh = new DrinkViewHolder(convertView);
+                    convertView.setTag(dvh);
+            } else {
+                dvh = (DrinkViewHolder) convertView.getTag();    
+            }
+
+            Drink drink = getItem(position);
+            if (drink != null && dvh != null) {
+                dvh.getNameView().setText(drink.getName());
+                dvh.getYearView().setText(drink.getYear() == 0 ? "" : String.valueOf(drink.getYear()));
+                dvh.getOriginView().setText(drink.getOrigin());
+                dvh.getOriginCountryView().setText(drink.getOriginCountry());
+                dvh.getRateView().setRating(Float.parseFloat(drink.getRating()));
+                dvh.getAlcoholView().setText(drink.getAlcoholPercent());
+
+                ImageLoader.getInstance().load(dvh.getImageView(), 
+                        drink.getImageUrl(), true, R.drawable.noimage);
+            }
+
+            return convertView;
+        }
+
+        /**
+         * Append drinks to the list.
+         * @param drinks drinks to add to the list
+         * @return if we should append more or not
+         */
+        protected boolean append(ArrayList<Drink> drinks) {
+            if (drinks.isEmpty()) {
+                mShouldAppend.set(false);
+                Toast.makeText(SearchResultActivity.this, 
+                        "Inga fler artiklar", Toast.LENGTH_SHORT).show();
+                return mShouldAppend.get();
+            }
+
+            for (Drink drink : drinks) {
+                add(drink);
+            }
+
+            return mShouldAppend.get();
+        }
+
+        /**
+         * A background task that will be run when there is a need to append more
+         * data.
+         */
+        class AppendTask extends AsyncTask<Void, Void, ArrayList<Drink>> {
+            @Override
+            protected ArrayList<Drink> doInBackground(Void... params) {
+                publishProgress();
+                return drinksStore.searchDrinks(sSearchQuery, mPage.get());
+            }
+
+            @Override
+            public void onProgressUpdate(Void... values) {
+                setProgressBarIndeterminateVisibility(true);
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<Drink> drinks) {
+                append(drinks);
+                setProgressBarIndeterminateVisibility(false);
+            }
         }
     }
 }
