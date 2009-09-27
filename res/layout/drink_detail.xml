@@ -16,7 +16,7 @@
         >
         <ImageView 
             android:id="@+id/drink_image"
-            android:src="@drawable/tmp"
+            android:src="@drawable/noimage"
             android:layout_width="50px"
             android:layout_height="50px"
             android:paddingRight="5dip"
