@@ -2,15 +2,13 @@ package com.markupartist.iglaset.provider;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIUtils;
 
 import android.util.Log;
 
@@ -20,10 +18,11 @@ public class DrinksStore {
     private static String TAG = "DrinksStore";
     private static String ARTICLES_BASE_URI = "http://api.iglaset.se/api/articles/xml/";
 
-    public ArrayList<Drink> searchDrinks(String query) {
+    public ArrayList<Drink> searchDrinks(String query, int page) {
         final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
-        final HttpGet get = new HttpGet(ARTICLES_BASE_URI + "?page=1&search=" + query);
+        final HttpGet get = new HttpGet(ARTICLES_BASE_URI 
+                + "?page=" + page + "&search=" + URLEncoder.encode(query));
         HttpEntity entity = null;
 
         try {
