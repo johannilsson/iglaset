@@ -27,6 +27,11 @@ TODO and wish list
 
 Changelog
 ---------
+* NEXT
+    * Now using apache http client for http request
+    * Added pagination to the search result
+    * Replaced ImageUtilities with ImageLoader by Guojian Miguel Wu <http://wu-media.com>
+      This also solves issue 2 with images not always being loading correct  
 * 1.0.2
     * Added access to search via context menu from the search results and the
       detailed view
