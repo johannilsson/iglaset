@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
+import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.DrinksStore;
 import com.markupartist.iglaset.util.ImageLoader;
@@ -35,7 +36,7 @@ public class SearchResultActivity extends ListActivity {
     DrinksStore drinksStore = new DrinksStore();
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
-    private static String sSearchQuery;    
+    private static String sSearchQuery;
 
     /** Called when the activity is first created. */
     @Override
@@ -48,6 +49,7 @@ public class SearchResultActivity extends ListActivity {
         // Check if already have some data, used if screen is rotated.
         @SuppressWarnings("unchecked")
         final ArrayList<Drink> data = (ArrayList<Drink>) getLastNonConfigurationInstance();
+
         if (data == null) {
             final Intent queryIntent = getIntent();
             final String queryAction = queryIntent.getAction();
@@ -59,7 +61,9 @@ public class SearchResultActivity extends ListActivity {
                 suggestions.saveRecentQuery(queryString, null);
 
                 TextView searchText = (TextView) findViewById(R.id.search_progress_text);
-                searchText.setText(searchText.getText() + " '" + queryString + "'");
+                String searchingText = searchText.getText() + " \"" + queryString + "\"";
+                searchText.setText(searchingText);
+                setTitle(searchingText);
                 sSearchQuery = queryString;
                 new SearchDrinksTask().execute(queryString, "1");
             } else {
@@ -87,6 +91,7 @@ public class SearchResultActivity extends ListActivity {
             TextView emptyResult = (TextView) findViewById(R.id.search_empty);
             emptyResult.setVisibility(View.VISIBLE);
         }
+        setTitle(getText(R.string.search_results) + " \"" + sSearchQuery + "\"");
 
         LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);
         progressBar.setVisibility(View.GONE);
@@ -140,7 +145,10 @@ public class SearchResultActivity extends ListActivity {
         protected ArrayList<Drink> doInBackground(String... params) {
             publishProgress();
             int page = Integer.parseInt(params[1]);
-            return drinksStore.searchDrinks(params[0], page);
+
+            // TODO: fix token...
+            String token = AuthStore.getInstance().getStoredToken(SearchResultActivity.this);
+            return drinksStore.searchDrinks(params[0], page, token);
         }
 
         @Override
@@ -236,7 +244,10 @@ public class SearchResultActivity extends ListActivity {
             @Override
             protected ArrayList<Drink> doInBackground(Void... params) {
                 publishProgress();
-                return drinksStore.searchDrinks(sSearchQuery, mPage.get());
+
+                // TODO: fix token...
+                String token = AuthStore.getInstance().getStoredToken(SearchResultActivity.this);
+                return drinksStore.searchDrinks(sSearchQuery, mPage.get(), token);
             }
 
             @Override
