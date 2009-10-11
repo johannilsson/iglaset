@@ -12,7 +12,7 @@
         android:id="@+id/volume_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#ffffff"
+        android:textColor="?android:attr/textColorPrimary"
         android:text="120003"
         android:paddingRight="10dip"
     />
@@ -20,7 +20,7 @@
 		android:id="@+id/volume_amount"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:textColor="#ffffff"
+		android:textColor="?android:attr/textColorPrimary"
 		android:text="330ml"
 		android:paddingRight="10dip"
 	/>
@@ -28,7 +28,7 @@
 		android:id="@+id/volume_price"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:textColor="#ffffff"
+		android:textColor="?android:attr/textColorPrimary"
 		android:text="12,9 kr"
 	/>
 </LinearLayout>

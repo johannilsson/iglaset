@@ -46,7 +46,7 @@
                             android:layout_height="wrap_content"
                             android:paddingRight="4dip"
                             android:textStyle="bold"
-                            android:textColor="#ffffff"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:scrollHorizontally="true"
                             android:maxLength="25"
                             android:text="Pinot Noir Domaine Hudelot-Baillet"
@@ -56,7 +56,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textStyle="normal"
-                            android:textColor="#ffffff"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:text="2004"
                         />
                     </LinearLayout>
@@ -76,7 +76,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textStyle="normal"
-                            android:textColor="#EBEBEB"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:paddingRight="4dip"
                             android:maxLength="13"
                             android:text="Sverige"
@@ -86,7 +86,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textStyle="normal"
-                            android:textColor="#EBEBEB"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:paddingRight="4dip"
                             android:maxLength="13"
                             android:text="Sverige"
@@ -96,7 +96,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textStyle="normal"
-                            android:textColor="#EBEBEB"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:text="12%"
                             />
                     </LinearLayout>	           

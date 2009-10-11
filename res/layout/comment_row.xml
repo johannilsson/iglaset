@@ -17,7 +17,7 @@
 	        android:id="@+id/comment_nickname"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:textColor="#ffffff"
+	        android:textColor="?android:attr/textColorPrimary"
 	        android:textStyle="bold"
 	        android:paddingRight="15dip"
 	        android:maxLength="13"
@@ -28,20 +28,10 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:paddingRight="5dip"
-	        android:textColor="#B0B0B0"
+	        android:textColor="?android:attr/textColorSecondary"
 	        android:text="2009"
 	        android:layout_weight="1"
 	        />
-	    <!-- 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="5dip"
-            android:textColor="#B0B0B0"
-            android:text="right"
-            android:gravity="right"
-            />
-         --> 
 	    <RatingBar
 	        android:id="@+id/comment_rating"
 	        android:layout_width="wrap_content"
@@ -58,7 +48,7 @@
 	    android:id="@+id/comment_comment"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:textColor="#ffffff"
+	    android:textColor="?android:attr/textColorPrimary"
 	    android:text="Usch!!!"
 		/>
 </LinearLayout>
