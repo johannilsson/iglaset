@@ -2,6 +2,7 @@ package com.markupartist.iglaset.activity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
@@ -16,6 +17,8 @@ import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
+import com.markupartist.iglaset.provider.AuthenticationException;
+import com.markupartist.iglaset.provider.AuthStore.ExpiringToken;
 
 public class BasicPreferenceActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
     private static final String TAG = "BasicPreferenceActivity";
@@ -99,34 +102,16 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
      * Update the token that is given after authentication.
      * @param token the token retrieved after authentication
      */
-    private void updateAuthToken(String token) {        
-        if (token == null) {
-            showDialog(DIALOG_AUTH_FAILED);
-        } else {
-            Toast.makeText(BasicPreferenceActivity.this, "Inloggad", Toast.LENGTH_SHORT).show();
-        }
+    private void userAuthenticated(ExpiringToken token) {        
+        Toast.makeText(BasicPreferenceActivity.this, "Inloggad", Toast.LENGTH_SHORT).show();
     }
 
     /**
-     * Task that authenticates a user.
+     * Update the token that is given after authentication.
+     * @param token the token retrieved after authentication
      */
-    private class AuthUserTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            publishProgress();
-            String token = new AuthStore().authenticateUser(params[0], params[1]);
-            return token;
-        }
-
-        @Override
-        public void onProgressUpdate(Void... values) {
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            updateAuthToken(result);
-        }
+    private void userAuthenticationFailed(Exception e) {        
+        showDialog(DIALOG_AUTH_FAILED);
     }
 
     @Override
@@ -135,16 +120,54 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
         if (key.equals("preference_password")) {
             Toast.makeText(BasicPreferenceActivity.this, 
                     "Loggar in", Toast.LENGTH_SHORT).show();
-            new AuthUserTask().execute(
+            /*new AuthUserTask().execute(
                     sharedPreferences.getString("preference_username", ""), 
-                    sharedPreferences.getString("preference_password", ""));
+                    sharedPreferences.getString("preference_password", ""));*/
+            //new Authenticator().authenticateUser(this);
+            new AuthUserTask().execute(this);
         } else if (key.equals("preference_username") 
                 && sharedPreferences.contains("preference_password")) {
             Toast.makeText(BasicPreferenceActivity.this, 
                     "Loggar in", Toast.LENGTH_SHORT).show();
-            new AuthUserTask().execute(
+            /*new AuthUserTask().execute(
                     sharedPreferences.getString("preference_username", ""), 
-                    sharedPreferences.getString("preference_password", ""));
+                    sharedPreferences.getString("preference_password", ""));*/
+            //new Authenticator().authenticateUser(this);
+            new AuthUserTask().execute(this);
+        }
+    }
+
+    /**
+     * Task that authenticates a user.
+     */
+    private class AuthUserTask extends AsyncTask<Context, Void, ExpiringToken> {
+        private Exception mException;
+
+        @Override
+        protected ExpiringToken doInBackground(Context... params) {
+            publishProgress();
+
+            ExpiringToken token = null;
+            try {
+                token = AuthStore.getInstance().authenticateUser(params[0]);
+            } catch (AuthenticationException e) {
+                mException = e;
+            }
+
+            return token;
+        }
+
+        @Override
+        public void onProgressUpdate(Void... values) {
+        }
+
+        @Override
+        protected void onPostExecute(ExpiringToken result) {
+            if (mException != null || result == null) {
+                userAuthenticationFailed(mException);
+            } else {
+                userAuthenticated(result);
+            }
         }
     }
 }
