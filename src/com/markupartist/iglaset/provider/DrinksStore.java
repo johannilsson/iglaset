@@ -1,8 +1,6 @@
 package com.markupartist.iglaset.provider;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
@@ -19,10 +17,19 @@ public class DrinksStore {
     private static String ARTICLES_BASE_URI = "http://api.iglaset.se/api/articles/xml/";
 
     public ArrayList<Drink> searchDrinks(String query, int page) {
+        return searchDrinks(query, page, null);
+    }
+
+    public ArrayList<Drink> searchDrinks(String query, int page, String token) {
         final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
-        final HttpGet get = new HttpGet(ARTICLES_BASE_URI 
-                + "?page=" + page + "&search=" + URLEncoder.encode(query));
+        String searchUri = ARTICLES_BASE_URI + "?page=" + page 
+            + "&search=" + URLEncoder.encode(query);
+        if (token != null) {
+            searchUri += "&token=" + token;
+        }
+
+        final HttpGet get = new HttpGet(searchUri);
         HttpEntity entity = null;
 
         try {
@@ -35,24 +42,23 @@ public class DrinksStore {
             Log.d(TAG, "Failed to read data: " + e.getMessage());
         }
 
-        return drinks;
+        return drinks;        
     }
 
-    public void rateDrink(Drink drink, int grade, Authenticate authCallback) {
-        String token = authCallback.authenticate();
+    public void rateDrink(Drink drink, float grade, String token) {
         Log.d(TAG, "TOKEN " + token);
+
+        final HttpGet get = new HttpGet("http://api.iglaset.se/api/rate/" 
+                + drink.getId() + "/" + (int)grade + "/" + token);
+        HttpEntity entity = null;
+
         try {
-            URL endpoint = new URL("http://api.iglaset.se/api/rate/" 
-                    + drink.getId() + "/" + grade + "/" + token);
-            // TODO: Parse response...
-            endpoint.openStream();
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            Log.d(TAG, "Malformed URL: " + e.getMessage());
-            e.printStackTrace();
+            final HttpResponse response = HttpManager.execute(get);
+            entity = response.getEntity();
+            entity.getContent();
         } catch (IOException e) {
+            // TODO Auto-generated catch block
             Log.d(TAG, "Failed to read data: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }
