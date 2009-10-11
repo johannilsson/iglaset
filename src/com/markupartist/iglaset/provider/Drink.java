@@ -22,6 +22,7 @@ public class Drink implements Parcelable {
     private String mImageUrl;
     private ArrayList<Volume> mVolumes;
     private HashMap<String, ArrayList<String>> mTags;
+    private float mUserRating;
 
     public Drink(int id) {
         mId = id;
@@ -46,6 +47,8 @@ public class Drink implements Parcelable {
 
         mTags = new HashMap<String, ArrayList<String>>();
         in.readMap(mTags, ClassLoader.getSystemClassLoader());
+
+        mUserRating = in.readFloat();
     }
 
     public void addVolume(Volume volume) {
@@ -94,6 +97,7 @@ public class Drink implements Parcelable {
         dest.writeString(mImageUrl);
         dest.writeTypedList(mVolumes);
         dest.writeMap(mTags);
+        dest.writeFloat(mUserRating);
     }
 
     public static final Creator<Drink> CREATOR = new Creator<Drink>() {
@@ -202,6 +206,14 @@ public class Drink implements Parcelable {
         this.mRating = rating;
     }
 
+    public float getUserRating() {
+        return mUserRating;
+    }
+
+    public void setUserRating(float userRating) {
+        this.mUserRating = userRating;
+    }
+
     @Override
     public String toString() {
         return mName;
@@ -211,6 +223,7 @@ public class Drink implements Parcelable {
         private String mPriceSek;
         private int mArticleId;
         private int mVolume;
+        private int mRetired;
 
         public Volume() {
         }
@@ -219,6 +232,7 @@ public class Drink implements Parcelable {
             mPriceSek = in.readString();
             mArticleId = in.readInt();
             mVolume = in.readInt();
+            mRetired = in.readInt();
         }
 
         public String getPriceSek() {
@@ -239,11 +253,24 @@ public class Drink implements Parcelable {
         public void setVolume(int volume) {
             this.mVolume = volume;
         }
+        public int getRetired() {
+            return mRetired;
+        }
+        public void setRetired(int retired) {
+            this.mRetired = retired;
+        }
+        public boolean isRetired() {
+            return mRetired == 1;
+        }
 
         @Override
         public String toString() {
-            return "Volume [mArticleId=" + mArticleId + ", mPriceSek="
-                    + mPriceSek + ", mVolume=" + mVolume + "]";
+            return "Volume [" 
+                +"mArticleId=" + mArticleId 
+                + ", mPriceSek=" + mPriceSek 
+                + ", mRetired=" + mRetired 
+                + ", mVolume=" + mVolume 
+                + "]";
         }
 
         @Override
@@ -256,6 +283,7 @@ public class Drink implements Parcelable {
             dest.writeString(mPriceSek);
             dest.writeInt(mArticleId);
             dest.writeInt(mVolume);
+            dest.writeInt(mRetired);
         }
 
         public static final Creator<Volume> CREATOR = new Creator<Volume>() {

@@ -59,6 +59,7 @@ class DrinksParser extends DefaultHandler {
             mCurrentVolume = new Volume();
             mCurrentVolume.setArticleId(Integer.parseInt(atts.getValue("sb_article_id").trim()));
             mCurrentVolume.setPriceSek(atts.getValue("price").trim());
+            mCurrentVolume.setRetired(Integer.parseInt(atts.getValue("retired").trim()));
         } else if (name.equals("tag")) {
             mCurrentTagType = atts.getValue("type").trim();
         } else if (name.equals("commercial_desc")) {
@@ -103,6 +104,8 @@ class DrinksParser extends DefaultHandler {
                 mCurrentDrink.setRating(mCurrentText);
             } else if (name.equals("small") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.setImageUrl(mCurrentText);
+            } else if (name.equals("user_rating") && !TextUtils.isEmpty(mCurrentText)) {
+                mCurrentDrink.setUserRating(Float.parseFloat(mCurrentText));
             }
         }
 
