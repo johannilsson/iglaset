@@ -2,51 +2,128 @@ package com.markupartist.iglaset.provider;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import com.markupartist.iglaset.util.HttpManager;
-
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
+import android.text.format.Time;
 import android.util.Log;
+
+import com.markupartist.iglaset.util.HttpManager;
 
 public class AuthStore {
     private static final String TAG = "AuthStore";
     private static final String AUTH_BASE_URI = "http://api.iglaset.se/api/authenticate/";
+    private static AuthStore sInstance;
+    //private ExpiringToken mExpiringToken;
 
-    public String authenticateUser(String username, String password) {
-        String token = null;
-        final HttpPost post = new HttpPost(AUTH_BASE_URI + username + "/" + password);
+    private AuthStore() {
+        
+    }
+
+    public static AuthStore getInstance() {
+        if (sInstance == null) {
+            sInstance = new AuthStore();
+        }
+        return sInstance;
+    }
+
+    public ExpiringToken authenticateUser(Context context) throws AuthenticationException {
+        SharedPreferences sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(context);
+
+        ExpiringToken token = null;
+        if (sharedPreferences.contains("preference_username") 
+                && sharedPreferences.contains("preference_password")) {
+            String username = sharedPreferences.getString("preference_username", "");
+            String password = sharedPreferences.getString("preference_password", "");
+
+            token = authenticateUser(username, password);
+
+            storeToken(token, context);
+        }
+
+        return token;
+    }
+
+    private ExpiringToken authenticateUser(String username, String password) 
+            throws AuthenticationException {
+        Log.d(TAG, "authenticate user...");
+        final HttpPost post = new HttpPost(AUTH_BASE_URI);
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+        nameValuePairs.add(new BasicNameValuePair("username", username));
+        nameValuePairs.add(new BasicNameValuePair("password", password)); 
         HttpEntity entity = null;
 
+        ExpiringToken expiringToken = null;
+
         try {
+            post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             final HttpResponse response = HttpManager.execute(post);
-            //if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            Log.d(TAG, "status: " + response.getStatusLine().getStatusCode());
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 entity = response.getEntity();
-                Log.d(TAG, "about to parse response");
-                token = parseResponse(entity.getContent());
+                String token = parseResponse(entity.getContent());
                 if (token.equals("")) {
-                    token = null; // Replace with exception...
+                    Log.d(TAG, "Failed to authenticate user " + username);
+                    throw new AuthenticationException("Failed to authenticate user " 
+                            + username);
                 }
-            //}
-            Log.d(TAG, "parse done");
+
+                expiringToken = createToken(token);
+            }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
+        }            
 
-        Log.d(TAG, "token: " + token);
-        return token;
+        Log.d(TAG, "token: " + expiringToken.token);
+        return expiringToken;
+    }
+
+    public String getStoredToken(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString("preference_token", null);
+    }
+
+    public boolean storeToken(ExpiringToken token, Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(context);
+
+        Editor editor = sharedPreferences.edit();
+        editor.putString("preference_token", token.token);
+
+        return editor.commit();
+    }
+
+    public boolean isTokenValid(ExpiringToken token) {
+        Time currentTime = new Time();
+        currentTime.setToNow();
+        return currentTime.before(token.expiring);
+    }
+
+    private ExpiringToken createToken(String token) {
+        ExpiringToken expiringToken = new ExpiringToken();
+
+        expiringToken.expiring = new Time();
+        expiringToken.expiring.set(System.currentTimeMillis() + 3600000);
+        expiringToken.token = token;
+
+        return expiringToken;
     }
 
     private String parseResponse(InputStream inputStream) {
@@ -84,5 +161,10 @@ public class AuthStore {
         }
 
         return token;
+    }
+
+    public static class ExpiringToken {
+        public String token;
+        public Time expiring;        
     }
 }
