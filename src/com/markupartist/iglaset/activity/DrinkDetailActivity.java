@@ -3,10 +3,17 @@ package com.markupartist.iglaset.activity;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,26 +25,34 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.SimpleAdapter.ViewBinder;
 
 import com.markupartist.iglaset.R;
+import com.markupartist.iglaset.activity.SectionedAdapter.Section;
+import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.Comment;
 import com.markupartist.iglaset.provider.CommentsStore;
 import com.markupartist.iglaset.provider.Drink;
+import com.markupartist.iglaset.provider.DrinksStore;
 import com.markupartist.iglaset.provider.Drink.Volume;
 import com.markupartist.iglaset.util.ImageLoader;
 
 public class DrinkDetailActivity extends ListActivity {
+    private static final int RATE_DIALOG = 0;
     static String TAG = "DrinkDetailActivity";
     private CommentsStore mCommentsStore = new CommentsStore();
     private SimpleAdapter mCommentsAdapter;
     private ArrayList<Comment> mComments;
     private Drink mDrink;
+    private UserRatingAdapter mUserRatingAdapter;
 
     /** Called when the activity is first created. */
     @Override
@@ -52,6 +67,8 @@ public class DrinkDetailActivity extends ListActivity {
 
         Bundle extras = getIntent().getExtras();
         Drink drink = extras.getParcelable("com.markupartist.iglaset.Drink");
+
+        addUserRatingInUi(drink);
 
         TextView nameTextView = (TextView) findViewById(R.id.drink_name);
         nameTextView.setText(drink.getName());
@@ -87,25 +104,7 @@ public class DrinkDetailActivity extends ListActivity {
 
         ArrayList<Volume> volumes = drink.getVolumes();
         if (!volumes.isEmpty()) {
-            ArrayList<HashMap<String, String>> volumeList = new ArrayList<HashMap<String, String>>();
-            for (Volume volume : volumes) {
-                HashMap<String, String> map = new HashMap<String, String>();
-                map.put("id", String.valueOf(volume.getArticleId()));
-                map.put("amount", String.valueOf(volume.getVolume()) + " ml");
-                map.put("price", volume.getPriceSek() + " kr");
-                volumeList.add(map);
-            }
-
-            SimpleAdapter volumeAdapter = new SimpleAdapter(this, volumeList, 
-                    R.layout.volume_row,
-                    new String[] { "id", "amount", "price" },
-                    new int[] { 
-                        R.id.volume_id,
-                        R.id.volume_amount, 
-                        R.id.volume_price
-                    }
-            );
-
+            VolumeAdapter volumeAdapter = new VolumeAdapter(this, volumes);
             mSectionedAdapter.addSection(1, (String) getText(R.string.packings), volumeAdapter);
         }
 
@@ -118,7 +117,7 @@ public class DrinkDetailActivity extends ListActivity {
         if (comments == null) {
             new GetCommentsTask().execute(drink.getId());
         } else {
-            updateComments(comments);
+            updateCommentsInUi(comments);
         }
 
         setListAdapter(mSectionedAdapter);
@@ -150,12 +149,26 @@ public class DrinkDetailActivity extends ListActivity {
         );
         return commentsAdapter;
     }
+
+    private void addUserRatingInUi(Drink drink) {
+        String token = AuthStore.getInstance().getStoredToken(this);
+        if (token != null) {
+            Log.d(TAG, "user rating " + drink.getUserRating());
+            mUserRatingAdapter = new UserRatingAdapter(this, drink.getUserRating());
+            mSectionedAdapter.addSection(0, "Mitt betyg", mUserRatingAdapter);
+        }
+    }
+
+    private void updateUserRatingInUi(float rating) {
+        final RatingBar userRatingBar = (RatingBar) DrinkDetailActivity.this.findViewById(R.id.user_drink_rating);
+        userRatingBar.setRating(rating);
+    }
     
     /**
      * Update comments view.
      * @param comments the comments
      */
-    private void updateComments(ArrayList<Comment> comments) {
+    private void updateCommentsInUi(ArrayList<Comment> comments) {
         // Save the result to return it from onRetainNonConfigurationInstance.
         mComments = comments;
 
@@ -243,6 +256,24 @@ public class DrinkDetailActivity extends ListActivity {
     };
 
     @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        Section section = mSectionedAdapter.getSection(position);
+        Object item = mSectionedAdapter.getItem(position);
+
+        if (item instanceof Volume) {
+            Volume volume = (Volume) item;
+            if (!volume.isRetired()) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://systembolaget.se/SokDrycker/Produkt?VaruNr="
+                                + volume.getArticleId()));
+                startActivity(browserIntent);
+            }
+        } else if (section.adapter instanceof UserRatingAdapter) {
+            showDialog(RATE_DIALOG);
+        }
+    }
+
+    @Override
     public boolean onSearchRequested() {
         startSearch(null, false, null, false);
         return true;
@@ -267,31 +298,55 @@ public class DrinkDetailActivity extends ListActivity {
             case R.id.menu_search:
                 onSearchRequested();
                 return true;
-            /*
-            SAVED FOR LATER...
             case R.id.menu_rate:
-                new DrinksStore().rateDrink(mDrink, 8, new Authenticate() {
-                    @Override
-                    public String authenticate() {
-                        
-                        // FIXA DET HÄR
-                        // Lägga till en Application, som håller token och ser till 
-                        // det skapas en ny om den är för gammal typ
-                        // getExpiringToken
-                        // TODO: Check if we have prefs or not..
-                        SharedPreferences sharedPreferences = PreferenceManager
-                            .getDefaultSharedPreferences(DrinkDetailActivity.this);
-                        String username = sharedPreferences.getString("preference_username", "");
-                        String password = sharedPreferences.getString("preference_password", "");
-                        return new AuthStore().authenticateUser(username, password);
-                    }
-                });
+                String token = AuthStore.getInstance().getStoredToken(this);
+                if (token != null) {
+                    showDialog(RATE_DIALOG);
+                }
                 return true;
-            */
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch(id) {
+            case RATE_DIALOG:
+                final RatingBar userRatingBar = (RatingBar) findViewById(R.id.user_drink_rating);
+
+                final RatingBar ratingBar = new RatingBar(this);
+                ratingBar.setNumStars(5);
+                ratingBar.setStepSize((float) 0.5);
+                ratingBar.setRating(userRatingBar.getRating() / 2);
+                LinearLayout layout = new LinearLayout(this);
+                layout.setLayoutParams(new LayoutParams(
+                        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                layout.addView(ratingBar);
+
+                return new AlertDialog.Builder(this)
+                    .setTitle("Sätt betyg")
+                    .setMessage("Ditt betyg görs om till en 10-gradig skala.")
+                    .setView(layout)
+                    .setPositiveButton("Ok", new OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            new SetUserRatingTask().execute(ratingBar.getRating() * 2);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ;
+                        }
+                    })
+                    .create();
+        }
+        return null;
+    }
+
+    /**
+     * Background task for fetching comments
+     */
     private class GetCommentsTask extends AsyncTask<Integer, Void, ArrayList<Comment>> {
 
         @Override
@@ -308,7 +363,85 @@ public class DrinkDetailActivity extends ListActivity {
         @Override
         protected void onPostExecute(ArrayList<Comment> result) {
             setProgressBarIndeterminateVisibility(false);
-            updateComments(result);
+            updateCommentsInUi(result);
+        }
+    }
+
+    /**
+     * Background task for setting a user rating.
+     */
+    private class SetUserRatingTask extends AsyncTask<Float, Void, Float> {
+
+        @Override
+        protected Float doInBackground(Float... params) {
+            publishProgress();
+
+            String token = AuthStore.getInstance().getStoredToken(DrinkDetailActivity.this);
+            new DrinksStore().rateDrink(mDrink, params[0], token);
+
+            return params[0];
+        }
+
+        @Override
+        public void onProgressUpdate(Void... values) {
+            setProgressBarIndeterminateVisibility(true);
+        }
+
+        @Override
+        protected void onPostExecute(Float rating) {
+            setProgressBarIndeterminateVisibility(false);
+            updateUserRatingInUi(rating);
+        }
+    }
+
+    private class VolumeAdapter extends ArrayAdapter<Volume> {
+        public VolumeAdapter(Context context, List<Volume> objects) {
+            super(context, R.layout.volume_row, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.volume_row, parent, false);
+            }
+            Volume volume = getItem(position);
+            TextView id = (TextView) convertView.findViewById(R.id.volume_id);
+            id.setText(String.valueOf(volume.getArticleId()));
+
+            TextView amount = (TextView) convertView.findViewById(R.id.volume_amount);
+            amount.setText(String.valueOf(volume.getVolume()));
+
+            TextView price = (TextView) convertView.findViewById(R.id.volume_price);
+            price.setText(volume.getPriceSek() + " kr"); // TODO should fix hard coded string
+
+            if (volume.isRetired()) {
+                id.setPaintFlags(id.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                amount.setPaintFlags(amount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                price.setPaintFlags(price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            }
+
+            return convertView;
+        }
+    }
+
+    private class UserRatingAdapter extends ArrayAdapter<String> {
+        private float mUserRating;
+        public UserRatingAdapter(Context context, float userRating) {
+            super(context, R.layout.user_rating, new ArrayList<String>());
+            add("1");
+            this.mUserRating = userRating;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Log.d(TAG, "getView rating");
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.user_rating, parent, false);
+            }
+            RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.user_drink_rating);
+            ratingBar.setRating(mUserRating);
+
+            return convertView;
         }
     }
 }
