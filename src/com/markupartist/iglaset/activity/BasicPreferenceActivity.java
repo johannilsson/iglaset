@@ -13,6 +13,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.provider.SearchRecentSuggestions;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
@@ -24,6 +25,7 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
     private static final String TAG = "BasicPreferenceActivity";
     private static final int DIALOG_CLEAR_SEARCH_HISTORY = 0;
     private static final int DIALOG_AUTH_FAILED = 1;
+    private AuthUserTask mAuthUserTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,14 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
         // Unregister the listener whenever a key changes            
         getPreferenceScreen().getSharedPreferences()
             .unregisterOnSharedPreferenceChangeListener(this);    
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mAuthUserTask != null) {
+            mAuthUserTask.cancel(true);
+        }
     }
 
     @Override
@@ -120,14 +130,32 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
         if (key.equals("preference_password")) {
             Toast.makeText(BasicPreferenceActivity.this, 
                     "Loggar in", Toast.LENGTH_SHORT).show();
-            new AuthUserTask().execute(this);
+            mAuthUserTask = new AuthUserTask();
+            mAuthUserTask.execute(this);
         } else if (key.equals("preference_username") 
                 && sharedPreferences.contains("preference_password")) {
             Toast.makeText(BasicPreferenceActivity.this, 
                     "Loggar in", Toast.LENGTH_SHORT).show();
-            new AuthUserTask().execute(this);
+            mAuthUserTask = new AuthUserTask();
+            mAuthUserTask.execute(this);
         }
     }
+
+    /**
+     * Called when a key is pressed. Overridden to catch if the back key was
+     * pressed. Then setResult is called to allow activities to call this 
+     * activity with startActivityForResult.
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            setResult(RESULT_OK);
+            finish();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }           
 
     /**
      * Task that authenticates a user.
