@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class DrinkViewHolder {
     private View layout;
     private TextView nameView;
-    private TextView yearView;
+    //private TextView yearView;
     private TextView originView;
     private TextView originCountryView;
     private RatingBar rateView;
@@ -28,12 +28,14 @@ public class DrinkViewHolder {
         return nameView;
     }
 
+    /*
     public TextView getYearView() {
         if (yearView == null) {
             yearView = (TextView) layout.findViewById(R.id.drink_year);
         }
         return yearView;
     }
+    */
 
     public TextView getOriginView() {
         if (originView == null) {
