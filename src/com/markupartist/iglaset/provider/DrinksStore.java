@@ -15,6 +15,7 @@ import com.markupartist.iglaset.util.HttpManager;
 public class DrinksStore {
     private static String TAG = "DrinksStore";
     private static String ARTICLES_BASE_URI = "http://api.iglaset.se/api/articles/xml/";
+    private static String RATE_BASE_URI = "http://api.iglaset.se/api/rate/";
 
     public ArrayList<Drink> searchDrinks(String query, int page) {
         return searchDrinks(query, page, null);
@@ -38,18 +39,46 @@ public class DrinksStore {
             DrinksParser drinksParser = new DrinksParser();
             drinksParser.parseDrinks(entity.getContent(), drinks);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             Log.d(TAG, "Failed to read data: " + e.getMessage());
         }
 
         return drinks;        
     }
 
-    public void rateDrink(Drink drink, float grade, String token) {
-        Log.d(TAG, "TOKEN " + token);
+    public Drink getDrink(int id) {
+        return getDrink(id, null);
+    }
 
-        final HttpGet get = new HttpGet("http://api.iglaset.se/api/rate/" 
-                + drink.getId() + "/" + (int)grade + "/" + token);
+    public Drink getDrink(int id, String token) {
+        String searchUri = ARTICLES_BASE_URI + id;
+        if (token != null) {
+            searchUri += "/?token=" + token;
+        }
+
+        final HttpGet get = new HttpGet(searchUri);
+        final ArrayList<Drink> drinks = new ArrayList<Drink>();
+
+        try {
+            final HttpResponse response = HttpManager.execute(get);
+            HttpEntity entity = response.getEntity();
+            DrinksParser drinksParser = new DrinksParser();
+            drinksParser.parseDrinks(entity.getContent(), drinks);
+        } catch (IOException e) {
+            Log.d(TAG, "Failed to read data: " + e.getMessage());
+        }
+
+        Drink drink = null;
+        if (drinks.size() == 1) {
+            drink = drinks.get(0);
+        }
+
+        Log.d(TAG, "Got drink " + drink);
+        return drink;
+    }
+
+    public void rateDrink(Drink drink, float grade, String token) {
+        final HttpGet get = new HttpGet(RATE_BASE_URI + drink.getId() 
+                + "/" + (int)grade + "/" + token);
         HttpEntity entity = null;
 
         try {
@@ -57,7 +86,6 @@ public class DrinksStore {
             entity = response.getEntity();
             entity.getContent();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             Log.d(TAG, "Failed to read data: " + e.getMessage());
         }
     }
