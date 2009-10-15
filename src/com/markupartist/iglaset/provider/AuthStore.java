@@ -51,7 +51,12 @@ public class AuthStore {
             String username = sharedPreferences.getString("preference_username", "");
             String password = sharedPreferences.getString("preference_password", "");
 
-            token = authenticateUser(username, password);
+            try {
+                token = authenticateUser(username, password);
+            } catch (AuthenticationException e) {
+                removeToken(context);
+                throw e;
+            }
 
             storeToken(token, context);
         }
@@ -89,7 +94,6 @@ public class AuthStore {
             e.printStackTrace();
         }            
 
-        Log.d(TAG, "token: " + expiringToken.token);
         return expiringToken;
     }
 
@@ -98,6 +102,16 @@ public class AuthStore {
             .getDefaultSharedPreferences(context);
 
         return sharedPreferences.getString("preference_token", null);
+    }
+
+    private boolean removeToken(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager
+        .getDefaultSharedPreferences(context);
+
+        Editor editor = sharedPreferences.edit();
+        editor.putString("preference_token", null);
+    
+        return editor.commit();
     }
 
     public boolean storeToken(ExpiringToken token, Context context) {
