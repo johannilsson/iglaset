@@ -19,8 +19,7 @@
 
 package com.markupartist.iglaset.activity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,7 @@ abstract public class SectionedAdapter extends BaseAdapter {
     abstract protected View getHeaderView(Section section, int index,
             View convertView, ViewGroup parent);
 
-    private List<Section> sections = new ArrayList<Section>();
+    private LinkedList<Section> sections = new LinkedList<Section>();
     private static int TYPE_SECTION_HEADER = 0;
 
     public SectionedAdapter() {
@@ -43,6 +42,14 @@ abstract public class SectionedAdapter extends BaseAdapter {
 
     public void addSection(int id, String caption, Adapter adapter) {
         sections.add(new Section(id, caption, adapter));
+    }
+
+    public void addSectionFirst(int id, String caption, Adapter adapter) {
+        sections.addFirst(new Section(id, caption, adapter));
+    }
+
+    public void addSectionLast(int id, String caption, Adapter adapter) {
+        sections.addLast(new Section(id, caption, adapter));
     }
 
     public void removeSection(int id) {
