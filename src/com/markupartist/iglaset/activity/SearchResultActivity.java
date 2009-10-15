@@ -202,8 +202,9 @@ public class SearchResultActivity extends ListActivity {
 
             Drink drink = getItem(position);
             if (drink != null && dvh != null) {
-                dvh.getNameView().setText(drink.getName());
-                dvh.getYearView().setText(drink.getYear() == 0 ? "" : String.valueOf(drink.getYear()));
+                String year = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
+                dvh.getNameView().setText(drink.getName() + year);
+                //dvh.getYearView().setText(drink.getYear() == 0 ? "" : String.valueOf(drink.getYear()));
                 dvh.getOriginView().setText(drink.getOrigin());
                 dvh.getOriginCountryView().setText(drink.getOriginCountry());
                 dvh.getRateView().setRating(Float.parseFloat(drink.getRating()));
