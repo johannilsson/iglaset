@@ -24,15 +24,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.SimpleAdapter.ViewBinder;
 
 import com.markupartist.iglaset.R;
@@ -319,6 +318,11 @@ public class DrinkDetailActivity extends ListActivity {
                     showDialog(NOT_AUTHENTICATED_DIALOG);
                 }
                 return true;
+            /*
+            case R.id.menu_scan:
+                IntentIntegrator.initiateScan(this);
+                return true;
+            */
         }
         return super.onOptionsItemSelected(item);
     }
@@ -327,21 +331,24 @@ public class DrinkDetailActivity extends ListActivity {
     protected Dialog onCreateDialog(int id) {
         switch(id) {
             case RATE_DIALOG:
-                //final RatingBar userRatingBar = (RatingBar) findViewById(R.id.user_drink_rating);
                 float userRating = mUserRatingAdapter.getUserRating();
-
-                final RatingBar ratingBar = new RatingBar(this);
+                final View layout = getLayoutInflater().inflate(R.layout.user_rating_dialog, null);
+                final TextView ratingValue = (TextView) layout.findViewById(R.id.add_user_rating_value);
+                ratingValue.setText("Ditt betyg " + userRating);
+                final RatingBar ratingBar = (RatingBar) layout.findViewById(R.id.add_user_rating);
                 ratingBar.setNumStars(5);
                 ratingBar.setStepSize((float) 0.5);
                 ratingBar.setRating(userRating / 2);
-                LinearLayout layout = new LinearLayout(this);
-                layout.setLayoutParams(new LayoutParams(
-                        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-                layout.addView(ratingBar);
+                ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating,
+                            boolean fromUser) {
+                        ratingValue.setText("Ditt betyg " + rating * 2);
+                    }
+                });
 
                 return new AlertDialog.Builder(this)
                     .setTitle("Sätt betyg")
-                    .setMessage("Ditt betyg görs om till en 10-gradig skala.")
                     .setView(layout)
                     .setPositiveButton("Ok", new OnClickListener() {
                         @Override
@@ -380,8 +387,19 @@ public class DrinkDetailActivity extends ListActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SETTINGS_CHANGED_REQUEST) {
-            new GetDrinkTask().execute(sDrink.getId());
+        switch (requestCode) {
+            case SETTINGS_CHANGED_REQUEST:
+                new GetDrinkTask().execute(sDrink.getId());
+            /*
+            case IntentIntegrator.REQUEST_CODE:
+                IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+                if (scanResult != null) {
+                    Log.d(TAG, "contents: " + scanResult.getContents());
+                    Log.d(TAG, "formatName: " + scanResult.getFormatName());
+                } else {
+                    Log.d(TAG, "NO SCAN RESULT");
+                }
+            */
         }
     }
 
