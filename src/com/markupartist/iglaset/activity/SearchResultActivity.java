@@ -36,6 +36,7 @@ public class SearchResultActivity extends ListActivity {
     DrinksStore drinksStore = new DrinksStore();
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
+    private String mToken;
     private static String sSearchQuery;
 
     /** Called when the activity is first created. */
@@ -45,6 +46,8 @@ public class SearchResultActivity extends ListActivity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         setContentView(R.layout.search_result);
+
+        mToken = AuthStore.getInstance().getStoredToken(SearchResultActivity.this);
 
         // Check if already have some data, used if screen is rotated.
         @SuppressWarnings("unchecked")
@@ -145,10 +148,7 @@ public class SearchResultActivity extends ListActivity {
         protected ArrayList<Drink> doInBackground(String... params) {
             publishProgress();
             int page = Integer.parseInt(params[1]);
-
-            // TODO: fix token...
-            String token = AuthStore.getInstance().getStoredToken(SearchResultActivity.this);
-            return drinksStore.searchDrinks(params[0], page, token);
+            return drinksStore.searchDrinks(params[0], page, mToken);
         }
 
         @Override
@@ -245,10 +245,7 @@ public class SearchResultActivity extends ListActivity {
             @Override
             protected ArrayList<Drink> doInBackground(Void... params) {
                 publishProgress();
-
-                // TODO: fix token...
-                String token = AuthStore.getInstance().getStoredToken(SearchResultActivity.this);
-                return drinksStore.searchDrinks(sSearchQuery, mPage.get(), token);
+                return drinksStore.searchDrinks(sSearchQuery, mPage.get(), mToken);
             }
 
             @Override
