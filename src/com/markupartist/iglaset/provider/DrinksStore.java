@@ -8,6 +8,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.markupartist.iglaset.util.HttpManager;
@@ -17,20 +18,10 @@ public class DrinksStore {
     private static String ARTICLES_BASE_URI = "http://api.iglaset.se/api/articles/xml/";
     private static String RATE_BASE_URI = "http://api.iglaset.se/api/rate/";
 
-    public ArrayList<Drink> searchDrinks(String query, int page) {
-        return searchDrinks(query, page, null);
-    }
-
-    public ArrayList<Drink> searchDrinks(String query, int page, String token) {
+    public ArrayList<Drink> searchDrinks(SearchCriteria searchCriteria) {
         final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
-        String searchUri = ARTICLES_BASE_URI + "?page=" + page 
-            + "&search=" + URLEncoder.encode(query);
-        if (token != null) {
-            searchUri += "&token=" + token;
-        }
-
-        final HttpGet get = new HttpGet(searchUri);
+        final HttpGet get = new HttpGet(buildSearchUri(searchCriteria));
         HttpEntity entity = null;
 
         try {
@@ -51,7 +42,7 @@ public class DrinksStore {
 
     public Drink getDrink(int id, String token) {
         String searchUri = ARTICLES_BASE_URI + id;
-        if (token != null) {
+        if (!TextUtils.isEmpty(token)) {
             searchUri += "/?token=" + token;
         }
 
@@ -72,7 +63,6 @@ public class DrinksStore {
             drink = drinks.get(0);
         }
 
-        Log.d(TAG, "Got drink " + drink);
         return drink;
     }
 
@@ -88,5 +78,23 @@ public class DrinksStore {
         } catch (IOException e) {
             Log.d(TAG, "Failed to read data: " + e.getMessage());
         }
+    }
+
+    /**
+     * Builds a the uri for search from a SearchCriteria
+     * @param searchCriteria the search criteria
+     * @return the search uri
+     */
+    private String buildSearchUri(SearchCriteria searchCriteria) {
+        Log.d(TAG, "building search uri from " + searchCriteria);
+        String searchUri = ARTICLES_BASE_URI + "?";
+        if (!TextUtils.isEmpty(searchCriteria.getQuery()))
+            searchUri += "&search=" + URLEncoder.encode(searchCriteria.getQuery());
+        if (!TextUtils.isEmpty(searchCriteria.getToken()))
+            searchUri += "&token=" + searchCriteria.getToken();
+        if (searchCriteria.getCategory() > 0)
+            searchUri += "&category=" + searchCriteria.getCategory();
+        searchUri += "&page=" + searchCriteria.getPage();
+        return searchUri;
     }
 }
