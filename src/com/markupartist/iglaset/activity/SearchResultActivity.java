@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +30,7 @@ import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.DrinksStore;
+import com.markupartist.iglaset.provider.SearchCriteria;
 import com.markupartist.iglaset.util.ImageLoader;
 
 public class SearchResultActivity extends ListActivity {
@@ -37,7 +39,7 @@ public class SearchResultActivity extends ListActivity {
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
     private String mToken;
-    private static String sSearchQuery;
+    private static SearchCriteria sSearchCriteria;
 
     /** Called when the activity is first created. */
     @Override
@@ -47,7 +49,7 @@ public class SearchResultActivity extends ListActivity {
 
         setContentView(R.layout.search_result);
 
-        mToken = AuthStore.getInstance().getStoredToken(SearchResultActivity.this);
+        mToken = AuthStore.getInstance().getStoredToken(this);
 
         // Check if already have some data, used if screen is rotated.
         @SuppressWarnings("unchecked")
@@ -56,6 +58,7 @@ public class SearchResultActivity extends ListActivity {
         if (data == null) {
             final Intent queryIntent = getIntent();
             final String queryAction = queryIntent.getAction();
+            final TextView searchText = (TextView) findViewById(R.id.search_progress_text);
             if (Intent.ACTION_SEARCH.equals(queryAction)) {
                 final String queryString = queryIntent.getStringExtra(SearchManager.QUERY);
                 // Record the query string in the recent queries suggestions provider.
@@ -63,14 +66,22 @@ public class SearchResultActivity extends ListActivity {
                         SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
                 suggestions.saveRecentQuery(queryString, null);
 
-                TextView searchText = (TextView) findViewById(R.id.search_progress_text);
                 String searchingText = searchText.getText() + " \"" + queryString + "\"";
                 searchText.setText(searchingText);
                 setTitle(searchingText);
-                sSearchQuery = queryString;
-                new SearchDrinksTask().execute(queryString, "1");
-            } else {
-                Log.d(TAG, "no ACTION_SEARCH intent");
+
+                sSearchCriteria = new SearchCriteria();
+                sSearchCriteria.setQuery(queryString);
+                sSearchCriteria.setToken(mToken);
+                new SearchDrinksTask().execute(sSearchCriteria);
+            } else if (queryIntent.hasExtra("com.markupartist.sthlmtraveling.searchCategory")) {
+                final int category = queryIntent.getExtras()
+                    .getInt("com.markupartist.sthlmtraveling.searchCategory");
+                setTitle(searchText.getText());
+                sSearchCriteria = new SearchCriteria();
+                sSearchCriteria.setCategory(category);
+                sSearchCriteria.setToken(mToken);
+                new SearchDrinksTask().execute(sSearchCriteria);
             }            
         } else {
             initList(data);
@@ -84,7 +95,21 @@ public class SearchResultActivity extends ListActivity {
      */
     @Override
     public Object onRetainNonConfigurationInstance() {
+        Log.d(TAG, "onRetainNonConfigurationInstance");
         return mDrinks;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO: See if we can get the previous search criteria from here.
+        Log.d(TAG, "onResume");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState");
     }
 
     private void initList(ArrayList<Drink> drinks) {
@@ -94,7 +119,12 @@ public class SearchResultActivity extends ListActivity {
             TextView emptyResult = (TextView) findViewById(R.id.search_empty);
             emptyResult.setVisibility(View.VISIBLE);
         }
-        setTitle(getText(R.string.search_results) + " \"" + sSearchQuery + "\"");
+
+        if (!TextUtils.isEmpty(sSearchCriteria.getQuery())) {
+            setTitle(getText(R.string.search_results) + " \"" + sSearchCriteria.getQuery() + "\"");
+        } else {
+            setTitle(getText(R.string.search_results));
+        }
 
         LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);
         progressBar.setVisibility(View.GONE);
@@ -142,13 +172,12 @@ public class SearchResultActivity extends ListActivity {
     /**
      * Background task to search for drinks.
      */
-    private class SearchDrinksTask extends AsyncTask<String, Void, ArrayList<Drink>> {
+    private class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<Drink>> {
 
         @Override
-        protected ArrayList<Drink> doInBackground(String... params) {
+        protected ArrayList<Drink> doInBackground(SearchCriteria... params) {
             publishProgress();
-            int page = Integer.parseInt(params[1]);
-            return drinksStore.searchDrinks(params[0], page, mToken);
+            return drinksStore.searchDrinks(params[0]);
         }
 
         @Override
@@ -245,7 +274,8 @@ public class SearchResultActivity extends ListActivity {
             @Override
             protected ArrayList<Drink> doInBackground(Void... params) {
                 publishProgress();
-                return drinksStore.searchDrinks(sSearchQuery, mPage.get(), mToken);
+                sSearchCriteria.setPage(mPage.get());
+                return drinksStore.searchDrinks(sSearchCriteria);
             }
 
             @Override
