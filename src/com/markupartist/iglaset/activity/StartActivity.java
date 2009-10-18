@@ -34,6 +34,15 @@ public class StartActivity extends Activity {
                 onSearchRequested();
             }
         });
+
+        Button listButton = (Button) findViewById(R.id.btn_lists);
+        listButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(StartActivity.this, CategoryActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     @Override

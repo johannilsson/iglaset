@@ -12,13 +12,31 @@
         android:paddingBottom="10dip"
         android:src="@drawable/iglaset"
     />
-    <Button
-        android:id="@+id/btn_search"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="80dip" 
-        android:layout_height="80dip"
-        android:paddingTop="15dip"
-        android:text="Sök"
-        android:drawableTop="@android:drawable/ic_search_category_default"
-        />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal"
+        >
+        <Button
+            android:id="@+id/btn_search"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="90dip" 
+            android:layout_height="85dip"
+            android:layout_margin="3dip"
+            android:paddingTop="5dip"
+            android:text="Sök"
+            android:drawableTop="@android:drawable/ic_menu_search"
+            />
+        <Button
+            android:id="@+id/btn_lists"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="90dip" 
+            android:layout_height="85dip"
+            android:layout_margin="3dip"
+            android:paddingTop="5dip"
+            android:text="Kategorier"
+            android:drawableTop="@drawable/ic_menu_list"
+            />
+    </LinearLayout>
 </LinearLayout>

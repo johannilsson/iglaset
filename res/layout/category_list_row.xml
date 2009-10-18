@@ -1,0 +1,12 @@
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"	
+    android:id="@+id/category_list_row"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:textColor="?android:attr/textColorPrimary"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:paddingTop="10dip"
+    android:paddingRight="5dip"
+    android:paddingBottom="10dip"
+    android:paddingLeft="5dip"
+	/>

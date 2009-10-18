@@ -20,17 +20,13 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.SAMPLE_CODE" />
             </intent-filter>
-
             <!-- This intent-filter identifies this activity as "searchable" -->
-
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
             <!-- This metadata entry provides further configuration details for searches -->
             <!-- that are handled by this activity. -->
-
             <meta-data android:name="android.app.searchable"
                        android:resource="@xml/searchable" />
         </activity>
@@ -41,6 +37,10 @@
                   android:authorities="com.markupartist.iglaset.activity.SuggestionProvider" />
 
         <activity android:name=".activity.DrinkDetailActivity"
+                  android:theme="@android:style/Theme.Light">
+        </activity>
+
+        <activity android:name=".activity.CategoryActivity"
                   android:theme="@android:style/Theme.Light">
         </activity>
 
