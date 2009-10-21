@@ -435,44 +435,36 @@ public class DrinkDetailActivity extends ListActivity {
         protected Float doInBackground(Float... params) {
             publishProgress();
 
-            new DrinksStore().rateDrink(sDrink, params[0], mToken);
+            DrinksStore.getInstance().rateDrink(sDrink, params[0], mToken);
 
             return params[0];
         }
 
         @Override
         public void onProgressUpdate(Void... values) {
-            //setProgressBarIndeterminateVisibility(true);
             Toast.makeText(DrinkDetailActivity.this, "Sätter betyg", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         protected void onPostExecute(Float rating) {
-            //setProgressBarIndeterminateVisibility(false);
             Toast.makeText(DrinkDetailActivity.this, "Betyg satt", Toast.LENGTH_SHORT).show();
             updateUserRatingInUi(rating);
         }
     }
 
     /**
-     * Background task for fetching comments
+     * Background task for fetching a drink.
      */
     private class GetDrinkTask extends AsyncTask<Integer, Void, Drink> {
 
         @Override
         protected Drink doInBackground(Integer... params) {
             publishProgress();
-            return new DrinksStore().getDrink(params[0], mToken);
-        }
-
-        @Override
-        public void onProgressUpdate(Void... values) {
-            setProgressBarIndeterminateVisibility(true);
+            return DrinksStore.getInstance().getDrink(params[0], mToken);
         }
 
         @Override
         protected void onPostExecute(Drink drink) {
-            setProgressBarIndeterminateVisibility(false);
             onUpdatedDrink(drink);
         }
     }
