@@ -9,7 +9,6 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
@@ -27,15 +26,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
+import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkCompletedListener;
+import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkProgressUpdatedListener;
 import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.Drink;
-import com.markupartist.iglaset.provider.DrinksStore;
 import com.markupartist.iglaset.provider.SearchCriteria;
 import com.markupartist.iglaset.util.ImageLoader;
 
-public class SearchResultActivity extends ListActivity {
+public class SearchResultActivity extends ListActivity implements SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener {
     static String TAG = "SearchResultActivity";
-    DrinksStore drinksStore = new DrinksStore();
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
     private String mToken;
@@ -73,7 +72,10 @@ public class SearchResultActivity extends ListActivity {
                 sSearchCriteria = new SearchCriteria();
                 sSearchCriteria.setQuery(queryString);
                 sSearchCriteria.setToken(mToken);
-                new SearchDrinksTask().execute(sSearchCriteria);
+                SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
+                searchDrinksTask.setSearchDrinkCompletedListener(this);
+                searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
+                searchDrinksTask.execute(sSearchCriteria);
             } else if (queryIntent.hasExtra("com.markupartist.sthlmtraveling.searchCategory")) {
                 final int category = queryIntent.getExtras()
                     .getInt("com.markupartist.sthlmtraveling.searchCategory");
@@ -81,7 +83,10 @@ public class SearchResultActivity extends ListActivity {
                 sSearchCriteria = new SearchCriteria();
                 sSearchCriteria.setCategory(category);
                 sSearchCriteria.setToken(mToken);
-                new SearchDrinksTask().execute(sSearchCriteria);
+                SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
+                searchDrinksTask.setSearchDrinkCompletedListener(this);
+                searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
+                searchDrinksTask.execute(sSearchCriteria);
             }            
         } else {
             initList(data);
@@ -169,33 +174,21 @@ public class SearchResultActivity extends ListActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Background task to search for drinks.
-     */
-    private class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<Drink>> {
+    @Override
+    public void onSearchDrinkComplete(ArrayList<Drink> result) {
+        setProgressBarIndeterminateVisibility(false);
+        initList(result);
+    }
 
-        @Override
-        protected ArrayList<Drink> doInBackground(SearchCriteria... params) {
-            publishProgress();
-            return drinksStore.searchDrinks(params[0]);
-        }
-
-        @Override
-        public void onProgressUpdate(Void... values) {
-            setProgressBarIndeterminateVisibility(true);
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Drink> result) {
-            setProgressBarIndeterminateVisibility(false);
-            initList(result);
-        }
+    @Override
+    public void onSearchDrinkProgress() {
+        setProgressBarIndeterminateVisibility(true);
     }
 
     /**
      * List adapter for drinks. Deals with pagination internally.
      */
-    class DrinkAdapter extends ArrayAdapter<Drink> {
+    class DrinkAdapter extends ArrayAdapter<Drink> implements SearchDrinkCompletedListener {
         private AtomicBoolean mShouldAppend = new AtomicBoolean(true);
         private AtomicInteger mPage = new AtomicInteger(1);
         private int mMaxResult = 100;
@@ -210,15 +203,17 @@ public class SearchResultActivity extends ListActivity {
                     && super.getCount() >= 10
                     && super.getCount() <= mMaxResult);
         }
-        
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
             DrinkViewHolder dvh = null;
             if (shouldAppend(position)) {
                 Toast.makeText(SearchResultActivity.this, "Hämtar", Toast.LENGTH_LONG).show();
-                mPage.addAndGet(1);
-                new AppendTask().execute();
+                sSearchCriteria.setPage(mPage.addAndGet(1));
+                SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
+                searchDrinksTask.setSearchDrinkCompletedListener(this);
+                searchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
+                searchDrinksTask.execute(sSearchCriteria);
             }
 
             if (convertView == null) {
@@ -266,28 +261,10 @@ public class SearchResultActivity extends ListActivity {
             return mShouldAppend.get();
         }
 
-        /**
-         * A background task that will be run when there is a need to append more
-         * data.
-         */
-        class AppendTask extends AsyncTask<Void, Void, ArrayList<Drink>> {
-            @Override
-            protected ArrayList<Drink> doInBackground(Void... params) {
-                publishProgress();
-                sSearchCriteria.setPage(mPage.get());
-                return drinksStore.searchDrinks(sSearchCriteria);
-            }
-
-            @Override
-            public void onProgressUpdate(Void... values) {
-                setProgressBarIndeterminateVisibility(true);
-            }
-
-            @Override
-            protected void onPostExecute(ArrayList<Drink> drinks) {
-                append(drinks);
-                setProgressBarIndeterminateVisibility(false);
-            }
+        @Override
+        public void onSearchDrinkComplete(ArrayList<Drink> result) {
+            append(result);
+            setProgressBarIndeterminateVisibility(false);
         }
     }
 }
