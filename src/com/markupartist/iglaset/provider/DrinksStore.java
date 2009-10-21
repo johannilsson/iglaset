@@ -14,9 +14,20 @@ import android.util.Log;
 import com.markupartist.iglaset.util.HttpManager;
 
 public class DrinksStore {
+    private static DrinksStore mInstance;
     private static String TAG = "DrinksStore";
     private static String ARTICLES_BASE_URI = "http://api.iglaset.se/api/articles/xml/";
     private static String RATE_BASE_URI = "http://api.iglaset.se/api/rate/";
+
+    private DrinksStore() {
+    }
+
+    public static DrinksStore getInstance() {
+        if (mInstance == null) {
+            mInstance = new DrinksStore();
+        }
+        return mInstance;
+    }
 
     public ArrayList<Drink> searchDrinks(SearchCriteria searchCriteria) {
         final ArrayList<Drink> drinks = new ArrayList<Drink>();
