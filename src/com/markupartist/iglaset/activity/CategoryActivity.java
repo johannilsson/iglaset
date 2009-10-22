@@ -10,12 +10,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.markupartist.iglaset.R;
+import com.markupartist.iglaset.util.Tracker;
 
 public class CategoryActivity extends ListActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Tracker.getInstance().start(this).trackPageView("categories");
+
         setContentView(R.layout.category_list);
         setTitle("Kategorier");
 
@@ -34,6 +38,12 @@ public class CategoryActivity extends ListActivity {
         Intent i = new Intent(this, SearchResultActivity.class);
         i.putExtra("com.markupartist.sthlmtraveling.searchCategory", category.getId());
         startActivity(i);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Tracker.getInstance().stop();
     }
 
     /** Create all categories */

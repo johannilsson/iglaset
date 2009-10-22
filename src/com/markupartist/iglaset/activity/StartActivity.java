@@ -16,6 +16,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.markupartist.iglaset.R;
+import com.markupartist.iglaset.util.Tracker;
 
 public class StartActivity extends Activity {
     private static final int DIALOG_ABOUT = 0;
@@ -25,20 +26,24 @@ public class StartActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Tracker.getInstance().start(this).trackPageView("start");
+
         setContentView(R.layout.main);
 
-        Button searchButton = (Button) findViewById(R.id.btn_search);
+        final Button searchButton = (Button) findViewById(R.id.btn_search);
         searchButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Tracker.getInstance().trackEvent(searchButton);
                 onSearchRequested();
             }
         });
 
-        Button listButton = (Button) findViewById(R.id.btn_lists);
+        final Button listButton = (Button) findViewById(R.id.btn_lists);
         listButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Tracker.getInstance().trackEvent(listButton);
                 Intent i = new Intent(StartActivity.this, CategoryActivity.class);
                 startActivity(i);
             }
@@ -62,6 +67,7 @@ public class StartActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.about:
+                Tracker.getInstance().trackEvent(item);
                 showDialog(DIALOG_ABOUT);
                 return true;
             case R.id.menu_preferences:
@@ -89,8 +95,15 @@ public class StartActivity extends Activity {
             aboutDialog.setCanceledOnTouchOutside(true);
             aboutDialog.setContentView(R.layout.about_dialog);
             aboutDialog.setTitle(getText(R.string.app_name) + " " + version);
+
             return aboutDialog;
         }
         return null;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Tracker.getInstance().stop();
     }
 }

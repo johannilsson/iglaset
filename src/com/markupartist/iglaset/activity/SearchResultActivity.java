@@ -32,6 +32,7 @@ import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.SearchCriteria;
 import com.markupartist.iglaset.util.ImageLoader;
+import com.markupartist.iglaset.util.Tracker;
 
 public class SearchResultActivity extends ListActivity implements SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener {
     static String TAG = "SearchResultActivity";
@@ -44,6 +45,7 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         setContentView(R.layout.search_result);
@@ -72,21 +74,29 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
                 sSearchCriteria = new SearchCriteria();
                 sSearchCriteria.setQuery(queryString);
                 sSearchCriteria.setToken(mToken);
+
                 SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
                 searchDrinksTask.setSearchDrinkCompletedListener(this);
                 searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchDrinksTask.execute(sSearchCriteria);
+
+                Tracker.getInstance().start(this).trackPageView("search result");
             } else if (queryIntent.hasExtra("com.markupartist.sthlmtraveling.searchCategory")) {
                 final int category = queryIntent.getExtras()
                     .getInt("com.markupartist.sthlmtraveling.searchCategory");
-                setTitle(searchText.getText());
+
+                setTitle(R.string.search_results);
+
                 sSearchCriteria = new SearchCriteria();
                 sSearchCriteria.setCategory(category);
                 sSearchCriteria.setToken(mToken);
+
                 SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
                 searchDrinksTask.setSearchDrinkCompletedListener(this);
                 searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchDrinksTask.execute(sSearchCriteria);
+
+                Tracker.getInstance().start(this).trackPageView("search result category");
             }            
         } else {
             initList(data);
@@ -109,6 +119,12 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
         super.onResume();
         // TODO: See if we can get the previous search criteria from here.
         Log.d(TAG, "onResume");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Tracker.getInstance().stop();
     }
 
     @Override

@@ -14,7 +14,7 @@
     <string name="no_comments">Inga kommentarer än</string>
     <string name="comments">Kommentarer</string>
     <string name="about">Om</string>
-    <string name="about_this_app">www.iglaset.se är en av Sveriges största dryckesdatabaser med kommentarer och betyg.\n\nDen här appen är utvecklad av Johan Nilsson.\n\niglaset@markupartist.com</string>
+    <string name="about_this_app">www.iglaset.se är en av Sveriges största dryckesdatabaser med kommentarer och betyg.\n\nViss aktivitet i appen trackas anonymt till Google Analytics.\n\nUtvecklad av Johan Nilsson.\n\niglaset@markupartist.com</string>
     <string name="settings">Inställningar</string>
     <string name="search_preferences">Sök</string>
     <string name="clear_search_history_preference">Radera sökhistorik</string>

@@ -20,6 +20,7 @@ import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.AuthenticationException;
 import com.markupartist.iglaset.provider.AuthStore.ExpiringToken;
+import com.markupartist.iglaset.util.Tracker;
 
 public class BasicPreferenceActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
     private static final String TAG = "BasicPreferenceActivity";
@@ -30,6 +31,9 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Tracker.getInstance().start(this).trackPageView("preferences");
+
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
     }
@@ -65,6 +69,8 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
         if (mAuthUserTask != null) {
             mAuthUserTask.cancel(true);
         }
+
+        Tracker.getInstance().stop();
     }
 
     @Override
@@ -175,10 +181,6 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
             }
 
             return token;
-        }
-
-        @Override
-        public void onProgressUpdate(Void... values) {
         }
 
         @Override

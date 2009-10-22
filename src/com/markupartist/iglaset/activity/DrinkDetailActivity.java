@@ -43,6 +43,7 @@ import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.DrinksStore;
 import com.markupartist.iglaset.provider.Drink.Volume;
 import com.markupartist.iglaset.util.ImageLoader;
+import com.markupartist.iglaset.util.Tracker;
 
 public class DrinkDetailActivity extends ListActivity {
     private static final int RATE_DIALOG = 0;
@@ -60,9 +61,9 @@ public class DrinkDetailActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Tracker.getInstance().start(this).trackPageView("article detail");
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        // Remove when we have progress bar near the comments
         requestWindowFeature(Window.FEATURE_NO_TITLE); 
 
         setContentView(R.layout.drink_details);
@@ -133,6 +134,12 @@ public class DrinkDetailActivity extends ListActivity {
 
         setListAdapter(mSectionedAdapter);
         sDrink = drink;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Tracker.getInstance().stop();
     }
 
     /**
@@ -277,7 +284,6 @@ public class DrinkDetailActivity extends ListActivity {
                 startActivity(browserIntent);
             }
         } else if (section.adapter instanceof UserRatingAdapter) {
-            String mToken = AuthStore.getInstance().getStoredToken(this);
             if (mToken != null) {
                 showDialog(RATE_DIALOG);
             } else {
@@ -303,6 +309,7 @@ public class DrinkDetailActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_goto_iglaset:
+                Tracker.getInstance().trackEvent(item);
                 String name = URLEncoder.encode(sDrink.getName());
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, 
                         Uri.parse("http://www.iglaset.se/dryck/" + name + "/" + sDrink.getId()));
