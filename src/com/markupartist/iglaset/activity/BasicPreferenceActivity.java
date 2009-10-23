@@ -100,8 +100,8 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
                 .create();
         case DIALOG_AUTH_FAILED:
             return new AlertDialog.Builder(this)
-            .setTitle("Inloggning misslyckades")
-            .setMessage("Kunde inte logga in, kontrollera användarnamn och lösenord.")
+            .setTitle(getText(R.string.login_failed))
+            .setMessage(getText(R.string.login_failed_message))
             .setPositiveButton("Ok", new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -119,7 +119,8 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
      * @param token the token retrieved after authentication
      */
     private void userAuthenticated(ExpiringToken token) {        
-        Toast.makeText(BasicPreferenceActivity.this, "Inloggad", Toast.LENGTH_SHORT).show();
+        Toast.makeText(BasicPreferenceActivity.this, 
+                getText(R.string.login_success), Toast.LENGTH_SHORT).show();
     }
 
     /**

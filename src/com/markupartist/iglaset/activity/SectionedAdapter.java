@@ -44,11 +44,11 @@ abstract public class SectionedAdapter extends BaseAdapter {
         sections.add(new Section(id, caption, adapter));
     }
 
-    public void addSectionFirst(int id, String caption, Adapter adapter) {
+    public void addSectionFirst(int id, CharSequence caption, Adapter adapter) {
         sections.addFirst(new Section(id, caption, adapter));
     }
 
-    public void addSectionLast(int id, String caption, Adapter adapter) {
+    public void addSectionLast(int id, CharSequence caption, Adapter adapter) {
         sections.addLast(new Section(id, caption, adapter));
     }
 
@@ -206,10 +206,10 @@ abstract public class SectionedAdapter extends BaseAdapter {
 
     class Section {
         int id;
-        String caption;
+        CharSequence caption;
         Adapter adapter;
 
-        Section(int id, String caption, Adapter adapter) {
+        Section(int id, CharSequence caption, Adapter adapter) {
             this.id = id;
             this.caption = caption;
             this.adapter = adapter;

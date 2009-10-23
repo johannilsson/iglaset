@@ -224,7 +224,7 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
         public View getView(int position, View convertView, ViewGroup parent) {
             DrinkViewHolder dvh = null;
             if (shouldAppend(position)) {
-                Toast.makeText(SearchResultActivity.this, "Hämtar", Toast.LENGTH_LONG).show();
+                Toast.makeText(SearchResultActivity.this, getText(R.string.loading_articles), Toast.LENGTH_LONG).show();
                 sSearchCriteria.setPage(mPage.addAndGet(1));
                 SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
                 searchDrinksTask.setSearchDrinkCompletedListener(this);
@@ -266,7 +266,7 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
             if (drinks.isEmpty()) {
                 mShouldAppend.set(false);
                 Toast.makeText(SearchResultActivity.this, 
-                        "Inga fler artiklar", Toast.LENGTH_SHORT).show();
+                        getText(R.string.no_more_articles), Toast.LENGTH_SHORT).show();
                 return mShouldAppend.get();
             }
 

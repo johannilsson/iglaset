@@ -21,7 +21,7 @@ public class CategoryActivity extends ListActivity {
         Tracker.getInstance().start(this).trackPageView("categories");
 
         setContentView(R.layout.category_list);
-        setTitle("Kategorier");
+        setTitle(getText(R.string.categories));
 
         ArrayAdapter<Category> categoryAdapter = new ArrayAdapter<Category>(
                 this, R.layout.category_list_row, createCategories());

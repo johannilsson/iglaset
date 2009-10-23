@@ -1,10 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item 
-        android:id="@+id/menu_search"
-        android:title="@string/search_label"
-        android:icon="@android:drawable/ic_menu_search"
-        />
-    <item 
         android:id="@+id/menu_rate"
         android:title="@string/rate"
         android:icon="@drawable/ic_menu_star"
@@ -21,4 +16,9 @@
         android:icon="@android:drawable/ic_menu_camera"
         />
     -->
+    <item 
+        android:id="@+id/menu_search"
+        android:title="@string/search_label"
+        android:icon="@android:drawable/ic_menu_search"
+        />
 </menu>

@@ -74,7 +74,7 @@ public class DrinkDetailActivity extends ListActivity {
         Drink drink = extras.getParcelable("com.markupartist.iglaset.Drink");
 
         mUserRatingAdapter = new UserRatingAdapter(this, 0);
-        mSectionedAdapter.addSectionFirst(0, "Mitt betyg", mUserRatingAdapter);
+        mSectionedAdapter.addSectionFirst(0, getText(R.string.my_rating), mUserRatingAdapter);
 
         if (mToken != null) {
             new GetDrinkTask().execute(drink.getId());
@@ -355,15 +355,15 @@ public class DrinkDetailActivity extends ListActivity {
                 });
 
                 return new AlertDialog.Builder(this)
-                    .setTitle("Sätt betyg")
+                    .setTitle(getText(R.string.add_rating))
                     .setView(layout)
-                    .setPositiveButton("Ok", new OnClickListener() {
+                    .setPositiveButton(android.R.string.ok, new OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             new SetUserRatingTask().execute(ratingBar.getRating() * 2);
                         }
                     })
-                    .setNegativeButton("Cancel", new OnClickListener() {
+                    .setNegativeButton(android.R.string.cancel, new OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             ;
@@ -372,8 +372,8 @@ public class DrinkDetailActivity extends ListActivity {
                     .create();
             case NOT_AUTHENTICATED_DIALOG:
                 return new AlertDialog.Builder(this)
-                .setTitle("Ej inloggad")
-                .setMessage("För att sätta betyg måste du först logga in.")
+                .setTitle(getText(R.string.not_logged_in))
+                .setMessage(R.string.login_to_add_rating)
                 .setPositiveButton("Logga in", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -381,7 +381,7 @@ public class DrinkDetailActivity extends ListActivity {
                         startActivityForResult(i, SETTINGS_CHANGED_REQUEST);
                     }
                 })
-                .setNegativeButton("Tillbaka", new OnClickListener() {
+                .setNegativeButton(R.string.back, new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ;
@@ -449,12 +449,12 @@ public class DrinkDetailActivity extends ListActivity {
 
         @Override
         public void onProgressUpdate(Void... values) {
-            Toast.makeText(DrinkDetailActivity.this, "Sätter betyg", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DrinkDetailActivity.this, getText(R.string.adding_rating), Toast.LENGTH_SHORT).show();
         }
 
         @Override
         protected void onPostExecute(Float rating) {
-            Toast.makeText(DrinkDetailActivity.this, "Betyg satt", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DrinkDetailActivity.this, getText(R.string.rating_added), Toast.LENGTH_SHORT).show();
             updateUserRatingInUi(rating);
         }
     }
