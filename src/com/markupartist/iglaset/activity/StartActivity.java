@@ -1,11 +1,14 @@
 package com.markupartist.iglaset.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -91,12 +94,40 @@ public class StartActivity extends Activity {
                 Log.e(TAG, "Could not get the package info.");
             }
 
-            Dialog aboutDialog = new Dialog(this);
-            aboutDialog.setCanceledOnTouchOutside(true);
-            aboutDialog.setContentView(R.layout.about_dialog);
-            aboutDialog.setTitle(getText(R.string.app_name) + " " + version);
-
-            return aboutDialog;
+            return new AlertDialog.Builder(this)
+                .setTitle(getText(R.string.app_name) + " " + version)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                //.setView(findViewById(R.id.about_dialog_text))
+                .setMessage(getText(R.string.about_this_app))
+                .setCancelable(true)
+                .setPositiveButton(getText(android.R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ;
+                    }
+                })
+                .setNeutralButton(getText(R.string.donate), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://pledgie.com/campaigns/6528"));
+                        startActivity(browserIntent);
+                    }
+                })
+                .setNegativeButton(getText(R.string.feedback), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        emailIntent .setType("plain/text");
+                        emailIntent .putExtra(android.content.Intent.EXTRA_EMAIL,
+                                new String[]{"iglaset@markupartist.com"});
+                        emailIntent .putExtra(android.content.Intent.EXTRA_SUBJECT,
+                                "iglaset feedback");
+                        startActivity(Intent.createChooser(emailIntent,
+                                getText(R.string.send_email)));
+                    }
+                })
+                .create();
         }
         return null;
     }
