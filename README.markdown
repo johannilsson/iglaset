@@ -4,10 +4,6 @@ iglaset Android App
 Search in one of Swedens largest liquor databases [iglaset.se](http://iglaset.se) 
 with comments and ratings from real users.
 
-*Note*, this is still a work in progress and not yet released on market.
-
-[![screen shot of the detail view](http://farm4.static.flickr.com/3469/3889614494_ee943520f1_m.jpg "Detail view")](http://www.flickr.com/photos/johannilsson/3889614494/)
-
 Setting up the project
 ----------------------
 
@@ -18,7 +14,6 @@ TODO and wish list
 ------------------
 
 * Comment on drinks
-* Set ratings
 * Shopping list
 * Find a systembolag near you
 * Sort by category
@@ -27,6 +22,14 @@ TODO and wish list
 
 Changelog
 ---------
+* 1.1.0
+    * Light Theme
+    * Added category listings
+    * iglaset integration, and possibility to add set ratings
+    * Direct link to systembolaget.se from the article detail view
+    * Scrollable text if the article title is to long in the search result 
+    * Added Google Analytics integration
+    * Preparations for bar code scanning
 * 1.0.3
     * Now using apache http client for http request
     * Added pagination to the search result
