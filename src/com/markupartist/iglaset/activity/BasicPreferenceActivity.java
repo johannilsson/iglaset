@@ -32,7 +32,7 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Tracker.getInstance().start(this).trackPageView("preferences");
+        Tracker.getInstance().trackPageView("preferences");
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
@@ -70,7 +70,7 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
             mAuthUserTask.cancel(true);
         }
 
-        Tracker.getInstance().stop();
+        //Tracker.getInstance().stop();
     }
 
     @Override

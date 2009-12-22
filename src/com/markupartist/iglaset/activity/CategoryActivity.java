@@ -18,7 +18,7 @@ public class CategoryActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Tracker.getInstance().start(this).trackPageView("categories");
+        Tracker.getInstance().trackPageView("categories");
 
         setContentView(R.layout.category_list);
         setTitle(getText(R.string.categories));
@@ -43,7 +43,7 @@ public class CategoryActivity extends ListActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Tracker.getInstance().stop();
+        //Tracker.getInstance().stop();
     }
 
     /** Create all categories */

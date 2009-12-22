@@ -8,7 +8,7 @@ import android.widget.Button;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 /**
- * Simple wrappar around the GoogleAnalyticsTracker.
+ * Simple wrapper around the GoogleAnalyticsTracker.
  * @author johan
  *
  */

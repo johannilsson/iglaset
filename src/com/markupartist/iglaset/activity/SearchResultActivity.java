@@ -81,7 +81,7 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
                 searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchDrinksTask.execute(sSearchCriteria);
 
-                Tracker.getInstance().start(this).trackPageView("search result");
+                Tracker.getInstance().trackPageView("search result");
             } else if (queryIntent.hasExtra(EXTRA_SEARCH_CATEGORY_ID)) {
                 final int category = queryIntent.getExtras()
                     .getInt(EXTRA_SEARCH_CATEGORY_ID);
@@ -97,7 +97,7 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
                 searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchDrinksTask.execute(sSearchCriteria);
 
-                Tracker.getInstance().start(this).trackPageView("search result category");
+                Tracker.getInstance().trackPageView("search result category");
             } else if (queryIntent.hasExtra(EXTRA_SEARCH_BARCODE)) {
                 String barcode = queryIntent.getStringExtra(EXTRA_SEARCH_BARCODE);
 
@@ -112,7 +112,7 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
                 searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchDrinksTask.execute(sSearchCriteria);
 
-                Tracker.getInstance().start(this).trackPageView("search result barcode");
+                Tracker.getInstance().trackPageView("search result barcode");
             }
         } else {
             initList(data);
@@ -140,7 +140,7 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Tracker.getInstance().stop();
+        //Tracker.getInstance().stop();
     }
 
     @Override

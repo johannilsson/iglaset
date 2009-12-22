@@ -171,6 +171,6 @@ public class StartActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Tracker.getInstance().stop();
+        //Tracker.getInstance().stop();
     }
 }

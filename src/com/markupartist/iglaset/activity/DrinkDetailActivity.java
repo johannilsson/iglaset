@@ -77,7 +77,7 @@ public class DrinkDetailActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Tracker.getInstance().start(this).trackPageView("article detail");
+        Tracker.getInstance().trackPageView("article detail");
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         requestWindowFeature(Window.FEATURE_NO_TITLE); 
@@ -161,7 +161,7 @@ public class DrinkDetailActivity extends ListActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Tracker.getInstance().stop();
+        //Tracker.getInstance().stop();
     }
 
     /**
