@@ -28,6 +28,8 @@ class DrinksParser extends DefaultHandler {
     private boolean inDescription = false;
     private Volume mCurrentVolume;
     private String mCurrentTagType;
+    private boolean mInName;
+    private String mCurrentName = "";
 
     public ArrayList<Drink> parseDrinks(InputStream in, ArrayList<Drink> drinks) {
         try {
@@ -64,14 +66,18 @@ class DrinksParser extends DefaultHandler {
             mCurrentTagType = atts.getValue("type").trim();
         } else if (name.equals("commercial_desc")) {
             inDescription = true;
+        } else if (name.equals("name")) {
+            mInName = true;
         }
     }
 
     public void characters(char ch[], int start, int length) {
         mCurrentText = (new String(ch).substring(start, start + length).trim());
-
+        //Log.d(TAG, "currentText: " + mCurrentText);
         if (inDescription /*&& !TextUtils.isEmpty(mCurrentText)*/) {
             mCurrentDescription += mCurrentText.replaceAll("\n", "<br>");
+        } else if (mInName) {
+            mCurrentName += mCurrentText;
         }
     }
 
@@ -79,7 +85,9 @@ class DrinksParser extends DefaultHandler {
                 throws SAXException {
         if (mCurrentDrink != null) {
             if (name.trim().equals("name") && !TextUtils.isEmpty(mCurrentText)) {
-                mCurrentDrink.setName(mCurrentText);
+                mCurrentDrink.setName(mCurrentName);
+                mInName = false;
+                mCurrentName = ""; // Reset the name
             } else if (name.equals("producer") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.setProducer(mCurrentText);
             } else if (name.equals("supplier") && !TextUtils.isEmpty(mCurrentText)) {
