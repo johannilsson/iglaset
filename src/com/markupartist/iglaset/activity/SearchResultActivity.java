@@ -34,6 +34,9 @@ import com.markupartist.iglaset.util.ImageLoader;
 import com.markupartist.iglaset.util.Tracker;
 
 public class SearchResultActivity extends ListActivity implements SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener {
+    //static String ACTION_CATEGORY_SEARCH = "com.markupartist.iglaset.action.CATEGORY";
+    //static String ACTION_BARCODE_SEARCH = "com.markupartist.iglaset.action.BARCODE";
+
     static String EXTRA_SEARCH_BARCODE = "com.markupartist.iglaset.search.barcode";
     static String EXTRA_SEARCH_CATEGORY_ID = "com.markupartist.iglaset.search.categoryId";
     static String TAG = "SearchResultActivity";
