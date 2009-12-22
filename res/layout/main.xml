@@ -1,42 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="10dip"
     >
-    <ImageView
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:paddingBottom="10dip"
-        android:src="@drawable/iglaset"
-    />
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="center_horizontal"
-        >
-        <Button
-            android:id="@+id/btn_search"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="90dip" 
-            android:layout_height="85dip"
-            android:layout_margin="3dip"
-            android:paddingTop="5dip"
-            android:text="@string/search_label"
-            android:drawableTop="@android:drawable/ic_menu_search"
-            />
-        <Button
-            android:id="@+id/btn_lists"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="90dip" 
-            android:layout_height="85dip"
-            android:layout_margin="3dip"
-            android:paddingTop="5dip"
-            android:text="@string/categories"
-            android:drawableTop="@drawable/ic_menu_list"
-            />
-    </LinearLayout>
-</LinearLayout>
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:padding="10dip"
+	    >
+	    <ImageView
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:paddingBottom="10dip"
+	        android:src="@drawable/iglaset"
+	    />
+	    <LinearLayout
+	        android:orientation="horizontal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:gravity="center_horizontal"
+	        >
+	        <Button
+	            android:id="@+id/btn_search"
+	            android:layout_gravity="center_horizontal"
+	            android:layout_width="85dip" 
+	            android:layout_height="85dip"
+	            android:layout_margin="1dip"
+	            android:paddingTop="5dip"
+	            android:text="@string/search_label"
+	            android:drawableTop="@android:drawable/ic_menu_search"
+	            />
+	        <Button
+	            android:id="@+id/btn_lists"
+	            android:layout_gravity="center_horizontal"
+	            android:layout_width="85dip" 
+	            android:layout_height="85dip"
+	            android:layout_margin="1dip"
+	            android:paddingTop="5dip"
+	            android:text="@string/lists"
+	            android:drawableTop="@drawable/ic_menu_list"
+	            />
+	        <Button
+	            android:id="@+id/btn_scan"
+	            android:layout_gravity="center_horizontal"
+	            android:layout_width="85dip" 
+	            android:layout_height="85dip"
+	            android:layout_margin="1dip"
+	            android:paddingTop="5dip"
+	            android:text="@string/scan_barcode"
+	            android:drawableTop="@android:drawable/ic_menu_camera"
+	            />
+	    </LinearLayout>
+	    <TextView
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:text="Hjälp! För att få streckkodsläsning att fungera behövs er hjälp med att scanna streckkoder. Scanna en streckkod genom att först söka upp en produkt och sen välja 'Scanna EAN till produkt'."
+	        />
+	</LinearLayout>
+</ScrollView>

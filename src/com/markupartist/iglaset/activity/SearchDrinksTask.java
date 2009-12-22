@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.os.AsyncTask;
 
+import com.markupartist.iglaset.provider.BarcodeStore;
 import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.DrinksStore;
 import com.markupartist.iglaset.provider.SearchCriteria;
@@ -19,8 +20,14 @@ public class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<
     @Override
     protected ArrayList<Drink> doInBackground(SearchCriteria... params) {
         publishProgress();
-        DrinksStore drinksStore = DrinksStore.getInstance();
-        return drinksStore.searchDrinks(params[0]);
+        SearchCriteria searchCriteria = params[0];
+        if (searchCriteria.hasBarcode()) {
+            BarcodeStore barcodeStore = BarcodeStore.getInstance();
+            return barcodeStore.search(searchCriteria);
+        } else {
+            DrinksStore drinksStore = DrinksStore.getInstance();
+            return drinksStore.searchDrinks(params[0]);
+        }
     }
 
     @Override

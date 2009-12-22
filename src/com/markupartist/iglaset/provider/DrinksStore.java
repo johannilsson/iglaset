@@ -44,7 +44,7 @@ public class DrinksStore {
             Log.d(TAG, "Failed to read data: " + e.getMessage());
         }
 
-        return drinks;        
+        return drinks;
     }
 
     public Drink getDrink(int id) {

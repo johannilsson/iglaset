@@ -36,7 +36,7 @@ public class CategoryActivity extends ListActivity {
         Category category = (Category) getListAdapter().getItem(position);
 
         Intent i = new Intent(this, SearchResultActivity.class);
-        i.putExtra("com.markupartist.sthlmtraveling.searchCategory", category.getId());
+        i.putExtra(SearchResultActivity.EXTRA_SEARCH_CATEGORY_ID, category.getId());
         startActivity(i);
     }
 

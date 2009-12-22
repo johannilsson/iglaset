@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,6 +34,8 @@ import com.markupartist.iglaset.util.ImageLoader;
 import com.markupartist.iglaset.util.Tracker;
 
 public class SearchResultActivity extends ListActivity implements SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener {
+    static String EXTRA_SEARCH_BARCODE = "com.markupartist.iglaset.search.barcode";
+    static String EXTRA_SEARCH_CATEGORY_ID = "com.markupartist.iglaset.search.categoryId";
     static String TAG = "SearchResultActivity";
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
@@ -81,9 +82,9 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
                 searchDrinksTask.execute(sSearchCriteria);
 
                 Tracker.getInstance().start(this).trackPageView("search result");
-            } else if (queryIntent.hasExtra("com.markupartist.sthlmtraveling.searchCategory")) {
+            } else if (queryIntent.hasExtra(EXTRA_SEARCH_CATEGORY_ID)) {
                 final int category = queryIntent.getExtras()
-                    .getInt("com.markupartist.sthlmtraveling.searchCategory");
+                    .getInt(EXTRA_SEARCH_CATEGORY_ID);
 
                 setTitle(R.string.search_results);
 
@@ -97,7 +98,22 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
                 searchDrinksTask.execute(sSearchCriteria);
 
                 Tracker.getInstance().start(this).trackPageView("search result category");
-            }            
+            } else if (queryIntent.hasExtra(EXTRA_SEARCH_BARCODE)) {
+                String barcode = queryIntent.getStringExtra(EXTRA_SEARCH_BARCODE);
+
+                setTitle(R.string.search_results);
+
+                sSearchCriteria = new SearchCriteria();
+                sSearchCriteria.setBarcode(barcode);
+                sSearchCriteria.setToken(mToken);
+
+                SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
+                searchDrinksTask.setSearchDrinkCompletedListener(this);
+                searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
+                searchDrinksTask.execute(sSearchCriteria);
+
+                Tracker.getInstance().start(this).trackPageView("search result barcode");
+            }
         } else {
             initList(data);
         }
@@ -110,7 +126,7 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
      */
     @Override
     public Object onRetainNonConfigurationInstance() {
-        Log.d(TAG, "onRetainNonConfigurationInstance");
+        //Log.d(TAG, "onRetainNonConfigurationInstance");
         return mDrinks;
     }
 
@@ -118,7 +134,7 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
     protected void onResume() {
         super.onResume();
         // TODO: See if we can get the previous search criteria from here.
-        Log.d(TAG, "onResume");
+        //Log.d(TAG, "onResume");
     }
 
     @Override
@@ -130,7 +146,7 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(TAG, "onSaveInstanceState");
+        //Log.d(TAG, "onSaveInstanceState");
     }
 
     private void initList(ArrayList<Drink> drinks) {

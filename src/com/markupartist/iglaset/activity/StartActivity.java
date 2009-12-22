@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.util.Tracker;
 
@@ -51,6 +53,15 @@ public class StartActivity extends Activity {
                 startActivity(i);
             }
         });
+
+        final Button scanButton = (Button) findViewById(R.id.btn_scan);
+        scanButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tracker.getInstance().trackEvent(scanButton);
+                IntentIntegrator.initiateScan(StartActivity.this);
+            }
+        });
     }
 
     @Override
@@ -80,7 +91,7 @@ public class StartActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
-    
+
     @Override
     protected Dialog onCreateDialog(int id) {
         switch(id) {
@@ -130,6 +141,31 @@ public class StartActivity extends Activity {
                 .create();
         }
         return null;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case IntentIntegrator.REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    IntentResult scanResult =
+                        IntentIntegrator.parseActivityResult(requestCode,
+                                resultCode, data);
+                    if (scanResult != null) {
+                        Log.d(TAG, "contents: " + scanResult.getContents());
+                        Log.d(TAG, "formatName: " + scanResult.getFormatName());
+                        if (scanResult.getFormatName().equals("EAN_13")) {
+                            Intent i = new Intent(StartActivity.this,
+                                    SearchResultActivity.class);
+                            i.putExtra(SearchResultActivity.EXTRA_SEARCH_BARCODE,
+                                    scanResult.getContents());
+                            startActivity(i);
+                        }
+                    } else {
+                        Log.d(TAG, "NO SCAN RESULT");
+                    }   
+                }
+        }
     }
 
     @Override

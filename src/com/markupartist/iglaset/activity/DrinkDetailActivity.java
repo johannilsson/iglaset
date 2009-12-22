@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,9 +35,12 @@ import android.widget.Toast;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.SimpleAdapter.ViewBinder;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.activity.SectionedAdapter.Section;
 import com.markupartist.iglaset.provider.AuthStore;
+import com.markupartist.iglaset.provider.BarcodeStore;
 import com.markupartist.iglaset.provider.Comment;
 import com.markupartist.iglaset.provider.CommentsStore;
 import com.markupartist.iglaset.provider.Drink;
@@ -46,9 +50,21 @@ import com.markupartist.iglaset.util.ImageLoader;
 import com.markupartist.iglaset.util.Tracker;
 
 public class DrinkDetailActivity extends ListActivity {
-    private static final int RATE_DIALOG = 0;
-    private static final int NOT_AUTHENTICATED_DIALOG = 1;
-    protected static final int SETTINGS_CHANGED_REQUEST = 0;
+    /**
+     * The id for the rating dialog
+     */
+    private static final int DIALOG_RATE = 0;
+    /**
+     * The id for the not authenticated dialog
+     */
+    private static final int DIALOG_NOT_AUTHENTICATED = 1;
+    /**
+     * The request code for indicating that settings has been changed
+     */
+    protected static final int REQUEST_CODE_SETTINGS_CHANGED = 0;
+    /**
+     * The log tag
+     */
     static String TAG = "DrinkDetailActivity";
     private CommentsStore mCommentsStore = new CommentsStore();
     private SimpleAdapter mCommentsAdapter;
@@ -137,6 +153,12 @@ public class DrinkDetailActivity extends ListActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mToken = AuthStore.getInstance().getStoredToken(this);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         Tracker.getInstance().stop();
@@ -222,7 +244,7 @@ public class DrinkDetailActivity extends ListActivity {
                         R.id.comment_rating
                     }
             );
-    
+
             mCommentsAdapter.setViewBinder(new ViewBinder() {
                 @Override
                 public boolean setViewValue(View view, Object data,
@@ -285,9 +307,9 @@ public class DrinkDetailActivity extends ListActivity {
             }
         } else if (section.adapter instanceof UserRatingAdapter) {
             if (mToken != null) {
-                showDialog(RATE_DIALOG);
+                showDialog(DIALOG_RATE);
             } else {
-                showDialog(NOT_AUTHENTICATED_DIALOG);
+                showDialog(DIALOG_NOT_AUTHENTICATED);
             }
         }
     }
@@ -320,16 +342,18 @@ public class DrinkDetailActivity extends ListActivity {
                 return true;
             case R.id.menu_rate:
                 if (mToken != null) {
-                    showDialog(RATE_DIALOG);
+                    showDialog(DIALOG_RATE);
                 } else {
-                    showDialog(NOT_AUTHENTICATED_DIALOG);
+                    showDialog(DIALOG_NOT_AUTHENTICATED);
                 }
                 return true;
-            /*
             case R.id.menu_scan:
-                IntentIntegrator.initiateScan(this);
+                if (mToken != null) {
+                    IntentIntegrator.initiateScan(this);
+                } else {
+                    showDialog(DIALOG_NOT_AUTHENTICATED);                    
+                }
                 return true;
-            */
         }
         return super.onOptionsItemSelected(item);
     }
@@ -337,7 +361,7 @@ public class DrinkDetailActivity extends ListActivity {
     @Override
     protected Dialog onCreateDialog(int id) {
         switch(id) {
-            case RATE_DIALOG:
+            case DIALOG_RATE:
                 float userRating = mUserRatingAdapter.getUserRating();
                 final View layout = getLayoutInflater().inflate(R.layout.user_rating_dialog, null);
                 final TextView ratingValue = (TextView) layout.findViewById(R.id.add_user_rating_value);
@@ -370,15 +394,15 @@ public class DrinkDetailActivity extends ListActivity {
                         }
                     })
                     .create();
-            case NOT_AUTHENTICATED_DIALOG:
+            case DIALOG_NOT_AUTHENTICATED:
                 return new AlertDialog.Builder(this)
                 .setTitle(getText(R.string.not_logged_in))
-                .setMessage(R.string.login_to_add_rating)
+                .setMessage(R.string.login_to_proceed_message)
                 .setPositiveButton("Logga in", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i = new Intent(DrinkDetailActivity.this, BasicPreferenceActivity.class);
-                        startActivityForResult(i, SETTINGS_CHANGED_REQUEST);
+                        startActivityForResult(i, REQUEST_CODE_SETTINGS_CHANGED);
                     }
                 })
                 .setNegativeButton(R.string.back, new OnClickListener() {
@@ -395,18 +419,22 @@ public class DrinkDetailActivity extends ListActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case SETTINGS_CHANGED_REQUEST:
+            case REQUEST_CODE_SETTINGS_CHANGED:
                 new GetDrinkTask().execute(sDrink.getId());
-            /*
             case IntentIntegrator.REQUEST_CODE:
-                IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-                if (scanResult != null) {
-                    Log.d(TAG, "contents: " + scanResult.getContents());
-                    Log.d(TAG, "formatName: " + scanResult.getFormatName());
-                } else {
-                    Log.d(TAG, "NO SCAN RESULT");
+                if (resultCode == RESULT_OK) {
+                    IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+                    if (scanResult != null) {
+                        Log.d(TAG, "contents: " + scanResult.getContents());
+                        Log.d(TAG, "formatName: " + scanResult.getFormatName());
+                        if (scanResult.getFormatName().equals("EAN_13")) {
+                            new SuggestBarcodeTask().execute(
+                                    scanResult.getContents(), sDrink.getId(), mToken);
+                        }
+                    } else {
+                        Log.d(TAG, "NO SCAN RESULT");
+                    }   
                 }
-            */
         }
     }
 
@@ -459,6 +487,25 @@ public class DrinkDetailActivity extends ListActivity {
         }
     }
 
+    private class SuggestBarcodeTask extends AsyncTask<Object, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Object... params) {
+            return BarcodeStore.getInstance().suggest(
+                    (String)params[0], (Integer)params[1], (String)params[2]);
+        }
+
+        @Override
+        public void onProgressUpdate(Void... values) {
+            Toast.makeText(DrinkDetailActivity.this, "Sparar streckkod", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean response) {
+            Toast.makeText(DrinkDetailActivity.this, "Streckkod sparad", Toast.LENGTH_SHORT).show();
+        }
+    }
+    
     /**
      * Background task for fetching a drink.
      */

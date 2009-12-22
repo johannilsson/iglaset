@@ -1,5 +1,7 @@
 package com.markupartist.iglaset.provider;
 
+import android.text.TextUtils;
+
 /**
  * Search criteria
  */
@@ -8,6 +10,7 @@ public class SearchCriteria {
     private int mCategory;
     private int mPage = 1;
     private String mToken;
+    private String mBarcode;
 
     public String getQuery() {
         return mQuery;
@@ -45,12 +48,26 @@ public class SearchCriteria {
         return this;
     }
 
+    public boolean hasBarcode() {
+        return !TextUtils.isEmpty(mBarcode);
+    }
+
+    public SearchCriteria setBarcode(String barcode) {
+        mBarcode = barcode;
+        return this;
+    }
+
+    public String getBarcode() {
+        return mBarcode;
+    }
+
     @Override
     public String toString() {
         return "SearchCriteria [" 
             + "mCategory=" + mCategory 
             + ", mPage=" + mPage
             + ", mQuery=" + mQuery 
+            + ", mBarcode=" + mBarcode
             + "]";
     }
 }
