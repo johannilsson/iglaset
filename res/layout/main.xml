@@ -31,7 +31,7 @@
 	            android:layout_margin="1dip"
 	            android:paddingTop="5dip"
 	            android:text="@string/search_label"
-	            android:drawableTop="@android:drawable/ic_menu_search"
+	            android:drawableTop="@drawable/ic_menu_search"
 	            />
 	        <Button
 	            android:id="@+id/btn_lists"
@@ -51,13 +51,14 @@
 	            android:layout_margin="1dip"
 	            android:paddingTop="5dip"
 	            android:text="@string/scan_barcode"
-	            android:drawableTop="@android:drawable/ic_menu_camera"
+	            android:drawableTop="@drawable/ic_menu_camera"
 	            />
 	    </LinearLayout>
 	    <TextView
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
-	        android:text="Hjälp! För att få streckkodsläsning att fungera behövs er hjälp med att scanna streckkoder. Scanna en streckkod genom att först söka upp en produkt och sen välja 'Scanna EAN till produkt'."
+	        android:layout_marginTop="8dip"
+	        android:text="För att få streckkodsläsning att fungera behövs er hjälp med att bygga upp en databas med streckkoder. Hjälp till att knyta streckkoder till produker genom att först söka upp en produkt och sen välja 'Scanna EAN till produkt' i menyn."
 	        />
 	</LinearLayout>
 </ScrollView>
