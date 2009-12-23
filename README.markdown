@@ -29,6 +29,7 @@ Changelog
     * Added support for scanning and crowdsourcing barcodes
     * Fixed problem with some product names not being parsed correct, closes #4
     * Added SB text icon when listing volumes
+    * Added support for all screens QVGA etc, also changed to compile against 1.6 
     * Fixed problem with the google analytics integration
 * 1.1.0
     * Light Theme
