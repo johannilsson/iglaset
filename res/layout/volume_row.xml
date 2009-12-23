@@ -9,6 +9,17 @@
     android:paddingLeft="20dip"
 	>
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#008B00"
+        android:textColor="#FFFF00"
+        android:paddingLeft="2dip"
+        android:paddingRight="2dip"
+        android:textSize="12dip"
+        android:text="SB"
+        android:layout_marginRight="5dip"
+    />
+    <TextView
         android:id="@+id/volume_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
