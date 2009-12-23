@@ -12,11 +12,11 @@
     <item 
         android:id="@+id/menu_scan"
         android:title="@string/update_barcode"
-        android:icon="@android:drawable/ic_menu_camera"
+        android:icon="@drawable/ic_menu_camera"
         />
     <item 
         android:id="@+id/menu_search"
         android:title="@string/search_label"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_menu_search"
         />
 </menu>
