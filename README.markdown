@@ -4,6 +4,8 @@ iglaset Android App
 Search in one of Swedens largest liquor databases [iglaset.se](http://iglaset.se) 
 with comments and ratings from real users.
 
+Note, the application is in Swedish.
+
 Setting up the project
 ----------------------
 
@@ -16,12 +18,18 @@ TODO and wish list
 * Comment on drinks
 * Shopping list
 * Find a systembolag near you
+* Integration with [Systembevakningsagenten](http://agent.nocrew.org/)
 * Sort by category
 * Sort by rating
 * more more
 
 Changelog
 ---------
+* 1.2.0
+    * Added support for scanning and crowdsourcing barcodes
+    * Fixed problem with some product names not being parsed correct, closes #4
+    * Added SB text icon when listing volumes
+    * Fixed problem with the google analytics integration
 * 1.1.0
     * Light Theme
     * Added category listings
@@ -34,7 +42,7 @@ Changelog
     * Now using apache http client for http request
     * Added pagination to the search result
     * Replaced ImageUtilities with ImageLoader by Guojian Miguel Wu <http://wu-media.com>
-      This also solves issue 2 with images not always being loading correct  
+      This also solves issue 2 with images not always being loaded correct  
 * 1.0.2
     * Added access to search via context menu from the search results and the
       detailed view
@@ -51,7 +59,7 @@ Changelog
     * Fixed bug that caused user ratings in comments to be hidden
     * Added a progress bar in the middle of the activity when searching
 * 0.7
-    * Added link to iglaset.se from drink detail activity
+    * Added link to iglaset.se from the drink detail activity
 * 0.6
     * Added maxLength to origin and country to prevent text overflows
 * 0.5
