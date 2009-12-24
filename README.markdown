@@ -25,6 +25,11 @@ TODO and wish list
 
 Changelog
 ---------
+* 1.2.2
+    * Removed the check for EAN_13 when scanning barcodes, now we are allowing
+      all types of codes
+* 1.2.1
+    * Fixed layout problems on WVGA screens
 * 1.2.0
     * Added support for scanning and crowdsourcing barcodes
     * Fixed problem with some product names not being parsed correct, closes #4
