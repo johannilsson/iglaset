@@ -154,13 +154,11 @@ public class StartActivity extends Activity {
                     if (scanResult != null) {
                         Log.d(TAG, "contents: " + scanResult.getContents());
                         Log.d(TAG, "formatName: " + scanResult.getFormatName());
-                        if (scanResult.getFormatName().equals("EAN_13")) {
-                            Intent i = new Intent(StartActivity.this,
-                                    SearchResultActivity.class);
-                            i.putExtra(SearchResultActivity.EXTRA_SEARCH_BARCODE,
-                                    scanResult.getContents());
-                            startActivity(i);
-                        }
+                        Intent i = new Intent(StartActivity.this,
+                                SearchResultActivity.class);
+                        i.putExtra(SearchResultActivity.EXTRA_SEARCH_BARCODE,
+                                scanResult.getContents());
+                        startActivity(i);
                     } else {
                         Log.d(TAG, "NO SCAN RESULT");
                     }   

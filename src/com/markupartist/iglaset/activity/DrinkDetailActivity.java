@@ -427,10 +427,8 @@ public class DrinkDetailActivity extends ListActivity {
                     if (scanResult != null) {
                         Log.d(TAG, "contents: " + scanResult.getContents());
                         Log.d(TAG, "formatName: " + scanResult.getFormatName());
-                        if (scanResult.getFormatName().equals("EAN_13")) {
-                            new SuggestBarcodeTask().execute(
-                                    scanResult.getContents(), sDrink.getId(), mToken);
-                        }
+                        new SuggestBarcodeTask().execute(
+                                scanResult.getContents(), sDrink.getId(), mToken);
                     } else {
                         Log.d(TAG, "NO SCAN RESULT");
                     }   
