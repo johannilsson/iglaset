@@ -29,20 +29,17 @@ public class DrinksStore {
         return mInstance;
     }
 
-    public ArrayList<Drink> searchDrinks(SearchCriteria searchCriteria) {
+    public ArrayList<Drink> searchDrinks(SearchCriteria searchCriteria)
+            throws IOException {
         final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
         final HttpGet get = new HttpGet(buildSearchUri(searchCriteria));
         HttpEntity entity = null;
 
-        try {
-            final HttpResponse response = HttpManager.execute(get);
-            entity = response.getEntity();
-            DrinksParser drinksParser = new DrinksParser();
-            drinksParser.parseDrinks(entity.getContent(), drinks);
-        } catch (IOException e) {
-            Log.d(TAG, "Failed to read data: " + e.getMessage());
-        }
+        final HttpResponse response = HttpManager.execute(get);
+        entity = response.getEntity();
+        DrinksParser drinksParser = new DrinksParser();
+        drinksParser.parseDrinks(entity.getContent(), drinks);
 
         return drinks;
     }
