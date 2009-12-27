@@ -44,22 +44,26 @@ public class Tracker {
 
     public Tracker trackEvent(CharSequence category, CharSequence action, 
                               CharSequence label, int value) {
-        mTracker.trackEvent((String) category, (String) action, (String) label, value);
+        if (mTracker != null)
+            mTracker.trackEvent((String) category, (String) action, (String) label, value);
         return this;
     }
 
     public Tracker trackEvent(MenuItem item) {
-        trackEvent(CATEGORY_CLICKS, ACTION_MENU_ITEM, item.getTitle(), 0);
+        if (mTracker != null)
+            trackEvent(CATEGORY_CLICKS, ACTION_MENU_ITEM, item.getTitle(), 0);
         return this;
     }
 
     public Tracker trackEvent(Button button) {
-        trackEvent(CATEGORY_CLICKS, ACTION_BUTTON, button.getText(), 0);
+        if (mTracker != null)
+            trackEvent(CATEGORY_CLICKS, ACTION_BUTTON, button.getText(), 0);
         return this;
     }
 
     public Tracker trackPageView(String page) {
-        mTracker.trackPageView(page);
+        if (mTracker != null)
+            mTracker.trackPageView(page);
         return this;
     }
 }
