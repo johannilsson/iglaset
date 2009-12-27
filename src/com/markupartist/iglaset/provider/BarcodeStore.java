@@ -29,7 +29,8 @@ public class BarcodeStore {
         return sInstance;
     }
 
-    public boolean suggest(String barcode, int drinkId, String authToken) {
+    public boolean suggest(String barcode, int drinkId, String authToken)
+            throws IOException {
         // http://api.iglaset.se/api/barcodes/suggest/[ean]/[article_id]/[auth_token]
         Log.d(TAG, "Suggesting barcode " + barcode);
         String suggestUri = String.format("%s/suggest/%s/%s/%s",
@@ -39,23 +40,20 @@ public class BarcodeStore {
 
         HttpEntity entity = null;
 
-        try {
-            final HttpResponse response = HttpManager.execute(get);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                Log.d(TAG, "added");
-                entity = response.getEntity();
-                return true;
-            } else {
-                Log.d(TAG, "Failed " + response.getStatusLine().getStatusCode());
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        final HttpResponse response = HttpManager.execute(get);
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            Log.d(TAG, "added");
+            entity = response.getEntity();
+            return true;
+        } else {
+            Log.d(TAG, "Failed " + response.getStatusLine().getStatusCode());
         }
+
         return false;
     }
 
-    public ArrayList<Drink> search(SearchCriteria searchCriteria) {
+    public ArrayList<Drink> search(SearchCriteria searchCriteria)
+            throws IOException {
         final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
         // http://api.iglaset.se/api/barcodes/xml/[ean]/?page=[page]
@@ -68,14 +66,10 @@ public class BarcodeStore {
         final HttpGet get = new HttpGet(searchUri);
         HttpEntity entity = null;
 
-        try {
-            final HttpResponse response = HttpManager.execute(get);
-            entity = response.getEntity();
-            DrinksParser drinksParser = new DrinksParser();
-            drinksParser.parseDrinks(entity.getContent(), drinks);
-        } catch (IOException e) {
-            Log.d(TAG, "Failed to read data: " + e.getMessage());
-        }
+        final HttpResponse response = HttpManager.execute(get);
+        entity = response.getEntity();
+        DrinksParser drinksParser = new DrinksParser();
+        drinksParser.parseDrinks(entity.getContent(), drinks);
 
         return drinks;
     }
