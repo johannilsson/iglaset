@@ -1,5 +1,6 @@
 package com.markupartist.iglaset.activity;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -51,6 +53,10 @@ import com.markupartist.iglaset.util.Tracker;
 
 public class DrinkDetailActivity extends ListActivity {
     /**
+     * Key to identify a barcode
+     */
+    private static final String EXTRA_BARCODE = "com.markupartist.iglaset.article.barcode";
+    /**
      * The id for the rating dialog
      */
     private static final int DIALOG_RATE = 0;
@@ -59,9 +65,22 @@ public class DrinkDetailActivity extends ListActivity {
      */
     private static final int DIALOG_NOT_AUTHENTICATED = 1;
     /**
+     * The id for suggest barcode failed dialog
+     */
+    private static final int DIALOG_SUGGEST_BARCODE_FAIL = 2;
+    /**
+     * The id for the choose add barcode method dialog
+     */
+    private static final int DIALOG_CHOOSE_ADD_BARCODE_METHOD = 3;
+    /**
+     * The id for the add barcode manual dialog 
+     */
+    private static final int DIALOG_ADD_BARCODE_MANUAL = 4;
+    /**
      * The request code for indicating that settings has been changed
      */
     protected static final int REQUEST_CODE_SETTINGS_CHANGED = 0;
+
     /**
      * The log tag
      */
@@ -162,6 +181,45 @@ public class DrinkDetailActivity extends ListActivity {
     protected void onDestroy() {
         super.onDestroy();
         //Tracker.getInstance().stop();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        restoreLocalState(savedInstanceState);
+    }
+
+    /**
+     * Restores the local state.
+     * @param savedInstanceState the bundle containing the saved state
+     */
+    private void restoreLocalState(Bundle savedInstanceState) {
+        restoreBarcode(savedInstanceState);
+    }
+
+    /**
+     * Restores the barcode.
+     * @param savedInstanceState the saved state
+     */
+    private void restoreBarcode(Bundle savedInstanceState) {
+        if (savedInstanceState.containsKey(EXTRA_BARCODE)) {
+            mBarcode = savedInstanceState.getString(EXTRA_BARCODE);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        saveBarcodeState(outState);
+    }
+
+    /**
+     * If there is any running search for routes, save it and process it later 
+     * on.
+     * @param outState the out state
+     */
+    private void saveBarcodeState(Bundle outState) {
+        outState.putString(EXTRA_BARCODE, mBarcode);
     }
 
     /**
@@ -291,6 +349,7 @@ public class DrinkDetailActivity extends ListActivity {
             return (result);
         }
     };
+    private String mBarcode;
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -349,7 +408,7 @@ public class DrinkDetailActivity extends ListActivity {
                 return true;
             case R.id.menu_scan:
                 if (mToken != null) {
-                    IntentIntegrator.initiateScan(this);
+                    showDialog(DIALOG_CHOOSE_ADD_BARCODE_METHOD);
                 } else {
                     showDialog(DIALOG_NOT_AUTHENTICATED);                    
                 }
@@ -361,6 +420,20 @@ public class DrinkDetailActivity extends ListActivity {
     @Override
     protected Dialog onCreateDialog(int id) {
         switch(id) {
+        case DIALOG_SUGGEST_BARCODE_FAIL:
+            return new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Ett fel inträffade")
+                .setMessage("Misslyckades med att spara streckkoden")
+                .setPositiveButton("Försök igen", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new SuggestBarcodeTask().execute(
+                                mBarcode, sDrink.getId(), mToken);                        
+                    }
+                })
+                .setNegativeButton(getText(android.R.string.cancel), null)
+                .create();
             case DIALOG_RATE:
                 float userRating = mUserRatingAdapter.getUserRating();
                 final View layout = getLayoutInflater().inflate(R.layout.user_rating_dialog, null);
@@ -412,6 +485,43 @@ public class DrinkDetailActivity extends ListActivity {
                     }
                 })
                 .create();
+            case DIALOG_CHOOSE_ADD_BARCODE_METHOD:
+                CharSequence[] methods = {"Scanna", "Manuellt"};
+                return new AlertDialog.Builder(this)
+                    .setTitle("Hur vill du lägga in koden?")
+                    .setItems(methods, new OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                            case 0:
+                                IntentIntegrator.initiateScan(DrinkDetailActivity.this);
+                                break;
+                            case 1:
+                                showDialog(DIALOG_ADD_BARCODE_MANUAL);
+                                break;
+                            }
+                        }
+                    })
+                    .create();
+            case DIALOG_ADD_BARCODE_MANUAL:
+                final View addBarcodeLayout = getLayoutInflater().inflate(
+                        R.layout.add_barcode_dialog, null);
+                final EditText addBarcodeEditText =
+                        (EditText) addBarcodeLayout.findViewById(R.id.add_barcode);
+                addBarcodeEditText.setSelected(true);
+                return new AlertDialog.Builder(this)
+                    .setTitle("Lägg in streckkod")
+                    .setView(addBarcodeLayout)
+                    .setPositiveButton("Spara", new OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mBarcode = addBarcodeEditText.getText().toString();
+                            new SuggestBarcodeTask().execute(
+                                    mBarcode, sDrink.getId(), mToken);
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .create();
         }
         return null;
     }
@@ -427,6 +537,7 @@ public class DrinkDetailActivity extends ListActivity {
                     if (scanResult != null) {
                         Log.d(TAG, "contents: " + scanResult.getContents());
                         Log.d(TAG, "formatName: " + scanResult.getFormatName());
+                        mBarcode = scanResult.getContents();
                         new SuggestBarcodeTask().execute(
                                 scanResult.getContents(), sDrink.getId(), mToken);
                     } else {
@@ -485,12 +596,19 @@ public class DrinkDetailActivity extends ListActivity {
         }
     }
 
+    /**
+     * Background task for suggesting a new barcode.
+     *
+     */
     private class SuggestBarcodeTask extends AsyncTask<Object, Void, Boolean> {
-
         @Override
         protected Boolean doInBackground(Object... params) {
-            return BarcodeStore.getInstance().suggest(
-                    (String)params[0], (Integer)params[1], (String)params[2]);
+            try {
+                return BarcodeStore.getInstance().suggest(
+                        (String)params[0], (Integer)params[1], (String)params[2]);
+            } catch (IOException e) {
+                return false;
+            }
         }
 
         @Override
@@ -500,7 +618,11 @@ public class DrinkDetailActivity extends ListActivity {
 
         @Override
         protected void onPostExecute(Boolean response) {
-            Toast.makeText(DrinkDetailActivity.this, "Streckkod sparad", Toast.LENGTH_SHORT).show();
+            if (response == true) {
+                Toast.makeText(DrinkDetailActivity.this, "Streckkod sparad", Toast.LENGTH_SHORT).show();
+            } else {
+                showDialog(DIALOG_SUGGEST_BARCODE_FAIL);
+            }
         }
     }
     
