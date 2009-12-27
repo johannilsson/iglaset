@@ -5,10 +5,14 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
@@ -26,6 +30,7 @@ import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkCompletedListener;
+import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkErrorListener;
 import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkProgressUpdatedListener;
 import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.Drink;
@@ -33,13 +38,15 @@ import com.markupartist.iglaset.provider.SearchCriteria;
 import com.markupartist.iglaset.util.ImageLoader;
 import com.markupartist.iglaset.util.Tracker;
 
-public class SearchResultActivity extends ListActivity implements SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener {
-    //static String ACTION_CATEGORY_SEARCH = "com.markupartist.iglaset.action.CATEGORY";
-    //static String ACTION_BARCODE_SEARCH = "com.markupartist.iglaset.action.BARCODE";
+public class SearchResultActivity extends ListActivity implements
+        SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener, SearchDrinkErrorListener {
+    //static final String ACTION_CATEGORY_SEARCH = "com.markupartist.iglaset.action.CATEGORY";
+    //static final String ACTION_BARCODE_SEARCH = "com.markupartist.iglaset.action.BARCODE";
 
-    static String EXTRA_SEARCH_BARCODE = "com.markupartist.iglaset.search.barcode";
-    static String EXTRA_SEARCH_CATEGORY_ID = "com.markupartist.iglaset.search.categoryId";
-    static String TAG = "SearchResultActivity";
+    static final String EXTRA_SEARCH_BARCODE = "com.markupartist.iglaset.search.barcode";
+    static final String EXTRA_SEARCH_CATEGORY_ID = "com.markupartist.iglaset.search.categoryId";
+    static final int DIALOG_SEARCH_NETWORK_PROBLEM = 0;
+    static final String TAG = "SearchResultActivity";
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
     private String mToken;
@@ -64,6 +71,12 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
             final Intent queryIntent = getIntent();
             final String queryAction = queryIntent.getAction();
             final TextView searchText = (TextView) findViewById(R.id.search_progress_text);
+
+            SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
+            searchDrinksTask.setSearchDrinkCompletedListener(this);
+            searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
+            searchDrinksTask.setSearchDrinkErrorListener(this);
+
             if (Intent.ACTION_SEARCH.equals(queryAction)) {
                 final String queryString = queryIntent.getStringExtra(SearchManager.QUERY);
                 // Record the query string in the recent queries suggestions provider.
@@ -79,9 +92,6 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
                 sSearchCriteria.setQuery(queryString);
                 sSearchCriteria.setToken(mToken);
 
-                SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
-                searchDrinksTask.setSearchDrinkCompletedListener(this);
-                searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchDrinksTask.execute(sSearchCriteria);
 
                 Tracker.getInstance().trackPageView("search result");
@@ -95,9 +105,6 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
                 sSearchCriteria.setCategory(category);
                 sSearchCriteria.setToken(mToken);
 
-                SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
-                searchDrinksTask.setSearchDrinkCompletedListener(this);
-                searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchDrinksTask.execute(sSearchCriteria);
 
                 Tracker.getInstance().trackPageView("search result category");
@@ -110,9 +117,6 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
                 sSearchCriteria.setBarcode(barcode);
                 sSearchCriteria.setToken(mToken);
 
-                SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
-                searchDrinksTask.setSearchDrinkCompletedListener(this);
-                searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchDrinksTask.execute(sSearchCriteria);
 
                 Tracker.getInstance().trackPageView("search result barcode");
@@ -220,6 +224,36 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
         setProgressBarIndeterminateVisibility(true);
     }
 
+    @Override
+    public void onSearchDrinkError(Exception exception) {
+        setProgressBarIndeterminateVisibility(false);
+        showDialog(DIALOG_SEARCH_NETWORK_PROBLEM);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch(id) {
+        case DIALOG_SEARCH_NETWORK_PROBLEM:
+            return new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Ett fel inträffade")
+                .setMessage("Kunde inte ansluta till servern.")
+                .setPositiveButton("Försök igen", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
+                        searchDrinksTask.setSearchDrinkCompletedListener(SearchResultActivity.this);
+                        searchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
+                        searchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
+                        searchDrinksTask.execute(sSearchCriteria);
+                    }
+                })
+                .setNegativeButton(getText(android.R.string.cancel), null)
+                .create();
+        }
+        return null;
+    }
+
     /**
      * List adapter for drinks. Deals with pagination internally.
      */
@@ -248,6 +282,7 @@ public class SearchResultActivity extends ListActivity implements SearchDrinkCom
                 SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
                 searchDrinksTask.setSearchDrinkCompletedListener(this);
                 searchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
+                searchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
                 searchDrinksTask.execute(sSearchCriteria);
             }
 

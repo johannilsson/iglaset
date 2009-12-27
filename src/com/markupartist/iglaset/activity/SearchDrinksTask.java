@@ -16,18 +16,25 @@ public class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<
 
     private SearchDrinkProgressUpdatedListener mSearchDrinkProgressUpdatedListener;
     private SearchDrinkCompletedListener mSearchDrinkCompletedListener;
+    private SearchDrinkErrorListener mSearchDrinkErrorListener;
+    private Exception mCaughtException;
 
     @Override
     protected ArrayList<Drink> doInBackground(SearchCriteria... params) {
         publishProgress();
         SearchCriteria searchCriteria = params[0];
-        if (searchCriteria.hasBarcode()) {
-            BarcodeStore barcodeStore = BarcodeStore.getInstance();
-            return barcodeStore.search(searchCriteria);
-        } else {
-            DrinksStore drinksStore = DrinksStore.getInstance();
-            return drinksStore.searchDrinks(params[0]);
+        try {
+            if (searchCriteria.hasBarcode()) {
+                BarcodeStore barcodeStore = BarcodeStore.getInstance();
+                return barcodeStore.search(searchCriteria);
+            } else {
+                DrinksStore drinksStore = DrinksStore.getInstance();
+                return drinksStore.searchDrinks(params[0]);
+            }
+        } catch (Exception e) {
+            mCaughtException = e;
         }
+        return null;
     }
 
     @Override
@@ -39,7 +46,11 @@ public class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<
 
     @Override
     protected void onPostExecute(ArrayList<Drink> result) {
-        mSearchDrinkCompletedListener.onSearchDrinkComplete(result);
+        if (mCaughtException == null) {
+            mSearchDrinkCompletedListener.onSearchDrinkComplete(result);
+        } else {
+            mSearchDrinkErrorListener.onSearchDrinkError(mCaughtException);
+        }
     }
 
     /**
@@ -59,6 +70,15 @@ public class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<
             SearchDrinkCompletedListener listener) {
         mSearchDrinkCompletedListener = listener;
     }
+
+    /**
+     * Set listener for errors
+     * @param listener the listener to set
+     */
+    public void setSearchDrinkErrorListener(SearchDrinkErrorListener listener) {
+        mSearchDrinkErrorListener = listener;
+    }
+
     /**
      * Listener for search progress updated.
      */
@@ -80,4 +100,14 @@ public class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<
         public void onSearchDrinkComplete(ArrayList<Drink> result);
     }
 
+    /**
+     * Listener for search completed.
+     */
+    public interface SearchDrinkErrorListener {
+        /**
+         * Called when search is completed.
+         * @param result the search result
+         */
+        public void onSearchDrinkError(Exception exception);
+    }
 }
