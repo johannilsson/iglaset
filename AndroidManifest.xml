@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.markupartist.iglaset"
-      android:versionCode="24" android:versionName="1.2.2">
+      android:versionName="1.2.3RC2" android:versionCode="26">
     <supports-screens
         android:largeScreens="true"
         android:normalScreens="true"
