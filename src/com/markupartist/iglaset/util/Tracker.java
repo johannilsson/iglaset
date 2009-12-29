@@ -14,6 +14,7 @@ import com.google.android.apps.analytics.GoogleAnalyticsTracker;
  */
 public class Tracker {
     private static final String TRACKER_ID = "UA-6205540-8";
+    private boolean mEnabled = false;
     private static final int DEFAULT_TRACKER_INTERVAL = 20;
     private static final String CATEGORY_CLICKS = "Clicks";
     private static final String ACTION_BUTTON = "Button";
@@ -33,7 +34,8 @@ public class Tracker {
     }
 
     public Tracker start(Context context) {
-        mTracker.start(TRACKER_ID, DEFAULT_TRACKER_INTERVAL, context);
+        if (mEnabled)
+            mTracker.start(TRACKER_ID, DEFAULT_TRACKER_INTERVAL, context);
         return this;
     }
 
@@ -44,25 +46,25 @@ public class Tracker {
 
     public Tracker trackEvent(CharSequence category, CharSequence action, 
                               CharSequence label, int value) {
-        if (mTracker != null)
+        if (mEnabled)
             mTracker.trackEvent((String) category, (String) action, (String) label, value);
         return this;
     }
 
     public Tracker trackEvent(MenuItem item) {
-        if (mTracker != null)
+        if (mEnabled)
             trackEvent(CATEGORY_CLICKS, ACTION_MENU_ITEM, item.getTitle(), 0);
         return this;
     }
 
     public Tracker trackEvent(Button button) {
-        if (mTracker != null)
+        if (mEnabled)
             trackEvent(CATEGORY_CLICKS, ACTION_BUTTON, button.getText(), 0);
         return this;
     }
 
     public Tracker trackPageView(String page) {
-        if (mTracker != null)
+        if (mEnabled)
             mTracker.trackPageView(page);
         return this;
     }
