@@ -237,7 +237,7 @@ public class SearchResultActivity extends ListActivity implements
             return new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Ett fel inträffade")
-                .setMessage("Kunde inte ansluta till servern.")
+                .setMessage("Kunde inte ansluta till servern. Försök igen, eller Cancel för att gå tillbaka till föregående vy.")
                 .setPositiveButton("Försök igen", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -248,7 +248,12 @@ public class SearchResultActivity extends ListActivity implements
                         searchDrinksTask.execute(sSearchCriteria);
                     }
                 })
-                .setNegativeButton(getText(android.R.string.cancel), null)
+                .setNegativeButton(getText(android.R.string.cancel), new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        finish();
+                    }
+                })
                 .create();
         }
         return null;
