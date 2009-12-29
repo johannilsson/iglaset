@@ -25,6 +25,10 @@ TODO and wish list
 
 Changelog
 ---------
+* 1.2.3
+    * Added a retry dialog for network problems for searches and for crowdsourcing
+      barcodes, Closes #3
+    * Disabled Analytics tracking since it caused several FC, Closes #5
 * 1.2.2
     * Removed the check for EAN_13 when scanning barcodes, now we are allowing
       all types of codes
