@@ -138,6 +138,11 @@ public class DrinkDetailActivity extends ListActivity {
         ImageLoader.getInstance().load(imageView, drink.getImageUrl(), 
                 true, R.drawable.noimage);
 
+    	ImageView hasRatedImageView = (ImageView) findViewById(R.id.has_rated_icon);
+        if(drink.hasUserRating()) {
+        	hasRatedImageView.setVisibility(View.VISIBLE);
+        }
+        
         //TextView descriptionTextView = (TextView) findViewById(R.id.drink_description);
         //descriptionTextView.setText(Html.fromHtml(drink.getDescription()));
 
@@ -304,7 +309,6 @@ public class DrinkDetailActivity extends ListActivity {
             );
 
             mCommentsAdapter.setViewBinder(new ViewBinder() {
-                @Override
                 public boolean setViewValue(View view, Object data,
                         String textRepresentation) {
                     switch (view.getId()) {
@@ -444,7 +448,6 @@ public class DrinkDetailActivity extends ListActivity {
                 ratingBar.setStepSize((float) 0.5);
                 ratingBar.setRating(userRating / 2);
                 ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
-                    @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating,
                             boolean fromUser) {
                         ratingValue.setText("Ditt betyg " + rating * 2);
@@ -455,13 +458,11 @@ public class DrinkDetailActivity extends ListActivity {
                     .setTitle(getText(R.string.add_rating))
                     .setView(layout)
                     .setPositiveButton(android.R.string.ok, new OnClickListener() {
-                        @Override
                         public void onClick(DialogInterface dialog, int which) {
                             new SetUserRatingTask().execute(ratingBar.getRating() * 2);
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, new OnClickListener() {
-                        @Override
                         public void onClick(DialogInterface dialog, int which) {
                             ;
                         }
@@ -472,14 +473,12 @@ public class DrinkDetailActivity extends ListActivity {
                 .setTitle(getText(R.string.not_logged_in))
                 .setMessage(R.string.login_to_proceed_message)
                 .setPositiveButton("Logga in", new OnClickListener() {
-                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i = new Intent(DrinkDetailActivity.this, BasicPreferenceActivity.class);
                         startActivityForResult(i, REQUEST_CODE_SETTINGS_CHANGED);
                     }
                 })
                 .setNegativeButton(R.string.back, new OnClickListener() {
-                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ;
                     }

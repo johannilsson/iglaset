@@ -121,7 +121,10 @@
                             android:stepSize="1"
                             style="?android:attr/ratingBarStyleSmall"
                         />
-                    </LinearLayout>
+                    
+
+<ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/has_rated_icon" android:src="@drawable/glass_icon" android:visibility="gone"></ImageView>
+</LinearLayout>
                 </TableRow>
             </TableLayout>
     </LinearLayout>

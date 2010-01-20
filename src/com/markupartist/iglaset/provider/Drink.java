@@ -76,12 +76,10 @@ public class Drink implements Parcelable {
         }
     }
 
-    @Override
     public int describeContents() {
         return 0;
     }
 
-    @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(mId);
         dest.writeString(mName);
@@ -210,6 +208,10 @@ public class Drink implements Parcelable {
         return mUserRating;
     }
 
+    public Boolean hasUserRating() {
+    	return mUserRating != 0.0;
+    }
+    
     public void setUserRating(float userRating) {
         this.mUserRating = userRating;
     }
@@ -273,12 +275,10 @@ public class Drink implements Parcelable {
                 + "]";
         }
 
-        @Override
         public int describeContents() {
             return 0;
         }
 
-        @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(mPriceSek);
             dest.writeInt(mArticleId);

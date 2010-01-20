@@ -16,6 +16,7 @@ public class DrinkViewHolder {
     private RatingBar rateView;
     private TextView alcoholView;
     private ImageView imageView;
+    private ImageView hasRatedImageView;
     
     public DrinkViewHolder(View layout) {
         this.layout = layout;
@@ -70,5 +71,13 @@ public class DrinkViewHolder {
             imageView = (ImageView) layout.findViewById(R.id.drink_image);
         }
         return imageView;
+    }
+    
+    public ImageView getHasRatedImageView() {
+    	if (hasRatedImageView == null) {
+    		hasRatedImageView = (ImageView) layout.findViewById(R.id.has_rated_icon);
+    	}
+    	
+    	return hasRatedImageView;
     }
 }

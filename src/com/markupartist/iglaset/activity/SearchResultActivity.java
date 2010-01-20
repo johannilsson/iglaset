@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -213,13 +214,11 @@ public class SearchResultActivity extends ListActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
     public void onSearchDrinkComplete(ArrayList<Drink> result) {
         setProgressBarIndeterminateVisibility(false);
         initList(result);
     }
 
-    @Override
     public void onSearchDrinkProgress() {
         setProgressBarIndeterminateVisibility(true);
     }
@@ -311,6 +310,14 @@ public class SearchResultActivity extends ListActivity implements
 
                 ImageLoader.getInstance().load(dvh.getImageView(), 
                         drink.getImageUrl(), true, R.drawable.noimage);
+                
+                ImageView image = dvh.getHasRatedImageView();
+                if(drink.hasUserRating()) {
+                	image.setVisibility(View.VISIBLE);
+                }
+                else {
+                	image.setVisibility(View.GONE);
+                }
             }
 
             return convertView;
@@ -336,7 +343,6 @@ public class SearchResultActivity extends ListActivity implements
             return mShouldAppend.get();
         }
 
-        @Override
         public void onSearchDrinkComplete(ArrayList<Drink> result) {
             append(result);
             setProgressBarIndeterminateVisibility(false);
