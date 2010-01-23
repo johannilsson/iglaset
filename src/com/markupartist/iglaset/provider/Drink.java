@@ -154,7 +154,7 @@ public class Drink implements Parcelable {
         	origin = this.mOrigin + ", " + this.mOriginCountry;
         }
         else {
-        	origin = this.mOrigin;
+        	origin = this.mOriginCountry;
         }
         return origin;
     }
