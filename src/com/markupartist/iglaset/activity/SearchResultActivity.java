@@ -304,7 +304,6 @@ public class SearchResultActivity extends ListActivity implements
                 dvh.getNameView().setText(drink.getName() + year);
                 //dvh.getYearView().setText(drink.getYear() == 0 ? "" : String.valueOf(drink.getYear()));
                 dvh.getOriginCountryView().setText(drink.getConcatenatedOrigin());
-                dvh.getRateView().setRating(Float.parseFloat(drink.getRating()));
                 dvh.getAlcoholView().setText(drink.getAlcoholPercent());
 
                 ImageLoader.getInstance().load(dvh.getImageView(), 
@@ -313,9 +312,11 @@ public class SearchResultActivity extends ListActivity implements
                 ImageView image = dvh.getHasRatedImageView();
                 if(drink.hasUserRating()) {
                 	image.setVisibility(View.VISIBLE);
+                	dvh.getRateView().setRating(drink.getUserRating());
                 }
                 else {
                 	image.setVisibility(View.GONE);
+                	dvh.getRateView().setRating(Float.parseFloat(drink.getRating()));
                 }
             }
 
