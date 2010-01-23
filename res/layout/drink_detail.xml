@@ -72,17 +72,7 @@
                             TODO: set origin and country in one element and a filter
                             if origin and country is the same. 
                         -->
-                        <TextView
-                            android:id="@+id/drink_origin"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textStyle="normal"
-                            android:textColor="?android:attr/textColorSecondary"
-                            android:maxLines="1"
-                            android:paddingRight="4dip"
-                            android:maxLength="13"
-                            android:text="Sverige"
-                            />
+                        
     		            <TextView
                             android:id="@+id/drink_origin_country"
                             android:layout_width="wrap_content"

@@ -119,9 +119,6 @@ public class DrinkDetailActivity extends ListActivity {
         String yearText = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
         nameTextView.setText(drink.getName() + yearText);
 
-        TextView originTextView = (TextView) findViewById(R.id.drink_origin);
-        originTextView.setText(drink.getOrigin());
-
         TextView originCountryTextView = (TextView) findViewById(R.id.drink_origin_country);
         originCountryTextView.setText(drink.getOriginCountry());
 

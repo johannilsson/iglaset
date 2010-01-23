@@ -38,13 +38,6 @@ public class DrinkViewHolder {
     }
     */
 
-    public TextView getOriginView() {
-        if (originView == null) {
-            originView = (TextView) layout.findViewById(R.id.drink_origin);
-        }
-        return originView;
-    }
-
     public TextView getOriginCountryView() {
         if (originCountryView == null) {
             originCountryView = (TextView) layout.findViewById(R.id.drink_origin_country);
