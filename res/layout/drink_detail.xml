@@ -81,9 +81,8 @@
                             android:textColor="?android:attr/textColorSecondary"
                             android:maxLines="1"
                             android:paddingRight="4dip"
-                            android:maxLength="13"
                             android:text="Sverige"
-                        />
+                        android:scrollHorizontally="true"/>
     		            <TextView
                             android:id="@+id/drink_alcohol_percent"
                             android:layout_width="wrap_content"
@@ -93,7 +92,9 @@
                             android:maxLines="1"
                             android:text="12%"
                             />
-                    </LinearLayout>	           
+                    
+
+</LinearLayout>	           
                 </TableRow>
                 <TableRow>
                     <LinearLayout 
@@ -114,8 +115,10 @@
                     
 
 <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/has_rated_icon" android:src="@drawable/glass_icon" android:visibility="gone"></ImageView>
+
 </LinearLayout>
                 </TableRow>
             </TableLayout>
-    </LinearLayout>
+    
+</LinearLayout>
 </LinearLayout>

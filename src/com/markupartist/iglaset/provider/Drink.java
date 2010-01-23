@@ -148,6 +148,17 @@ public class Drink implements Parcelable {
         this.mOriginCountry = originCountry;
     }
 
+    public String getConcatenatedOrigin() {
+        String origin;
+        if(this.mOrigin.equals(this.mOriginCountry) == false && this.mOrigin.length() > 0) {
+        	origin = this.mOrigin + ", " + this.mOriginCountry;
+        }
+        else {
+        	origin = this.mOrigin;
+        }
+        return origin;
+    }
+    
     public String getProducer() {
         return mProducer;
     }

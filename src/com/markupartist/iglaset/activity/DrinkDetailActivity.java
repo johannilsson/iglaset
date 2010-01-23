@@ -118,9 +118,9 @@ public class DrinkDetailActivity extends ListActivity {
         TextView nameTextView = (TextView) findViewById(R.id.drink_name);
         String yearText = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
         nameTextView.setText(drink.getName() + yearText);
-
+        
         TextView originCountryTextView = (TextView) findViewById(R.id.drink_origin_country);
-        originCountryTextView.setText(drink.getOriginCountry());
+        originCountryTextView.setText(drink.getConcatenatedOrigin());
 
         TextView alcoholPercentTextView = (TextView) findViewById(R.id.drink_alcohol_percent);
         alcoholPercentTextView.setText(drink.getAlcoholPercent());
