@@ -394,7 +394,10 @@ public class DrinkDetailActivity extends ListActivity {
         switch (item.getItemId()) {
             case R.id.menu_goto_iglaset:
                 Tracker.getInstance().trackEvent(item);
-                String name = URLEncoder.encode(sDrink.getName());
+                // Since iglaset.se does not really care about the name we just
+                // removes the slash because otherwise iglaset.se will parse it
+                // as a directory.
+                String name = URLEncoder.encode(sDrink.getName().replace("/", ""));
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, 
                         Uri.parse("http://www.iglaset.se/dryck/" + name + "/" + sDrink.getId()));
                 startActivity(browserIntent);
@@ -656,7 +659,7 @@ public class DrinkDetailActivity extends ListActivity {
             id.setText(String.valueOf(volume.getArticleId()));
 
             TextView amount = (TextView) convertView.findViewById(R.id.volume_amount);
-            amount.setText(String.valueOf(volume.getVolume()));
+            amount.setText(String.valueOf(volume.getVolume()) + " ml"); // TODO should fix hard coded string
 
             TextView price = (TextView) convertView.findViewById(R.id.volume_price);
             price.setText(volume.getPriceSek() + " kr"); // TODO should fix hard coded string
