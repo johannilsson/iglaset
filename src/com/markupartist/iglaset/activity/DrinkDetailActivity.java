@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -116,6 +117,12 @@ public class DrinkDetailActivity extends ListActivity {
         }
 
         TextView nameTextView = (TextView) findViewById(R.id.drink_name);
+        if(drink.hasUserRating()) {
+        	Drawable icon = getResources().getDrawable(R.drawable.glass_icon);
+        	icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
+        	nameTextView.setCompoundDrawables(null, null, icon, null);
+        }
+        
         String yearText = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
         nameTextView.setText(drink.getName() + yearText);
         
@@ -134,11 +141,6 @@ public class DrinkDetailActivity extends ListActivity {
         ImageView imageView = (ImageView) findViewById(R.id.drink_image);
         ImageLoader.getInstance().load(imageView, drink.getImageUrl(), 
                 true, R.drawable.noimage);
-
-    	ImageView hasRatedImageView = (ImageView) findViewById(R.id.has_rated_icon);
-        if(drink.hasUserRating()) {
-        	hasRatedImageView.setVisibility(View.VISIBLE);
-        }
         
         //TextView descriptionTextView = (TextView) findViewById(R.id.drink_description);
         //descriptionTextView.setText(Html.fromHtml(drink.getDescription()));

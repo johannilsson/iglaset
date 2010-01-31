@@ -2,6 +2,8 @@ package com.markupartist.iglaset.activity;
 
 import com.markupartist.iglaset.R;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -11,13 +13,13 @@ public class DrinkViewHolder {
     private View layout;
     private TextView nameView;
     //private TextView yearView;
-    private TextView originView;
+    //private TextView originView;
     private TextView originCountryView;
     private RatingBar rateView;
     private TextView alcoholView;
     private ImageView imageView;
-    private ImageView hasRatedImageView;
-    
+    private Drawable glassIcon = null;
+
     public DrinkViewHolder(View layout) {
         this.layout = layout;
     }
@@ -66,11 +68,11 @@ public class DrinkViewHolder {
         return imageView;
     }
     
-    public ImageView getHasRatedImageView() {
-    	if (hasRatedImageView == null) {
-    		hasRatedImageView = (ImageView) layout.findViewById(R.id.has_rated_icon);
+    public Drawable getGlassIcon(Context ctx) {
+    	if(null == glassIcon) {
+    		glassIcon = ctx.getResources().getDrawable(R.drawable.glass_icon);
+    		glassIcon.setBounds(0, 0, glassIcon.getIntrinsicWidth(), glassIcon.getIntrinsicHeight());
     	}
-    	
-    	return hasRatedImageView;
+    	return glassIcon;
     }
 }

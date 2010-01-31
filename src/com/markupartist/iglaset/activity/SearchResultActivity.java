@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
@@ -67,7 +68,7 @@ public class SearchResultActivity extends ListActivity implements
         // Check if already have some data, used if screen is rotated.
         @SuppressWarnings("unchecked")
         final ArrayList<Drink> data = (ArrayList<Drink>) getLastNonConfigurationInstance();
-
+        
         if (data == null) {
             final Intent queryIntent = getIntent();
             final String queryAction = queryIntent.getAction();
@@ -302,22 +303,20 @@ public class SearchResultActivity extends ListActivity implements
             if (drink != null && dvh != null) {
                 String year = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
                 dvh.getNameView().setText(drink.getName() + year);
+                if(drink.hasUserRating()) {
+                	dvh.getRateView().setRating(drink.getUserRating());
+                	dvh.getNameView().setCompoundDrawables(null, null, dvh.getGlassIcon(getContext()), null);
+                }
+                else {
+                	dvh.getRateView().setRating(Float.parseFloat(drink.getRating()));
+                	dvh.getNameView().setCompoundDrawables(null, null, null, null);
+                }
                 //dvh.getYearView().setText(drink.getYear() == 0 ? "" : String.valueOf(drink.getYear()));
                 dvh.getOriginCountryView().setText(drink.getConcatenatedOrigin());
                 dvh.getAlcoholView().setText(drink.getAlcoholPercent());
 
                 ImageLoader.getInstance().load(dvh.getImageView(), 
                         drink.getImageUrl(), true, R.drawable.noimage);
-                
-                ImageView image = dvh.getHasRatedImageView();
-                if(drink.hasUserRating()) {
-                	image.setVisibility(View.VISIBLE);
-                	dvh.getRateView().setRating(drink.getUserRating());
-                }
-                else {
-                	image.setVisibility(View.GONE);
-                	dvh.getRateView().setRating(Float.parseFloat(drink.getRating()));
-                }
             }
 
             return convertView;
