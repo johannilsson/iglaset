@@ -122,7 +122,7 @@ public class DrinkDetailActivity extends ListActivity {
         	icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
         	nameTextView.setCompoundDrawables(null, null, icon, null);
         }
-        
+
         String yearText = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
         nameTextView.setText(drink.getName() + yearText);
         

@@ -13,7 +13,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
@@ -24,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -306,8 +304,7 @@ public class SearchResultActivity extends ListActivity implements
                 if(drink.hasUserRating()) {
                 	dvh.getRateView().setRating(drink.getUserRating());
                 	dvh.getNameView().setCompoundDrawables(null, null, dvh.getGlassIcon(getContext()), null);
-                }
-                else {
+                } else {
                 	dvh.getRateView().setRating(Float.parseFloat(drink.getRating()));
                 	dvh.getNameView().setCompoundDrawables(null, null, null, null);
                 }
