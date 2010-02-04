@@ -2,6 +2,7 @@ package com.markupartist.iglaset.provider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -19,11 +20,21 @@ public class Drink implements Parcelable {
     private int mYear;
     private String mDescription;
     private String mRating = "0";
-    private String mImageUrl;
+    private String mSmallImageUrl;
+    private String mMediumImageUrl;
+    private String mLargeImageUrl;
     private ArrayList<Volume> mVolumes;
     private HashMap<String, ArrayList<String>> mTags;
     private float mUserRating;
-
+    private Map<ImageSize, String> mImages;
+    
+    public enum ImageSize {
+    	THUMBNAIL,
+    	SMALL,
+    	MEDIUM,
+    	LARGE
+    }
+    
     public Drink(int id) {
         mId = id;
     }
@@ -40,7 +51,12 @@ public class Drink implements Parcelable {
         mYear = in.readInt();
         mDescription = in.readString();
         mRating = in.readString();
-        mImageUrl = in.readString();
+        /*mImages.put(ImageSize.SMALL, in.readString());
+        mImages.put(ImageSize.MEDIUM, in.readString());
+        mImages.put(ImageSize.LARGE, in.readString());*/
+        mLargeImageUrl = in.readString();
+        mMediumImageUrl = in.readString();
+        mSmallImageUrl = in.readString();
 
         mVolumes = new ArrayList<Volume>();
         in.readTypedList(mVolumes, Volume.CREATOR);
@@ -92,7 +108,9 @@ public class Drink implements Parcelable {
         dest.writeInt(mYear);
         dest.writeString(mDescription);
         dest.writeString(mRating);
-        dest.writeString(mImageUrl);
+        dest.writeString(mLargeImageUrl);
+        dest.writeString(mMediumImageUrl);
+        dest.writeString(mSmallImageUrl);
         dest.writeTypedList(mVolumes);
         dest.writeMap(mTags);
         dest.writeFloat(mUserRating);
@@ -108,12 +126,43 @@ public class Drink implements Parcelable {
         }
     };
 
-    public void setImageUrl(String imageUrl) {
-        mImageUrl = imageUrl;
+    public void setThumbnailUrl(String url) {
+        mSmallImageUrl = url;
+    }
+
+    public void setImageUrl(String url) {
+    	mMediumImageUrl = url;
+    }
+    
+    public void setLargeImageUrl(String url) {
+    	mLargeImageUrl = url;
+    }
+    
+    public String getThumbnailUrl() {
+        return THUMB_RESIZE_BASE_URL + mSmallImageUrl;
     }
 
     public String getImageUrl() {
-        return THUMB_RESIZE_BASE_URL + mImageUrl;
+    	return mMediumImageUrl;
+    }
+    
+    public String getLargeImageUrl() {
+    	return mLargeImageUrl;
+    }
+    
+    /**
+     * Fetches the largest available image for the drink.
+     * @return Image url or null if no images are available.
+     */
+    public String getLargestImageUrl() {
+    	if(mLargeImageUrl != null && mLargeImageUrl.length() > 0)
+    		return mLargeImageUrl;
+    	else if(mMediumImageUrl != null && mMediumImageUrl.length() > 0)
+    		return mMediumImageUrl;
+    	else if(mSmallImageUrl != null && mSmallImageUrl.length() > 0)
+    		return mSmallImageUrl;
+    	
+    	return null;
     }
 
     public int getId() {

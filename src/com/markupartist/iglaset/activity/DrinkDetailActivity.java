@@ -107,7 +107,7 @@ public class DrinkDetailActivity extends ListActivity {
         mToken = AuthStore.getInstance().getStoredToken(this);
         
         Bundle extras = getIntent().getExtras();
-        Drink drink = extras.getParcelable("com.markupartist.iglaset.Drink");
+        final Drink drink = extras.getParcelable("com.markupartist.iglaset.Drink");
 
         mUserRatingAdapter = new UserRatingAdapter(this, 0);
         mSectionedAdapter.addSectionFirst(0, getText(R.string.my_rating), mUserRatingAdapter);
@@ -139,7 +139,16 @@ public class DrinkDetailActivity extends ListActivity {
         drinkRatingBar.setRating(Float.parseFloat(drink.getRating()));
 
         ImageView imageView = (ImageView) findViewById(R.id.drink_image);
-        ImageLoader.getInstance().load(imageView, drink.getImageUrl(), 
+        final Context ctx = this;
+        imageView.setOnClickListener(new View.OnClickListener() {
+        	@Override
+			public
+            void onClick(View view) {
+        		ViewItemImageActivity.showImage(ctx, drink.getLargestImageUrl());
+        	}
+        });
+        
+        ImageLoader.getInstance().load(imageView, drink.getThumbnailUrl(), 
                 true, R.drawable.noimage);
         
         //TextView descriptionTextView = (TextView) findViewById(R.id.drink_description);

@@ -111,7 +111,11 @@ class DrinksParser extends DefaultHandler {
             } else if (name.equals("avg_rating") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.setRating(mCurrentText);
             } else if (name.equals("small") && !TextUtils.isEmpty(mCurrentText)) {
-                mCurrentDrink.setImageUrl(mCurrentText);
+                mCurrentDrink.setThumbnailUrl(mCurrentText);
+            } else if (name.equals("medium") && !TextUtils.isEmpty(mCurrentText)) {
+            	mCurrentDrink.setLargeImageUrl(mCurrentText);
+            } else if (name.equals("large") && !TextUtils.isEmpty(mCurrentText)) {
+            	mCurrentDrink.setImageUrl(mCurrentText);
             } else if (name.equals("user_rating") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.setUserRating(Float.parseFloat(mCurrentText));
             }

@@ -16,6 +16,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -297,7 +298,7 @@ public class SearchResultActivity extends ListActivity implements
                 dvh = (DrinkViewHolder) convertView.getTag();    
             }
 
-            Drink drink = getItem(position);
+            final Drink drink = getItem(position);
             if (drink != null && dvh != null) {
                 String year = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
                 dvh.getNameView().setText(drink.getName() + year);
@@ -312,8 +313,14 @@ public class SearchResultActivity extends ListActivity implements
                 dvh.getOriginCountryView().setText(drink.getConcatenatedOrigin());
                 dvh.getAlcoholView().setText(drink.getAlcoholPercent());
 
-                ImageLoader.getInstance().load(dvh.getImageView(), 
-                        drink.getImageUrl(), true, R.drawable.noimage);
+                ImageLoader.getInstance().load(dvh.getImageView(), drink.getThumbnailUrl(), true, R.drawable.noimage);
+                dvh.getImageView().setOnClickListener(new View.OnClickListener() {
+                	@Override
+        			public
+                    void onClick(View view) {
+                		ViewItemImageActivity.showImage(getContext(), drink.getLargestImageUrl());
+                	}
+                });
             }
 
             return convertView;
