@@ -16,7 +16,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -309,7 +308,6 @@ public class SearchResultActivity extends ListActivity implements
                 	dvh.getRateView().setRating(Float.parseFloat(drink.getRating()));
                 	dvh.getNameView().setCompoundDrawables(null, null, null, null);
                 }
-                //dvh.getYearView().setText(drink.getYear() == 0 ? "" : String.valueOf(drink.getYear()));
                 dvh.getOriginCountryView().setText(drink.getConcatenatedOrigin());
                 dvh.getAlcoholView().setText(drink.getAlcoholPercent());
 
