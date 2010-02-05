@@ -217,14 +217,12 @@ public class Drink implements Parcelable {
      * @return String containing concatenated origin.
      */
     public String getConcatenatedOrigin() {
-        String origin;
-        if(this.mOrigin.equals(this.mOriginCountry) == false && this.mOrigin.length() > 0) {
-        	origin = this.mOrigin + ", " + this.mOriginCountry;
-        }
-        else {
-        	origin = this.mOriginCountry;
-        }
-        return origin;
+        if(null == mOrigin)
+            return mOriginCountry;
+        else if(mOrigin.equals(mOriginCountry) == false && mOrigin.length() > 0)
+        	return mOrigin + ", " + mOriginCountry;
+        else
+        	return mOriginCountry;
     }
     
     public String getProducer() {
