@@ -2,7 +2,7 @@ package com.markupartist.iglaset.provider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.TreeMap;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -20,16 +20,12 @@ public class Drink implements Parcelable {
     private int mYear;
     private String mDescription;
     private String mRating = "0";
-    private String mSmallImageUrl;
-    private String mMediumImageUrl;
-    private String mLargeImageUrl;
     private ArrayList<Volume> mVolumes;
     private HashMap<String, ArrayList<String>> mTags;
     private float mUserRating;
-    private Map<ImageSize, String> mImages;
+    private TreeMap<ImageSize, String> mImages;
     
     public enum ImageSize {
-    	THUMBNAIL,
     	SMALL,
     	MEDIUM,
     	LARGE
@@ -51,12 +47,9 @@ public class Drink implements Parcelable {
         mYear = in.readInt();
         mDescription = in.readString();
         mRating = in.readString();
-        /*mImages.put(ImageSize.SMALL, in.readString());
-        mImages.put(ImageSize.MEDIUM, in.readString());
-        mImages.put(ImageSize.LARGE, in.readString());*/
-        mLargeImageUrl = in.readString();
-        mMediumImageUrl = in.readString();
-        mSmallImageUrl = in.readString();
+        
+        mImages = new TreeMap<ImageSize, String>();
+        in.readMap(mImages, ClassLoader.getSystemClassLoader());
 
         mVolumes = new ArrayList<Volume>();
         in.readTypedList(mVolumes, Volume.CREATOR);
@@ -108,9 +101,7 @@ public class Drink implements Parcelable {
         dest.writeInt(mYear);
         dest.writeString(mDescription);
         dest.writeString(mRating);
-        dest.writeString(mLargeImageUrl);
-        dest.writeString(mMediumImageUrl);
-        dest.writeString(mSmallImageUrl);
+        dest.writeMap(mImages);
         dest.writeTypedList(mVolumes);
         dest.writeMap(mTags);
         dest.writeFloat(mUserRating);
@@ -126,28 +117,44 @@ public class Drink implements Parcelable {
         }
     };
 
-    public void setThumbnailUrl(String url) {
-        mSmallImageUrl = url;
-    }
-
-    public void setImageUrl(String url) {
-    	mMediumImageUrl = url;
+    /**
+     * Set the URL of a drink image. If the URL is null or empty it is
+     * considered invalid and will be discarded from the image list.
+     * @param size Size of the image.
+     * @param url Image URL.
+     */
+    public void setImageUrl(ImageSize size, String url) {
+    	if(null == mImages)
+    		mImages = new TreeMap<ImageSize, String>();
+    	
+    	if(null != url && url.length() > 0)
+    		mImages.put(size, url);
+        else
+        	mImages.remove(size);
     }
     
-    public void setLargeImageUrl(String url) {
-    	mLargeImageUrl = url;
-    }
-    
+    /**
+     * Get the thumbnail URL for this article.
+     * @return Thumbnail URL or null if not available.
+     */
     public String getThumbnailUrl() {
-        return THUMB_RESIZE_BASE_URL + mSmallImageUrl;
+    	if(null != mImages && mImages.size() > 0)
+    		return THUMB_RESIZE_BASE_URL + getSmallestImageUrl();
+    	
+    	return null;
     }
 
-    public String getImageUrl() {
-    	return mMediumImageUrl;
-    }
     
-    public String getLargeImageUrl() {
-    	return mLargeImageUrl;
+    /**
+     * Get the image URL for a given image size.
+     * @param size Size of image.
+     * @return URL to image or null if not available.
+     */
+    public String getImageUrl(ImageSize size) {
+    	if(null != mImages && mImages.containsKey(size))
+    		return mImages.get(size);
+    	
+    	return null;
     }
     
     /**
@@ -155,12 +162,19 @@ public class Drink implements Parcelable {
      * @return Image url or null if no images are available.
      */
     public String getLargestImageUrl() {
-    	if(mLargeImageUrl != null && mLargeImageUrl.length() > 0)
-    		return mLargeImageUrl;
-    	else if(mMediumImageUrl != null && mMediumImageUrl.length() > 0)
-    		return mMediumImageUrl;
-    	else if(mSmallImageUrl != null && mSmallImageUrl.length() > 0)
-    		return mSmallImageUrl;
+    	if(null != mImages && mImages.size() > 0)
+    		return mImages.get(mImages.lastKey());
+
+    	return null;
+    }
+
+    /**
+     * Fetches the smallest available image for the drink.
+     * @return Image url or null if no images are available.
+     */
+    public String getSmallestImageUrl() {
+    	if(null != mImages && mImages.size() > 0)
+    		return mImages.get(mImages.firstKey());
     	
     	return null;
     }
@@ -197,6 +211,11 @@ public class Drink implements Parcelable {
         this.mOriginCountry = originCountry;
     }
 
+    /**
+     * Get the concatenated origin. This includes both the country and the
+     * area (if available).
+     * @return String containing concatenated origin.
+     */
     public String getConcatenatedOrigin() {
         String origin;
         if(this.mOrigin.equals(this.mOriginCountry) == false && this.mOrigin.length() > 0) {
