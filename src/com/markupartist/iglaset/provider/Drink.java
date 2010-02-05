@@ -6,6 +6,7 @@ import java.util.TreeMap;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 public class Drink implements Parcelable {
     private static String THUMB_RESIZE_BASE_URL = "http://api.iglaset.se/resizely/crop/50x50/?url=";
@@ -217,7 +218,13 @@ public class Drink implements Parcelable {
      * @return String containing concatenated origin.
      */
     public String getConcatenatedOrigin() {
-        if(null != mOrigin && false == mOrigin.equals(mOriginCountry) && mOrigin.length() > 0)
+        if(TextUtils.isEmpty(mOrigin) && TextUtils.isEmpty(mOriginCountry))
+            return "";
+        else if(TextUtils.isEmpty(mOrigin))
+            return mOriginCountry;
+        else if(TextUtils.isEmpty(mOriginCountry))
+            return mOrigin;
+        else if(false == mOrigin.equals(mOriginCountry))
         	return mOrigin + ", " + mOriginCountry;
         else
         	return mOriginCountry;
