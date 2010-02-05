@@ -1,6 +1,11 @@
 package com.markupartist.iglaset.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -11,6 +16,7 @@ import java.util.Queue;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -19,6 +25,8 @@ import android.widget.ImageView;
  */
 public class ImageLoader {
     static private ImageLoader sInstance;
+    static final String TAG = "ImageLoader";
+    static final int IO_BUFFER_SIZE = 4096;
 
     static public ImageLoader getInstance() {
         if (sInstance == null) {
@@ -184,18 +192,28 @@ public class ImageLoader {
         @Override
         public void run() {
             InputStream inStream = null;
+            BufferedOutputStream out = null;
             mConn = null;
-            try {
+            try {            	
+            	Log.d(TAG, "Downloading " + group.url);
                 mConn = (HttpURLConnection) new URL(group.url).openConnection();
                 mConn.setDoInput(true);
                 mConn.connect();
                 inStream = mConn.getInputStream();
-                group.bitmap = BitmapFactory.decodeStream(inStream);
+                final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+                out = new BufferedOutputStream(dataStream, IO_BUFFER_SIZE);
+                copy(inStream, out);
+                out.flush();
+                final byte[] data = dataStream.toByteArray();
+                group.bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                
+               //group.bitmap = BitmapFactory.decodeStream(inStream);
                 inStream.close();
                 mConn.disconnect();
                 inStream = null;
                 mConn = null;
             } catch (Exception ex) {
+            	Log.d(TAG, "Download failed: " + ex.getMessage());
                 // nothing
             }
             if (inStream != null) {
@@ -210,6 +228,14 @@ public class ImageLoader {
             threadHandler.post(threadCallback);
         }
 
+        private void copy(InputStream in, OutputStream out) throws IOException {
+            byte[] b = new byte[IO_BUFFER_SIZE];
+            int read;
+            while ((read = in.read(b)) != -1) {
+                out.write(b, 0, read);
+            }
+        }
+        
         public void disconnect() {
             if (mConn != null) {
                 mConn.disconnect();
