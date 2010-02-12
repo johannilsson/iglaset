@@ -144,12 +144,12 @@ public class DrinkDetailActivity extends ListActivity {
         	@Override
 			public
             void onClick(View view) {
-        		ViewItemImageActivity.showImage(ctx, drink.getLargestImageUrl());
+        		ImageViewerDialog.showImage(ctx, drink.getLargestImageUrl());
         	}
         });
         
         ImageLoader.getInstance().load(imageView, drink.getThumbnailUrl(), 
-                true, R.drawable.noimage);
+                true, R.drawable.noimage, null);
         
         //TextView descriptionTextView = (TextView) findViewById(R.id.drink_description);
         //descriptionTextView.setText(Html.fromHtml(drink.getDescription()));

@@ -55,18 +55,22 @@ public class ImageLoader {
     }
 
     public void load(ImageView image, String url) {
-        load(image, url, false);
+        load(image, url, false, null);
     }
 
-    public void load(ImageView image, String url, boolean cache) {
-        load(image, url, cache, 0);
+    public void load(ImageView image, String url, boolean cache, EventHandler eventHandler) {
+        load(image, url, cache, 0, eventHandler);
     }
 
     public void load(ImageView image, String url, boolean cache, 
-            int defaultImageResource) {
+            int defaultImageResource, EventHandler eventHandler) {
         if (mUrlToBitmap.get(url) != null) {
             if (image != null) {
                 image.setImageBitmap(mUrlToBitmap.get(url));
+                
+                if(eventHandler != null) {
+                	eventHandler.onFinished();
+                }
             }
         } else {
             if (defaultImageResource != 0) {
@@ -74,11 +78,15 @@ public class ImageLoader {
             } else {
                 image.setImageBitmap(null);
             }
-            queue(image, url, cache);
+            queue(image, url, cache, eventHandler);
+            
+            if(eventHandler != null) {
+            	eventHandler.onDownloadStarted();
+            }
         }        
     }
  
-    public void queue(ImageView image, String url, boolean cache) {
+    public void queue(ImageView image, String url, boolean cache, EventHandler eventHandler) {
         Iterator<Group> it = mQueue.iterator();
         if (image != null) {
             while (it.hasNext()) {
@@ -95,7 +103,7 @@ public class ImageLoader {
                 }
             }
         }
-        mQueue.add(new Group(image, url, null, cache));
+        mQueue.add(new Group(image, url, null, cache, eventHandler));
         loadNext();
     }
 
@@ -129,6 +137,10 @@ public class ImageLoader {
             if (mUrlToBitmap.get(group.url) != null) {
                 if (group.image != null) {
                     group.image.setImageBitmap(mUrlToBitmap.get(group.url));
+                    
+                    if(null != group.eventHandler) {
+                    	group.eventHandler.onFinished();
+                    }
                 }
                 mBusy = false;
                 loadNext();
@@ -148,6 +160,10 @@ public class ImageLoader {
                 }
                 if (group.image != null) {
                     group.image.setImageBitmap(group.bitmap);
+                    
+                    if(null != group.eventHandler) {
+                    	group.eventHandler.onFinished();
+                    }
                 }
             } else if (mMissing != null) {
                 if (group.image != null) {
@@ -159,19 +175,44 @@ public class ImageLoader {
         mBusy = false;
         loadNext();
     }
+    
+    /**
+     * @author marco
+     * Event handler used to notify the caller about the image download status.
+     */
+    public interface EventHandler {
+    	/**
+    	 * Called before starting downloading an image.
+    	 * @note This will not be called if the image is cached.
+    	 */
+    	public void onDownloadStarted();
+    	
+    	/**
+    	 * Called when a download error occurs.
+    	 */
+    	public void onDownloadError();
+    	
+    	/**
+    	 * Called when download finished successfully.
+    	 */
+    	public void onFinished();
+    }
 
     private class Group {
-        public Group(ImageView image, String url, Bitmap bitmap, boolean cache) {
+        public Group(ImageView image, String url, Bitmap bitmap, boolean cache, EventHandler eventHandler) {
             this.image = image;
             this.url = url;
+            //this.url = "hej";
             this.bitmap = bitmap;
             this.cache = cache;
+            this.eventHandler = eventHandler;
         }
 
         public ImageView image;
         public String url;
         public Bitmap bitmap;
         public boolean cache;
+        public EventHandler eventHandler;
 
     }
 

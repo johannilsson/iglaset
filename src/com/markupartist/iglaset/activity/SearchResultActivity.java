@@ -16,6 +16,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -234,9 +235,9 @@ public class SearchResultActivity extends ListActivity implements
         case DIALOG_SEARCH_NETWORK_PROBLEM:
             return new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Ett fel intr√§ffade")
-                .setMessage("Kunde inte ansluta till servern. F√∂rs√∂k igen, eller Cancel f√∂r att g√• tillbaka till f√∂reg√•ende vy.")
-                .setPositiveButton("F√∂rs√∂k igen", new OnClickListener() {
+                .setTitle("Ett fel inträffade")
+                .setMessage("Kunde inte ansluta till servern. Försök igen, eller Cancel för att å tillbaka till föregående vy.")
+                .setPositiveButton("Försök igen", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
@@ -311,14 +312,16 @@ public class SearchResultActivity extends ListActivity implements
                 dvh.getOriginCountryView().setText(drink.getConcatenatedOrigin());
                 dvh.getAlcoholView().setText(drink.getAlcoholPercent());
 
-                ImageLoader.getInstance().load(dvh.getImageView(), drink.getThumbnailUrl(), true, R.drawable.noimage);
-                dvh.getImageView().setOnClickListener(new View.OnClickListener() {
+                ImageLoader.getInstance().load(dvh.getImageView(), drink.getThumbnailUrl(), true, R.drawable.noimage, null);
+                //dvh.getImageView().setOnClickListener(mImageClickListener);
+                dvh.getImageView().setOnClickListener(ImageViewerDialog.createListener(getContext(), drink));
+                /*dvh.getImageView().setOnClickListener(new View.OnClickListener() {
                 	@Override
         			public
                     void onClick(View view) {
                 		ViewItemImageActivity.showImage(getContext(), drink.getLargestImageUrl());
                 	}
-                });
+                });*/
             }
 
             return convertView;
@@ -347,6 +350,10 @@ public class SearchResultActivity extends ListActivity implements
         public void onSearchDrinkComplete(ArrayList<Drink> result) {
             append(result);
             setProgressBarIndeterminateVisibility(false);
+        }
+
+        public void onItemClick() {
+            Log.d("onItemClick", "");
         }
     }
 }

@@ -57,11 +57,7 @@
             </intent-filter>
         </activity>
 
-    <activity android:name=".activity.ViewItemImageActivity" android:theme="@android:style/Theme.Light">
-<intent-filter><action android:name="com.markupartist.iglaset.VIEW_ITEM_IMAGE"></action>
-<category android:name="android.intent.category.DEFAULT"></category>
-</intent-filter>
-</activity>
+        
 </application>
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
