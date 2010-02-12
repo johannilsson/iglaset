@@ -139,15 +139,7 @@ public class DrinkDetailActivity extends ListActivity {
         drinkRatingBar.setRating(Float.parseFloat(drink.getRating()));
 
         ImageView imageView = (ImageView) findViewById(R.id.drink_image);
-        final Context ctx = this;
-        imageView.setOnClickListener(new View.OnClickListener() {
-        	@Override
-			public
-            void onClick(View view) {
-        		ImageViewerDialog.showImage(ctx, drink.getLargestImageUrl());
-        	}
-        });
-        
+        imageView.setOnClickListener(ImageViewerDialog.createListener(this, drink));
         ImageLoader.getInstance().load(imageView, drink.getThumbnailUrl(), 
                 true, R.drawable.noimage, null);
         
