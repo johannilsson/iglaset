@@ -160,15 +160,17 @@ public class ImageLoader {
                 }
                 if (group.image != null) {
                     group.image.setImageBitmap(group.bitmap);
-                    
-                    if(null != group.eventHandler) {
-                    	group.eventHandler.onFinished();
-                    }
+                }
+                if(null != group.eventHandler) {
+                	group.eventHandler.onFinished();
                 }
             } else if (mMissing != null) {
                 if (group.image != null) {
                     group.image.setImageBitmap(mMissing);
                 }
+            }
+            else if(group.eventHandler != null) {
+            	group.eventHandler.onDownloadError();
             }
         }
         mThread = null;
