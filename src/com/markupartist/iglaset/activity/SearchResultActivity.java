@@ -236,7 +236,7 @@ public class SearchResultActivity extends ListActivity implements
             return new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Ett fel inträffade")
-                .setMessage("Kunde inte ansluta till servern. Försök igen, eller Cancel för att å tillbaka till föregående vy.")
+                .setMessage("Kunde inte ansluta till servern. Försök igen, eller Cancel för att gå tillbaka till föregående vy.")
                 .setPositiveButton("Försök igen", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -313,15 +313,7 @@ public class SearchResultActivity extends ListActivity implements
                 dvh.getAlcoholView().setText(drink.getAlcoholPercent());
 
                 ImageLoader.getInstance().load(dvh.getImageView(), drink.getThumbnailUrl(), true, R.drawable.noimage, null);
-                //dvh.getImageView().setOnClickListener(mImageClickListener);
                 dvh.getImageView().setOnClickListener(ImageViewerDialog.createListener(getContext(), drink));
-                /*dvh.getImageView().setOnClickListener(new View.OnClickListener() {
-                	@Override
-        			public
-                    void onClick(View view) {
-                		ViewItemImageActivity.showImage(getContext(), drink.getLargestImageUrl());
-                	}
-                });*/
             }
 
             return convertView;

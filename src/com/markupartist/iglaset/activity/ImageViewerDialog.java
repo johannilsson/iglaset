@@ -1,7 +1,9 @@
 package com.markupartist.iglaset.activity;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -15,9 +17,11 @@ public class ImageViewerDialog extends Dialog implements ImageLoader.EventHandle
 
 	private ImageView imageView;
 	private ProgressBar progressBar;
+	private String url;
 	
 	public ImageViewerDialog(Context context, String url) {
 		super(context);
+		this.url = url;
 
     	setCanceledOnTouchOutside(true);
     	requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -27,7 +31,7 @@ public class ImageViewerDialog extends Dialog implements ImageLoader.EventHandle
     	imageView.setOnClickListener(this);
     	progressBar = (ProgressBar) findViewById(R.id.progress_bar);
     	
-    	ImageLoader.getInstance().load(imageView, url, true, this);
+    	loadImage(this.url);
 	}
     
     public static View.OnClickListener createListener(final Context ctx, final Drink drink) {
@@ -39,11 +43,32 @@ public class ImageViewerDialog extends Dialog implements ImageLoader.EventHandle
 			}
 		};
     }
+    
+    private void loadImage(String url) {
+    	show();
+    	ImageLoader.getInstance().load(imageView, url, true, this);
+    }
 
 	@Override
 	public void onDownloadError() {
-		// TODO Auto-generated method stub
+		dismiss();
 		
+		new AlertDialog.Builder(getContext())
+        .setIcon(android.R.drawable.ic_dialog_alert)
+        .setTitle("Ett fel inträffade")
+        .setMessage("Kunde inte ansluta till servern. Försök igen, eller Cancel för att gå tillbaka till föregående vy.")
+        .setPositiveButton("Försök igen", new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            	ImageViewerDialog viewerDialog = ImageViewerDialog.this;
+            	viewerDialog.loadImage(viewerDialog.url);
+            }
+        }).setNegativeButton(getContext().getText(android.R.string.cancel), new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                dismiss();
+            }
+        }).create().show();
 	}
 
 	@Override
