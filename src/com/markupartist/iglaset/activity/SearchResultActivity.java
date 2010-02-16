@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -46,7 +45,6 @@ public class SearchResultActivity extends ListActivity implements
 
     static final String EXTRA_SEARCH_BARCODE = "com.markupartist.iglaset.search.barcode";
     static final String EXTRA_SEARCH_CATEGORY_ID = "com.markupartist.iglaset.search.categoryId";
-    static final int DIALOG_SEARCH_NETWORK_PROBLEM = 0;
     static final String TAG = "SearchResultActivity";
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
@@ -226,34 +224,32 @@ public class SearchResultActivity extends ListActivity implements
     @Override
     public void onSearchDrinkError(Exception exception) {
         setProgressBarIndeterminateVisibility(false);
-        showDialog(DIALOG_SEARCH_NETWORK_PROBLEM);
+        showDialog(DialogFactory.DIALOG_SEARCH_NETWORK_PROBLEM);
     }
 
     @Override
     protected Dialog onCreateDialog(int id) {
         switch(id) {
-        case DIALOG_SEARCH_NETWORK_PROBLEM:
-            return new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Ett fel inträffade")
-                .setMessage("Kunde inte ansluta till servern. Försök igen, eller Cancel för att gå tillbaka till föregående vy.")
-                .setPositiveButton("Försök igen", new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
-                        searchDrinksTask.setSearchDrinkCompletedListener(SearchResultActivity.this);
-                        searchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
-                        searchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
-                        searchDrinksTask.execute(sSearchCriteria);
-                    }
-                })
-                .setNegativeButton(getText(android.R.string.cancel), new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        finish();
-                    }
-                })
-                .create();
+        case DialogFactory.DIALOG_SEARCH_NETWORK_PROBLEM:
+        	return DialogFactory.createNetworkProblemDialog(
+        			this,
+        			new OnClickListener() {
+		                @Override
+		                public void onClick(DialogInterface dialog, int which) {
+		                	switch(which) {
+		                	case Dialog.BUTTON_POSITIVE:
+			                    SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
+			                    searchDrinksTask.setSearchDrinkCompletedListener(SearchResultActivity.this);
+			                    searchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
+			                    searchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
+			                    searchDrinksTask.execute(sSearchCriteria);
+			                    break;
+		                	case Dialog.BUTTON_NEGATIVE:
+		                		finish();
+		                		break;
+		                	}
+		                }
+		             });
         }
         return null;
     }
@@ -313,7 +309,7 @@ public class SearchResultActivity extends ListActivity implements
                 dvh.getAlcoholView().setText(drink.getAlcoholPercent());
 
                 ImageLoader.getInstance().load(dvh.getImageView(), drink.getThumbnailUrl(), true, R.drawable.noimage, null);
-                dvh.getImageView().setOnClickListener(ImageViewerDialog.createListener(getContext(), drink));
+                dvh.getImageView().setOnClickListener(DrinkImageViewerDialog.createListener(getContext(), drink));
             }
 
             return convertView;
