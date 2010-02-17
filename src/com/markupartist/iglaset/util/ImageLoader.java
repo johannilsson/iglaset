@@ -1,6 +1,5 @@
 package com.markupartist.iglaset.util;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
