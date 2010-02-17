@@ -1,5 +1,7 @@
 package com.markupartist.iglaset.activity;
 
+import java.io.IOException;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -19,7 +21,6 @@ import android.widget.Toast;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.AuthenticationException;
-import com.markupartist.iglaset.provider.AuthStore.ExpiringToken;
 import com.markupartist.iglaset.util.Tracker;
 
 public class BasicPreferenceActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
@@ -118,7 +119,7 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
      * Update the token that is given after authentication.
      * @param token the token retrieved after authentication
      */
-    private void userAuthenticated(ExpiringToken token) {        
+    private void userAuthenticated() {        
         Toast.makeText(BasicPreferenceActivity.this, 
                 getText(R.string.login_success), Toast.LENGTH_SHORT).show();
     }
@@ -167,29 +168,30 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
     /**
      * Task that authenticates a user.
      */
-    private class AuthUserTask extends AsyncTask<Context, Void, ExpiringToken> {
+    private class AuthUserTask extends AsyncTask<Context, Void, Boolean> {
         private Exception mException;
 
         @Override
-        protected ExpiringToken doInBackground(Context... params) {
+        protected Boolean doInBackground(Context... params) {
             publishProgress();
 
-            ExpiringToken token = null;
             try {
-                token = AuthStore.getInstance().authenticateUser(params[0]);
+                AuthStore.getInstance().authenticateUser(params[0]);
             } catch (AuthenticationException e) {
                 mException = e;
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                mException = e;
             }
-
-            return token;
+            return true;
         }
 
         @Override
-        protected void onPostExecute(ExpiringToken result) {
-            if (mException != null || result == null) {
+        protected void onPostExecute(Boolean result) {
+            if (mException != null) {
                 userAuthenticationFailed(mException);
             } else {
-                userAuthenticated(result);
+                userAuthenticated();
             }
         }
     }
