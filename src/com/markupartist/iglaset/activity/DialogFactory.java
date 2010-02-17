@@ -30,9 +30,9 @@ public class DialogFactory {
 			OnClickListener onClickListener) {
         return new AlertDialog.Builder(ctx)
         .setIcon(android.R.drawable.ic_dialog_alert)
-        .setTitle("Ett fel inträffade")
-        .setMessage("Kunde inte ansluta till servern. Försök igen, eller Cancel för att gå tillbaka till föregående vy.")
-        .setPositiveButton("Försök igen", onClickListener)
+        .setTitle("Ett fel intr√§ffade")
+        .setMessage("Kunde inte ansluta till servern. F√∂rs√∂k igen, eller Cancel f√∂r att g√• tillbaka till f√∂reg√•ende vy.")
+        .setPositiveButton("F√∂rs√∂k igen", onClickListener)
         .setNegativeButton(ctx.getText(android.R.string.cancel), onClickListener)
         .create();
 	}
