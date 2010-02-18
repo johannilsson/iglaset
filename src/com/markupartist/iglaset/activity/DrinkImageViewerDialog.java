@@ -1,7 +1,7 @@
 package com.markupartist.iglaset.activity;
 
+import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
 import android.view.Window;
@@ -20,7 +20,7 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
 
 	private ImageView imageView;
 	private ProgressBar progressBar;
-	private String url;
+	private Drink drink;
 
 	/**
 	 * DrinkImageViewerDialog constructor. Creates the dialog and starts downloading
@@ -30,9 +30,9 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
 	 * immediately, otherwise it will have to be started manually later via
 	 * DrinkImageViewerDialog.loadImage.
 	 */
-	public DrinkImageViewerDialog(Context context, String url) {
-		super(context);
-		this.url = url;
+	public DrinkImageViewerDialog(Activity activity, Drink drink) {
+		super(activity);
+		this.drink = drink;
 
     	setCanceledOnTouchOutside(true);
     	requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -42,26 +42,15 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
     	imageView.setOnClickListener(this);
     	progressBar = (ProgressBar) findViewById(R.id.progress_bar);
     	
-    	if(null != this.url) {
-    		loadImage(this.url);
+    	if(null != this.drink) {
+    		loadImage(this.drink.getLargestImageUrl());
     	}
 	}
-    
-    /**
-     * Convenience method for creating an OnClickListener which will create and
-     * display a new DrinkImageViewerDialog object.
-     * @param ctx Calling context.
-     * @param drink Drink object containing the image to show.
-     * @return OnClickListener object.
-     */
-    public static View.OnClickListener createListener(final Context ctx, final Drink drink) {
-    	return new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new DrinkImageViewerDialog(ctx, drink.getLargestImageUrl()).show();
-			}
-		};
-    }
+	
+	public void setDrink(Drink drink) {
+		this.drink = drink;
+		loadImage(drink.getLargestImageUrl());
+	}
     
     /**
      * Tells the ImageLoader helper to start loading a URL into this view.
@@ -79,7 +68,7 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
             	switch(which) {
             	case Dialog.BUTTON_POSITIVE:
             		DrinkImageViewerDialog viewerDialog = DrinkImageViewerDialog.this;
-            		viewerDialog.loadImage(viewerDialog.url);
+            		viewerDialog.loadImage(viewerDialog.drink.getLargestImageUrl());
             		break;
             	case Dialog.BUTTON_NEGATIVE:
             		dismiss();
@@ -89,7 +78,7 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
             }
 		};
 		
-		DialogFactory.createNetworkProblemDialog(getContext(), onClickListener).show();
+		DialogFactory.createNetworkProblemDialog(getOwnerActivity(), onClickListener).show();
 	}
 
 	@Override

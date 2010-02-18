@@ -78,6 +78,10 @@ public class DrinkDetailActivity extends ListActivity {
      */
     private static final int DIALOG_ADD_BARCODE_MANUAL = 4;
     /**
+     * The id for showing the drink image dialog.
+     */
+    private static final int DIALOG_SHOW_DRINK_IMAGE = 5;
+    /**
      * The request code for indicating that settings has been changed
      */
     protected static final int REQUEST_CODE_SETTINGS_CHANGED = 0;
@@ -139,7 +143,12 @@ public class DrinkDetailActivity extends ListActivity {
         drinkRatingBar.setRating(Float.parseFloat(drink.getRating()));
 
         ImageView imageView = (ImageView) findViewById(R.id.drink_image);
-        imageView.setOnClickListener(DrinkImageViewerDialog.createListener(this, drink));
+        imageView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDialog(DIALOG_SHOW_DRINK_IMAGE);
+			}
+		});
         ImageLoader.getInstance().load(imageView, drink.getThumbnailUrl(), 
                 true, R.drawable.noimage, null);
         
@@ -524,10 +533,12 @@ public class DrinkDetailActivity extends ListActivity {
                     })
                     .setNegativeButton("Cancel", null)
                     .create();
+            case DIALOG_SHOW_DRINK_IMAGE:
+            	return new DrinkImageViewerDialog(this, sDrink);
         }
         return null;
     }
-
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
