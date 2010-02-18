@@ -45,11 +45,27 @@ public class SearchResultActivity extends ListActivity implements
 
     static final String EXTRA_SEARCH_BARCODE = "com.markupartist.iglaset.search.barcode";
     static final String EXTRA_SEARCH_CATEGORY_ID = "com.markupartist.iglaset.search.categoryId";
+    static final int DIALOG_SEARCH_NETWORK_PROBLEM = 0;
+    static final int DIALOG_DRINK_IMAGE = 1;
     static final String TAG = "SearchResultActivity";
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
     private String mToken;
     private static SearchCriteria sSearchCriteria;
+    
+    /**
+     * Common click listener used for all the images in the list. Note that
+     * each image will have to come with its corresponding drink attached
+     * as setTag. This will then be extracted in mImageClickListener.onClick.
+     */
+    private View.OnClickListener mImageClickListener;
+    
+    /**
+     * Placeholder for the drink clicked on in the list. This will be set
+     * in mImageClickListener's onClick event and will later be used to
+     * create the drink image viewer dialog.
+     */
+    private Drink mClickedDrink;
 
     /** Called when the activity is first created. */
     @Override
@@ -59,9 +75,18 @@ public class SearchResultActivity extends ListActivity implements
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         setContentView(R.layout.search_result);
-
+        
         mToken = AuthStore.getInstance().getStoredToken(this);
 
+        mImageClickListener = new View.OnClickListener() {
+    		
+    		@Override
+    		public void onClick(View v) {
+    			mClickedDrink = (Drink) v.getTag();
+    			showDialog(DIALOG_DRINK_IMAGE);
+    		}
+    	};
+        
         // Check if already have some data, used if screen is rotated.
         @SuppressWarnings("unchecked")
         final ArrayList<Drink> data = (ArrayList<Drink>) getLastNonConfigurationInstance();
@@ -224,13 +249,13 @@ public class SearchResultActivity extends ListActivity implements
     @Override
     public void onSearchDrinkError(Exception exception) {
         setProgressBarIndeterminateVisibility(false);
-        showDialog(DialogFactory.DIALOG_SEARCH_NETWORK_PROBLEM);
+        showDialog(DIALOG_SEARCH_NETWORK_PROBLEM);
     }
 
     @Override
     protected Dialog onCreateDialog(int id) {
         switch(id) {
-        case DialogFactory.DIALOG_SEARCH_NETWORK_PROBLEM:
+        case DIALOG_SEARCH_NETWORK_PROBLEM:
         	return DialogFactory.createNetworkProblemDialog(
         			this,
         			new OnClickListener() {
@@ -250,8 +275,19 @@ public class SearchResultActivity extends ListActivity implements
 		                	}
 		                }
 		             });
+        
+        case DIALOG_DRINK_IMAGE:
+        	return new DrinkImageViewerDialog(this, mClickedDrink);
         }
         return null;
+    }
+    
+    protected void onPrepareDialog(int id, Dialog dialog) {
+    	switch(id) {
+    	case DIALOG_DRINK_IMAGE:
+    		DrinkImageViewerDialog imageDialog = (DrinkImageViewerDialog) dialog;
+    		imageDialog.setDrink(mClickedDrink);
+    	}
     }
 
     /**
@@ -309,7 +345,17 @@ public class SearchResultActivity extends ListActivity implements
                 dvh.getAlcoholView().setText(drink.getAlcoholPercent());
 
                 ImageLoader.getInstance().load(dvh.getImageView(), drink.getThumbnailUrl(), true, R.drawable.noimage, null);
-                dvh.getImageView().setOnClickListener(DrinkImageViewerDialog.createListener(getContext(), drink));
+                dvh.getImageView().setTag(drink);
+                dvh.getImageView().setOnClickListener(mImageClickListener);
+                /*dvh.getImageView().setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						//DrinkImageViewerDialog dialog = new DrinkImageViewerDialog(SearchResultActivity.this, drink);
+						//dialog.setOwnerActivity(SearchResultActivity.this);
+						//dialog.show();
+						showDialog(DIALOG_DRINK_IMAGE);
+					}
+                });*/
             }
 
             return convertView;
