@@ -29,8 +29,4 @@ public class CommentsStore {
         }
         return comments;
     }
-
-    public void addComment(String comment, Authenticate authCallback) {
-        
-    }
 }
