@@ -347,15 +347,6 @@ public class SearchResultActivity extends ListActivity implements
                 ImageLoader.getInstance().load(dvh.getImageView(), drink.getThumbnailUrl(), true, R.drawable.noimage, null);
                 dvh.getImageView().setTag(drink);
                 dvh.getImageView().setOnClickListener(mImageClickListener);
-                /*dvh.getImageView().setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						//DrinkImageViewerDialog dialog = new DrinkImageViewerDialog(SearchResultActivity.this, drink);
-						//dialog.setOwnerActivity(SearchResultActivity.this);
-						//dialog.show();
-						showDialog(DIALOG_DRINK_IMAGE);
-					}
-                });*/
             }
 
             return convertView;
