@@ -45,6 +45,7 @@ public class SearchResultActivity extends ListActivity implements
 
     static final String EXTRA_SEARCH_BARCODE = "com.markupartist.iglaset.search.barcode";
     static final String EXTRA_SEARCH_CATEGORY_ID = "com.markupartist.iglaset.search.categoryId";
+    static final String EXTRA_CLICKED_DRINK = "com.markupartist.iglaset.search.clickedDrink";
     static final int DIALOG_SEARCH_NETWORK_PROBLEM = 0;
     static final int DIALOG_DRINK_IMAGE = 1;
     static final String TAG = "SearchResultActivity";
@@ -177,7 +178,16 @@ public class SearchResultActivity extends ListActivity implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if(null != mClickedDrink) {
+        	outState.putParcelable(EXTRA_CLICKED_DRINK, mClickedDrink);
+        }
         //Log.d(TAG, "onSaveInstanceState");
+    }
+    
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    	super.onRestoreInstanceState(savedInstanceState);
+    	mClickedDrink = savedInstanceState.getParcelable(EXTRA_CLICKED_DRINK);
     }
 
     private void initList(ArrayList<Drink> drinks) {
