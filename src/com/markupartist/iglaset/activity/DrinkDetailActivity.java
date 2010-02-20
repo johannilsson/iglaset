@@ -121,11 +121,7 @@ public class DrinkDetailActivity extends ListActivity {
         }
 
         TextView nameTextView = (TextView) findViewById(R.id.drink_name);
-        if(drink.hasUserRating()) {
-        	Drawable icon = getResources().getDrawable(R.drawable.glass_icon);
-        	icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
-        	nameTextView.setCompoundDrawables(null, null, icon, null);
-        }
+        updateHasRatedIconInUi(drink.hasUserRating());
 
         String yearText = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
         nameTextView.setText(drink.getName() + yearText);
@@ -264,6 +260,7 @@ public class DrinkDetailActivity extends ListActivity {
 
     private void onUpdatedDrink(Drink drink) {
         updateUserRatingInUi(drink.getUserRating());
+        updateHasRatedIconInUi(drink.hasUserRating());
     }
 
     private void updateUserRatingInUi(float rating) {
@@ -272,6 +269,20 @@ public class DrinkDetailActivity extends ListActivity {
         if (userRatingBar != null) {
             userRatingBar.setRating(rating);
         }
+    }
+    
+    private void updateHasRatedIconInUi(Boolean hasRated) {
+    	Drawable icon = null;
+    	TextView nameTextView = (TextView) findViewById(R.id.drink_name);
+    	
+    	if(true == hasRated) {
+        	icon = getResources().getDrawable(R.drawable.glass_icon);
+        	icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
+        }
+    	
+    	if(null != nameTextView) {
+    		nameTextView.setCompoundDrawables(null, null, icon, null);
+    	}
     }
 
     /**
@@ -606,6 +617,9 @@ public class DrinkDetailActivity extends ListActivity {
         protected void onPostExecute(Float rating) {
             Toast.makeText(DrinkDetailActivity.this, getText(R.string.rating_added), Toast.LENGTH_SHORT).show();
             updateUserRatingInUi(rating);
+            
+            sDrink.setUserRating(rating);
+            updateHasRatedIconInUi(sDrink.hasUserRating());
         }
     }
 
