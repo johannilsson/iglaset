@@ -9,7 +9,7 @@
       android:layout_height="wrap_content"
       android:id="@+id/drink_image"
       android:adjustViewBounds="true"
-      android:scaleType="fitCenter">
+      android:scaleType="fitCenter" android:background="@android:color/white">
    </ImageView>
    <ProgressBar
       android:layout_width="wrap_content"
