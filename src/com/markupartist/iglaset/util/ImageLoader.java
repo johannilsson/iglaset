@@ -203,7 +203,6 @@ public class ImageLoader {
         public Group(ImageView image, String url, Bitmap bitmap, boolean cache, EventHandler eventHandler) {
             this.image = image;
             this.url = url;
-            //this.url = "hej";
             this.bitmap = bitmap;
             this.cache = cache;
             this.eventHandler = eventHandler;
@@ -248,8 +247,7 @@ public class ImageLoader {
                 out.flush();
                 final byte[] data = dataStream.toByteArray();
                 group.bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                
-               //group.bitmap = BitmapFactory.decodeStream(inStream);
+
                 inStream.close();
                 mConn.disconnect();
                 inStream = null;
