@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import com.markupartist.iglaset.provider.BarcodeStore;
 import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.DrinksStore;
+import com.markupartist.iglaset.provider.RatingSearchCriteria;
+import com.markupartist.iglaset.provider.RecommendationSearchCriteria;
 import com.markupartist.iglaset.provider.SearchCriteria;
 
 /**
@@ -27,9 +29,17 @@ public class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<
             if (searchCriteria.hasBarcode()) {
                 BarcodeStore barcodeStore = BarcodeStore.getInstance();
                 return barcodeStore.search(searchCriteria);
+            } else if (searchCriteria instanceof RecommendationSearchCriteria) {
+                DrinksStore drinksStore = DrinksStore.getInstance();
+                return drinksStore.findRecommendations(
+                        (RecommendationSearchCriteria) searchCriteria);
+            } else if (searchCriteria instanceof RatingSearchCriteria) {
+                DrinksStore drinksStore = DrinksStore.getInstance();
+                return drinksStore.findRatedDrinks(
+                        (RatingSearchCriteria) searchCriteria);
             } else {
                 DrinksStore drinksStore = DrinksStore.getInstance();
-                return drinksStore.searchDrinks(params[0]);
+                return drinksStore.searchDrinks(searchCriteria);
             }
         } catch (Exception e) {
             mCaughtException = e;

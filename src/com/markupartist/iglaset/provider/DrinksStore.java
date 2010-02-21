@@ -16,8 +16,14 @@ import com.markupartist.iglaset.util.HttpManager;
 public class DrinksStore {
     private static DrinksStore mInstance;
     private static String TAG = "DrinksStore";
-    private static String ARTICLES_BASE_URI = "http://api.iglaset.se/api/articles/xml/";
-    private static String RATE_BASE_URI = "http://api.iglaset.se/api/rate/";
+    private static String ARTICLES_BASE_URI =
+        "http://api.iglaset.se/api/articles/xml/";
+    private static String RATE_BASE_URI =
+        "http://api.iglaset.se/api/rate/";
+    private static String USER_RECOMMENDATIONS_URI =
+        "http://api.iglaset.se/api/user_recommendations/xml/";
+    private static String USER_RATINGS_URI =
+        "http://api.iglaset.se/api/user_ratings/xml/";
 
     private DrinksStore() {
     }
@@ -44,6 +50,53 @@ public class DrinksStore {
         return drinks;
     }
 
+    /**
+     * Fins recommendations for the user.
+     * @param searchCriteria the search criteria
+     * @return list of recommendations
+     * @throws IOException on connection problem
+     */
+    public ArrayList<Drink> findRecommendations(
+            RecommendationSearchCriteria searchCriteria)
+                throws IOException {
+        final ArrayList<Drink> drinks = new ArrayList<Drink>();
+
+        final HttpGet get = new HttpGet(USER_RECOMMENDATIONS_URI
+                + searchCriteria.getUserId() + "/"
+                + "?page=" + searchCriteria.getPage());
+        HttpEntity entity = null;
+
+        final HttpResponse response = HttpManager.execute(get);
+        entity = response.getEntity();
+        DrinksParser drinksParser = new DrinksParser();
+        drinksParser.parseDrinks(entity.getContent(), drinks);
+
+        return drinks;
+    }
+
+    /**
+     * Find all drinks that the user has rated.
+     * @param searchCriteria the search criteria
+     * @return list of rated drinks
+     * @throws IOException on connection problem
+     */
+    public ArrayList<Drink> findRatedDrinks(RatingSearchCriteria searchCriteria)
+            throws IOException {
+        final ArrayList<Drink> drinks = new ArrayList<Drink>();
+
+        final HttpGet get = new HttpGet(USER_RATINGS_URI
+                + searchCriteria.getUserId() + "/"
+                + "?page=" + searchCriteria.getPage());
+        HttpEntity entity = null;
+
+        final HttpResponse response = HttpManager.execute(get);
+        entity = response.getEntity();
+        DrinksParser drinksParser = new DrinksParser();
+        drinksParser.parseDrinks(entity.getContent(), drinks);
+
+        return drinks;
+    }
+    
     public Drink getDrink(int id) {
         return getDrink(id, null);
     }

@@ -83,7 +83,20 @@ public class CategoryActivity extends ListActivity {
             i.putExtra(SearchResultActivity.EXTRA_SEARCH_CATEGORY_ID, category.getId());
             startActivity(i);
         } else {
-            Log.d(TAG, "fix search for this...");
+            int sectionPosition = mSectionedAdapter.getSectionIndex(position);
+            Log.d(TAG, "index: " + sectionPosition);
+            switch (sectionPosition) {
+            case 0:
+                Intent recIntent = new Intent(this, SearchResultActivity.class);
+                recIntent.setAction(SearchResultActivity.ACTION_USER_RECOMMENDATIONS);
+                startActivity(recIntent);
+                return;
+            case 1:
+                Intent ratingIntent = new Intent(this, SearchResultActivity.class);
+                ratingIntent.setAction(SearchResultActivity.ACTION_USER_RATINGS);
+                startActivity(ratingIntent);
+                return;
+            }
         }
     }
 
