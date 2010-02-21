@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dip"
+    android:paddingBottom="10dip"
+    >
+    <TableRow>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_text_dot"
+        android:paddingTop="8dip"
+        android:layout_marginRight="5dip"
+        />
+    <TextView   
+        android:id="@+id/start_list_row"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:paddingTop="5dip"
+        android:text="Sök"
+        />
+    </TableRow>
+</TableLayout>
+<!-- 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_text_dot"    
+        />
+	<TextView	
+	    android:id="@+id/start_list_row"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textColor="?android:attr/textColorPrimary"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:paddingTop="5dip"
+	    android:text="Sök"
+		/>
+</LinearLayout>
+ -->

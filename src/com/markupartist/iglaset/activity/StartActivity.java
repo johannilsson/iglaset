@@ -3,8 +3,10 @@ package com.markupartist.iglaset.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -15,17 +17,22 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.markupartist.iglaset.R;
+import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.util.Tracker;
 
-public class StartActivity extends Activity {
-    private static final int DIALOG_ABOUT = 0;
+public class StartActivity extends ListActivity {
     private static final String TAG = "StartActivity";
+
+    private static final int DIALOG_ABOUT = 0;
+    private static final int DIALOG_NOT_AUTHENTICATED = 1;
 
     /** Called when the activity is first created. */
     @Override
@@ -33,36 +40,57 @@ public class StartActivity extends Activity {
         super.onCreate(savedInstanceState);
         Tracker.getInstance().start(this).trackPageView("start");
 
-        setContentView(R.layout.main);
+        setContentView(R.layout.start);
 
-        final Button searchButton = (Button) findViewById(R.id.btn_search);
-        searchButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Tracker.getInstance().trackEvent(searchButton);
-                onSearchRequested();
-            }
-        });
+        ArrayAdapter<String> adapter =
+            new ArrayAdapter<String>(this, R.layout.start_list_row, R.id.start_list_row);
+        adapter.add("Sök");
+        adapter.add("Scanna");
+        adapter.add("Kategorier");
+        adapter.add("Rekommendationer");
+        adapter.add("Satta betyg");
 
-        final Button listButton = (Button) findViewById(R.id.btn_lists);
-        listButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Tracker.getInstance().trackEvent(listButton);
-                Intent i = new Intent(StartActivity.this, CategoryActivity.class);
-                startActivity(i);
-            }
-        });
-
-        final Button scanButton = (Button) findViewById(R.id.btn_scan);
-        scanButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Tracker.getInstance().trackEvent(scanButton);
-                IntentIntegrator.initiateScan(StartActivity.this);
-            }
-        });
+        setListAdapter(adapter);
     }
+
+    /*
+     * @see android.app.ListActivity#onListItemClick(android.widget.ListView, android.view.View, int, long)
+     */
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        switch (position) {
+        case 0:
+            onSearchRequested();
+            break;
+        case 1:
+            IntentIntegrator.initiateScan(StartActivity.this);
+            break;
+        case 2:
+            Intent i = new Intent(StartActivity.this, CategoryActivity.class);
+            startActivity(i);
+            break;
+        case 3:
+            if (AuthStore.getInstance().hasAuthentication(this)) {
+                Intent recIntent = new Intent(this, SearchResultActivity.class);
+                recIntent.setAction(SearchResultActivity.ACTION_USER_RECOMMENDATIONS);
+                startActivity(recIntent);
+            } else {
+                showDialog(DIALOG_NOT_AUTHENTICATED);
+            }
+            break;
+        case 4:
+            if (AuthStore.getInstance().hasAuthentication(this)) {
+                Intent ratingIntent = new Intent(this, SearchResultActivity.class);
+                ratingIntent.setAction(SearchResultActivity.ACTION_USER_RATINGS);
+                startActivity(ratingIntent);
+            } else {
+                showDialog(DIALOG_NOT_AUTHENTICATED);
+            }
+            break;
+        }
+    }
+
+
 
     @Override
     public boolean onSearchRequested() {
@@ -95,6 +123,20 @@ public class StartActivity extends Activity {
     @Override
     protected Dialog onCreateDialog(int id) {
         switch(id) {
+        case DIALOG_NOT_AUTHENTICATED:
+            return new AlertDialog.Builder(this)
+                .setTitle(getText(R.string.not_logged_in))
+                .setMessage(R.string.login_to_proceed_message)
+                .setPositiveButton("Logga in", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent prefIntent =
+                            new Intent(StartActivity.this, BasicPreferenceActivity.class);
+                        startActivity(prefIntent);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
         case DIALOG_ABOUT:
             PackageManager pm = getPackageManager();
             String version = "";
