@@ -33,8 +33,12 @@ import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkCompletedLi
 import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkErrorListener;
 import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkProgressUpdatedListener;
 import com.markupartist.iglaset.provider.AuthStore;
+import com.markupartist.iglaset.provider.AuthenticationException;
 import com.markupartist.iglaset.provider.Drink;
+import com.markupartist.iglaset.provider.RatingSearchCriteria;
+import com.markupartist.iglaset.provider.RecommendationSearchCriteria;
 import com.markupartist.iglaset.provider.SearchCriteria;
+import com.markupartist.iglaset.provider.AuthStore.Authentication;
 import com.markupartist.iglaset.util.ImageLoader;
 import com.markupartist.iglaset.util.Tracker;
 
@@ -42,10 +46,24 @@ public class SearchResultActivity extends ListActivity implements
         SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener, SearchDrinkErrorListener {
     //static final String ACTION_CATEGORY_SEARCH = "com.markupartist.iglaset.action.CATEGORY";
     //static final String ACTION_BARCODE_SEARCH = "com.markupartist.iglaset.action.BARCODE";
+    /**
+     * Action for triggering a search for user recommendations.
+     */
+    static final String ACTION_USER_RECOMMENDATIONS =
+        "com.markupartist.iglaset.action.USER_RECOMMENDATIONS";
+    /**
+     * Actions for triggering a search for rated articles.
+     */
+    static final String ACTION_USER_RATINGS =
+        "com.markupartist.iglaset.action.USER_RATINGS";
 
-    static final String EXTRA_SEARCH_BARCODE = "com.markupartist.iglaset.search.barcode";
-    static final String EXTRA_SEARCH_CATEGORY_ID = "com.markupartist.iglaset.search.categoryId";
-    static final String EXTRA_CLICKED_DRINK = "com.markupartist.iglaset.search.clickedDrink";
+    static final String EXTRA_SEARCH_BARCODE =
+        "com.markupartist.iglaset.search.barcode";
+    static final String EXTRA_SEARCH_CATEGORY_ID =
+        "com.markupartist.iglaset.search.categoryId";
+    static final String EXTRA_CLICKED_DRINK =
+        "com.markupartist.iglaset.search.clickedDrink";
+
     static final int DIALOG_SEARCH_NETWORK_PROBLEM = 0;
     static final int DIALOG_DRINK_IMAGE = 1;
     static final String TAG = "SearchResultActivity";
@@ -76,8 +94,16 @@ public class SearchResultActivity extends ListActivity implements
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         setContentView(R.layout.search_result);
-        
-        mToken = AuthStore.getInstance().getStoredToken(this);
+
+        Authentication auth = null;
+        try {
+            auth = AuthStore.getInstance().getAuthentication(this);
+            mToken = auth.token;
+        } catch (AuthenticationException e) {
+            Log.d(TAG, "User not authenticated...");
+        }
+
+        //mToken = AuthStore.getInstance().getStoredToken(this);
 
         mImageClickListener = new View.OnClickListener() {
     		
@@ -99,9 +125,10 @@ public class SearchResultActivity extends ListActivity implements
 
             SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
             searchDrinksTask.setSearchDrinkCompletedListener(this);
-            searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
             searchDrinksTask.setSearchDrinkErrorListener(this);
 
+            Log.d(TAG, "action: " + queryAction);
+            
             if (Intent.ACTION_SEARCH.equals(queryAction)) {
                 final String queryString = queryIntent.getStringExtra(SearchManager.QUERY);
                 // Record the query string in the recent queries suggestions provider.
@@ -110,6 +137,7 @@ public class SearchResultActivity extends ListActivity implements
                 suggestions.saveRecentQuery(queryString, null);
 
                 String searchingText = searchText.getText() + " \"" + queryString + "\"";
+                searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchText.setText(searchingText);
                 setTitle(searchingText);
 
@@ -145,6 +173,24 @@ public class SearchResultActivity extends ListActivity implements
                 searchDrinksTask.execute(sSearchCriteria);
 
                 Tracker.getInstance().trackPageView("search result barcode");
+            } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
+                setTitle(R.string.recommendations_label);
+
+                sSearchCriteria = new RecommendationSearchCriteria();
+                ((RecommendationSearchCriteria) sSearchCriteria).setUserId(
+                        auth.userId);
+                sSearchCriteria.setToken(mToken);
+
+                searchDrinksTask.execute(sSearchCriteria); 
+            } else if (ACTION_USER_RATINGS.equals(queryAction)) {
+                setTitle(R.string.rated_articles_label);
+
+                sSearchCriteria = new RatingSearchCriteria();
+                ((RatingSearchCriteria) sSearchCriteria).setUserId(
+                        auth.userId);
+                sSearchCriteria.setToken(mToken);
+
+                searchDrinksTask.execute(sSearchCriteria); 
             }
         } else {
             initList(data);
@@ -199,9 +245,8 @@ public class SearchResultActivity extends ListActivity implements
         }
 
         if (!TextUtils.isEmpty(sSearchCriteria.getQuery())) {
-            setTitle(getText(R.string.search_results) + " \"" + sSearchCriteria.getQuery() + "\"");
-        } else {
-            setTitle(getText(R.string.search_results));
+            setTitle(getText(R.string.search_results)
+                    + " \"" + sSearchCriteria.getQuery() + "\"");
         }
 
         LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);

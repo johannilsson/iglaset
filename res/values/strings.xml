@@ -41,4 +41,6 @@
     <string name="donate">Donera</string>
     <string name="feedback">Feedback</string>
     <string name="send_email">Skicka e-post...</string>
+    <string name="recommendations_label">Rekommendationer</string>
+    <string name="rated_articles_label">Betygsatta artiklar</string>
 </resources>

@@ -22,6 +22,8 @@
                   android:theme="@android:style/Theme.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="com.markupartist.iglaset.action.USER_RECOMMENDATIONS" />
+                <action android:name="com.markupartist.iglaset.action.USER_RATINGS" />
                 <category android:name="android.intent.category.SAMPLE_CODE" />
             </intent-filter>
             <!-- This intent-filter identifies this activity as "searchable" -->
