@@ -86,7 +86,8 @@ public class DrinksStore {
 
         final HttpGet get = new HttpGet(USER_RATINGS_URI
                 + searchCriteria.getUserId() + "/"
-                + "?page=" + searchCriteria.getPage());
+                + "?page=" + searchCriteria.getPage()
+                + "&token=" + searchCriteria.getToken());
         HttpEntity entity = null;
 
         final HttpResponse response = HttpManager.execute(get);
