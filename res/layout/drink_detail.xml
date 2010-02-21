@@ -20,11 +20,7 @@
         <ImageView 
             android:id="@+id/drink_image"
             android:src="@drawable/noimage"
-            android:layout_width="50px"
-            android:layout_height="50px"
-            android:layout_gravity="center_vertical"
-            android:paddingRight="5dip"
-        />
+            android:background="@drawable/border" android:layout_marginRight="5dip" android:layout_width="54px" android:layout_height="54px" android:layout_gravity="center_vertical|center_horizontal"/>
             <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
