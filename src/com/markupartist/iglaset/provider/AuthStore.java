@@ -105,6 +105,18 @@ public class AuthStore {
         return sharedPreferences.getString("preference_token", null);
     }
 
+    public boolean hasAuthentication(Context context) {
+        try {
+            Authentication authentication = getAuthentication(context);
+            if (authentication.looksValid()) {
+                return true;
+            }
+        } catch (AuthenticationException e) {
+            ; // No auth or failed to request one.
+        }
+        return false;
+    }
+    
     public Authentication getAuthentication(Context context)
             throws AuthenticationException {
         SharedPreferences sharedPreferences =
