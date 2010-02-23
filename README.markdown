@@ -15,7 +15,6 @@ This is found under Android Tools.
 TODO and wish list
 ------------------
 
-* Comment on drinks
 * Shopping list
 * Find a systembolag near you
 * Integration with [Systembevakningsagenten](http://agent.nocrew.org/)
