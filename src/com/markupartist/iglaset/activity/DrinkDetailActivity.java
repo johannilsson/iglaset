@@ -20,7 +20,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.Time;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -81,6 +84,10 @@ public class DrinkDetailActivity extends ListActivity {
      * The id for showing the drink image dialog.
      */
     private static final int DIALOG_SHOW_DRINK_IMAGE = 5;
+    /**
+     * The id for showing the comment add dialog.
+     */
+    private static final int DIALOG_ADD_COMMENT = 6;
     /**
      * The request code for indicating that settings has been changed
      */
@@ -167,7 +174,7 @@ public class DrinkDetailActivity extends ListActivity {
         // This is temporary till we have fixed a proper comments adapter. 
         mSectionedAdapter.addSection(2, (String) getText(R.string.comments), 
                 createLoadingAdapter(getText(R.string.loading_comments)));
-
+        
         // Check if already have some data, used if screen is rotated.
         @SuppressWarnings("unchecked")
         final ArrayList<Comment> comments = (ArrayList<Comment>) getLastNonConfigurationInstance();
@@ -272,15 +279,15 @@ public class DrinkDetailActivity extends ListActivity {
     }
     
     private void updateHasRatedIconInUi(Boolean hasRated) {
-    	Drawable icon = null;
     	TextView nameTextView = (TextView) findViewById(R.id.drink_name);
-    	
-    	if(true == hasRated) {
-        	icon = getResources().getDrawable(R.drawable.glass_icon);
-        	icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
-        }
-    	
     	if(null != nameTextView) {
+        	Drawable icon = null;
+
+	    	if(true == hasRated) {
+	        	icon = getResources().getDrawable(R.drawable.glass_icon);
+	        	icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
+	    	}
+	    	
     		nameTextView.setCompoundDrawables(null, null, icon, null);
     	}
     }
@@ -293,9 +300,10 @@ public class DrinkDetailActivity extends ListActivity {
         // Save the result to return it from onRetainNonConfigurationInstance.
         mComments = comments;
 
+        ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+
         if (comments.isEmpty()) {
-            ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-            Map<String, Object> map = new HashMap<String, Object>();
+        	Map<String, Object> map = new HashMap<String, Object>();
             map.put("text", getText(R.string.no_comments));
             list.add(map);
 
@@ -307,9 +315,8 @@ public class DrinkDetailActivity extends ListActivity {
                     }
             );
         } else {
-            ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
             for (Comment comment : comments) {
-                Map<String, Object> map = new HashMap<String, Object>();
+            	Map<String, Object> map = new HashMap<String, Object>();
                 map.put("nickname", comment.getNickname());
                 map.put("created", comment.getCreated());
                 map.put("comment", comment.getComment());
@@ -324,7 +331,7 @@ public class DrinkDetailActivity extends ListActivity {
                         R.id.comment_nickname,
                         R.id.comment_created, 
                         R.id.comment_comment,
-                        R.id.comment_rating
+                        R.id.comment_rating,
                     }
             );
 
@@ -389,11 +396,7 @@ public class DrinkDetailActivity extends ListActivity {
                 startActivity(browserIntent);
             }
         } else if (section.adapter instanceof UserRatingAdapter) {
-            if (mToken != null) {
-                showDialog(DIALOG_RATE);
-            } else {
-                showDialog(DIALOG_NOT_AUTHENTICATED);
-            }
+        	tryShowAuthenticatedDialog(DIALOG_RATE);
         }
     }
 
@@ -407,6 +410,9 @@ public class DrinkDetailActivity extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu_drink_detail, menu);
+        
+        //TODO is this ("Search") really needed?
+        menu.removeItem(4);
         return true;
     }
 
@@ -427,23 +433,32 @@ public class DrinkDetailActivity extends ListActivity {
                 onSearchRequested();
                 return true;
             case R.id.menu_rate:
-                if (mToken != null) {
-                    showDialog(DIALOG_RATE);
-                } else {
-                    showDialog(DIALOG_NOT_AUTHENTICATED);
-                }
+            	tryShowAuthenticatedDialog(DIALOG_RATE);
                 return true;
             case R.id.menu_scan:
-                if (mToken != null) {
-                    showDialog(DIALOG_CHOOSE_ADD_BARCODE_METHOD);
-                } else {
-                    showDialog(DIALOG_NOT_AUTHENTICATED);                    
-                }
+            	tryShowAuthenticatedDialog(DIALOG_CHOOSE_ADD_BARCODE_METHOD);
                 return true;
+            case R.id.menu_add_comment:
+            	tryShowAuthenticatedDialog(DIALOG_ADD_COMMENT);
+            	return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Try to show a dialog which requires that the user is logged in. If the
+     * user is logged in then the specified dialog will be shown, otherwise the
+     * standard authentication (DIALOG_NOT_AUTHENTICATED) dialog will be shown.
+     * @param dialog
+     */
+    private void tryShowAuthenticatedDialog(int dialog) {
+    	if(null != mToken) {
+    		showDialog(dialog);
+    	} else {
+    		showDialog(DIALOG_NOT_AUTHENTICATED);
+    	}
+    }
+    
     @Override
     protected Dialog onCreateDialog(int id) {
         switch(id) {
@@ -546,8 +561,52 @@ public class DrinkDetailActivity extends ListActivity {
                     .create();
             case DIALOG_SHOW_DRINK_IMAGE:
             	return new DrinkImageViewerDialog(this, sDrink);
+            case DIALOG_ADD_COMMENT:
+            	final View addCommentLayout = getLayoutInflater().inflate(R.layout.add_comment_dialog, null);
+            	final EditText commentText = (EditText) addCommentLayout.findViewById(R.id.add_comment_text);
+            	
+            	final AlertDialog dialog = new AlertDialog.Builder(this)
+            		.setTitle(R.string.add_comment)
+            		.setView(addCommentLayout)
+            		.setIcon(android.R.drawable.sym_action_chat)
+            		.setPositiveButton(android.R.string.ok, new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							new AddCommentTask().execute(commentText.getText().toString(), sDrink.getId(), mToken);
+						}
+            			
+            		})
+            		.setNegativeButton(android.R.string.cancel, null)
+            		.create();
+             	
+            	// Attach listener which will toggle the "Ok" button's activeness
+            	// based on if the text view is empty or not.
+            	commentText.addTextChangedListener(new TextWatcher() {
+            		@Override
+					public void afterTextChanged(Editable editable) {
+						View button = dialog.getButton(Dialog.BUTTON_POSITIVE);
+						button.setEnabled(editable.length() > 0);
+					}
+
+					@Override
+					public void beforeTextChanged(CharSequence text, int start, int count, int after) {}
+					@Override
+					public void onTextChanged(CharSequence text, int start, int before, int cout) {}
+            		 
+            	 });
+            	
+            	return dialog;
         }
         return null;
+    }
+    
+    @Override
+    protected void onPrepareDialog(final int id, final Dialog dialog) {
+    	switch(id) {
+    	case DIALOG_ADD_COMMENT:
+    		AlertDialog alert = (AlertDialog) dialog;
+    		alert.getButton(Dialog.BUTTON_POSITIVE).setEnabled(false);
+    	}
     }
     
     @Override
@@ -602,9 +661,7 @@ public class DrinkDetailActivity extends ListActivity {
         @Override
         protected Float doInBackground(Float... params) {
             publishProgress();
-
             DrinksStore.getInstance().rateDrink(sDrink, params[0], mToken);
-
             return params[0];
         }
 
@@ -621,6 +678,41 @@ public class DrinkDetailActivity extends ListActivity {
             sDrink.setUserRating(rating);
             updateHasRatedIconInUi(sDrink.hasUserRating());
         }
+    }
+    
+    /**
+     * @author marco
+     * Background task for adding a comment.
+     */
+    private class AddCommentTask extends AsyncTask<Object, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(Object... params) {
+			try {
+				return DrinksStore.getInstance().commentDrink(sDrink, (String) params[0], mToken);
+			} catch(IOException e) {
+				return false;
+			}
+		}
+    	
+		@Override
+		public void onProgressUpdate(Void... values) {
+			Toast.makeText(DrinkDetailActivity.this, getText(R.string.adding_comment), Toast.LENGTH_SHORT).show();
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean response) {
+			if(true == response) {
+				Toast.makeText(DrinkDetailActivity.this, R.string.comment_saved, Toast.LENGTH_SHORT).show();
+				
+				// TODO: We might want to inject the comment directly into the adapter,
+				// but just refresh all the comments for now.
+				new GetCommentsTask().execute(sDrink.getId());
+			} else {
+				// TODO: Show a retry/cancel here or maybe a better text than just "failed"?
+				Toast.makeText(DrinkDetailActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
+			}
+		}
     }
 
     /**
@@ -640,7 +732,7 @@ public class DrinkDetailActivity extends ListActivity {
 
         @Override
         public void onProgressUpdate(Void... values) {
-            Toast.makeText(DrinkDetailActivity.this, "Sparar streckkod", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DrinkDetailActivity.this, "Sparar streckkod...", Toast.LENGTH_SHORT).show();
         }
 
         @Override

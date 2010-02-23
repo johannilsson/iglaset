@@ -28,10 +28,11 @@ Changelog
 * NEXT
     * Fixed bug with some articles ended up on 404 page after clicked on "view
       on iglaset.se"
-    * Show icon that indicates if the user has rated an article (denravonska)
-    * If origin and origin country is the same just show one of them (denravonska) 
+    * Show icon that indicates if the user has rated an article
+    * If origin and origin country is the same just show one of them 
     * Drink images in lists and drink detail views are now clickable for a fullscreen
-      image view (denravonska)
+      image view
+    * Commenting support added
 
 * 1.2.3
     * Added a retry dialog for network problems for searches and for crowdsourcing

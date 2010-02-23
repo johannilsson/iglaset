@@ -1,22 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item 
         android:id="@+id/menu_rate"
-        android:title="@string/rate"
-        android:icon="@drawable/ic_menu_star"
-        />
-	<item 
-		android:id="@+id/menu_goto_iglaset"
-		android:title="@string/goto_iglaset"
-		android:icon="@drawable/ic_menu_goto"
-		/>
+        android:title="@string/rate" android:icon="@drawable/ic_menu_star"/>
+	<item android:id="@+id/menu_add_comment" android:title="@string/comment" android:icon="@drawable/ic_menu_start_conversation"></item>
     <item 
         android:id="@+id/menu_scan"
-        android:title="@string/update_barcode"
-        android:icon="@drawable/ic_menu_camera"
-        />
+        android:title="@string/update_barcode" android:icon="@drawable/ic_menu_camera"></item><item android:id="@+id/menu_goto_iglaset" android:title="@string/goto_iglaset" android:icon="@drawable/ic_menu_goto"></item>
     <item 
         android:id="@+id/menu_search"
-        android:title="@string/search_label"
-        android:icon="@drawable/ic_menu_search"
-        />
+        android:title="@string/search_label" android:icon="@drawable/ic_menu_search"></item>
+
 </menu>
