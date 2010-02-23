@@ -10,7 +10,7 @@
     <string name="search_results">Sökresultat</string>
     <string name="no_search_result">Sökningen gav inga träffar</string>
     <string name="packings">Förpackningar</string>
-    <string name="loading_comments">Hämtar kommentarer</string>
+    <string name="loading_comments">Hämtar kommentarer...</string>
     <string name="no_comments">Inga kommentarer än</string>
     <string name="comments">Kommentarer</string>
     <string name="about">Om</string>
@@ -26,7 +26,7 @@
     <string name="update_barcode">Scanna EAN till produkt</string>
     <string name="my_rating">Mitt betyg</string>
     <string name="add_rating">Sätt betyg</string>
-    <string name="adding_rating">Sätter betyg</string>
+    <string name="adding_rating">Sätter betyg...</string>
     <string name="rating_added">Betyg satt</string>
     <string name="not_logged_in">Ej inloggad</string>
     <string name="login_to_proceed_message">För att komma åt den här funktionen måste du först logga in.</string>
@@ -43,4 +43,10 @@
     <string name="send_email">Skicka e-post...</string>
     <string name="recommendations_label">Rekommendationer</string>
     <string name="rated_articles_label">Betygsatta artiklar</string>
+    <string name="comment">Kommentera</string>
+    <string name="adding_comment">Lägger till kommentar...</string>
+<string name="add_comment">Lägg till kommentar</string>
+<string name="comment_saved">Kommentar sparad</string>
+
+<string name="failed">Misslyckades</string>
 </resources>

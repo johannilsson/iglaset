@@ -1,16 +1,23 @@
 package com.markupartist.iglaset.provider;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
 
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.markupartist.iglaset.provider.AuthStore.Authentication;
 import com.markupartist.iglaset.util.HttpManager;
 
 public class DrinksStore {
@@ -20,6 +27,11 @@ public class DrinksStore {
         "http://api.iglaset.se/api/articles/xml/";
     private static String RATE_BASE_URI =
         "http://api.iglaset.se/api/rate/";
+    /**
+     * Base URI for adding an article comment.
+     */
+    private static String COMMENT_BASE_URI =
+    	"http://api.iglaset.se/api/comment/";
     private static String USER_RECOMMENDATIONS_URI =
         "http://api.iglaset.se/api/user_recommendations/xml/";
     private static String USER_RATINGS_URI =
@@ -142,6 +154,38 @@ public class DrinksStore {
         }
     }
 
+    /**
+     * Add a new comment to a drink. This will, unlike Android Market, add
+     * an additional comment. It will not overwrite the user's previous one.
+     * @param drink Drink to comment.
+     * @param comment Comment to add.
+     * @param token Authorization token.
+     * @return Returns true if successful, false otherwise.
+     * @throws IOException on connection problem.
+     */
+    public Boolean commentDrink(Drink drink, String comment, String token) throws IOException {
+    	final HttpPost post = new HttpPost(COMMENT_BASE_URI + drink.getId() + "/" + token);
+    	
+        ArrayList<NameValuePair> payload = new ArrayList<NameValuePair>(1);
+        payload.add(new BasicNameValuePair("comment", comment));
+        
+        try {
+			post.setEntity(new UrlEncodedFormEntity(payload, "utf-8"));
+			final HttpResponse response = HttpManager.execute(post);
+	        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	            return true;
+	        } else {
+	            Log.w(TAG, "Request failed, http status code was not OK.");
+	            return false;
+	        }
+			
+		} catch (UnsupportedEncodingException e) {
+			// TODO What to do? :(
+			e.printStackTrace();
+			return false;
+		}
+    }
+    
     /**
      * Builds a the uri for search from a SearchCriteria
      * @param searchCriteria the search criteria
