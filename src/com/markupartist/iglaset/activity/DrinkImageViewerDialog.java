@@ -26,9 +26,10 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
 	 * DrinkImageViewerDialog constructor. Creates the dialog and starts downloading
 	 * the specified image. Note that the dialog is not shown automatically.
 	 * @param context Calling context.
-	 * @param url If not null then the image downloading process will start
-	 * immediately, otherwise it will have to be started manually later via
-	 * DrinkImageViewerDialog.loadImage.
+	 * @param drink Drink containing the image to show. If the image is not null then
+	 * the dialog will try to show the  drink's largest available image. If that image
+	 * is not available on the server or if there is a network connection issue then an
+	 * error will be shown, allowing the user to retry or abort.
 	 */
 	public DrinkImageViewerDialog(Activity activity, Drink drink) {
 		super(activity);
@@ -37,7 +38,7 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
     	setCanceledOnTouchOutside(true);
     	requestWindowFeature(Window.FEATURE_NO_TITLE);
     	setContentView(R.layout.article_image_view);
-    	
+
     	imageView = (ImageView) findViewById(R.id.drink_image);
     	imageView.setOnClickListener(this);
     	progressBar = (ProgressBar) findViewById(R.id.progress_bar);
@@ -47,9 +48,17 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
     	}
 	}
 	
+	/**
+	 * Attach drink to dialog. This will, if drink is not null, immediately try
+	 * to download the drink's largest image.
+	 * @param drink Drink to attach to the image viewer.
+	 */
 	public void setDrink(Drink drink) {
 		this.drink = drink;
-		loadImage(drink.getLargestImageUrl());
+		
+		if(null != this.drink) {
+			loadImage(drink.getLargestImageUrl());
+		}
 	}
     
     /**
