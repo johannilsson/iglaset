@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">iglaset</string>
     <string name="search_label">Sök</string>
+    <string name="search_description">Namn, artikelnummer eller valfri text</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
     <string name="searching">Söker...</string>
@@ -23,6 +24,7 @@
     <string name="goto_iglaset">Visa på iglaset.se</string>
     <string name="rate">Sätt betyg</string>
     <string name="scan_barcode">Scanna</string>
+    <string name="scan_barcode_description">Scanna streckkod</string>
     <string name="update_barcode">Scanna EAN till produkt</string>
     <string name="my_rating">Mitt betyg</string>
     <string name="add_rating">Sätt betyg</string>
@@ -35,6 +37,7 @@
     <string name="login_failed_message">Kunde inte logga in, kontrollera användarnamn och lösenord.</string>
     <string name="back">Tillbaka</string>
     <string name="categories">Kategorier</string>
+    <string name="category_description">Sprit, Starkvin, Öl...</string>
     <string name="lists">Listor</string>
     <string name="no_more_articles">Inga fler artiklar</string>
     <string name="loading_articles">Hämtar artiklar</string>
@@ -42,11 +45,12 @@
     <string name="feedback">Feedback</string>
     <string name="send_email">Skicka e-post...</string>
     <string name="recommendations_label">Rekommendationer</string>
-    <string name="rated_articles_label">Betygsatta artiklar</string>
+    <string name="recommendations_description">Baserat på satta betyg.</string>
+    <string name="rated_articles_label">Betyg</string>
+    <string name="rated_articles_description">Betygsatta artiklar</string>
     <string name="comment">Kommentera</string>
     <string name="adding_comment">Lägger till kommentar...</string>
-<string name="add_comment">Lägg till kommentar</string>
-<string name="comment_saved">Kommentar sparad</string>
-
-<string name="failed">Misslyckades</string>
+    <string name="add_comment">Lägg till kommentar</string>
+    <string name="comment_saved">Kommentar sparad</string>
+    <string name="failed">Misslyckades</string>
 </resources>

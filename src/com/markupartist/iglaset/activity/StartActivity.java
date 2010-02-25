@@ -3,7 +3,7 @@ package com.markupartist.iglaset.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ListActivity;
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
@@ -18,9 +18,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -28,69 +29,35 @@ import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.util.Tracker;
 
-public class StartActivity extends ListActivity {
+public class StartActivity extends Activity implements android.view.View.OnClickListener {
     private static final String TAG = "StartActivity";
 
     private static final int DIALOG_ABOUT = 0;
     private static final int DIALOG_NOT_AUTHENTICATED = 1;
 
+    private AutoCompleteTextView mSearchView;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Tracker.getInstance().start(this).trackPageView("start");
 
         setContentView(R.layout.start);
 
-        ArrayAdapter<String> adapter =
-            new ArrayAdapter<String>(this, R.layout.start_list_row, R.id.start_list_row);
-        adapter.add("Sök");
-        adapter.add("Scanna");
-        adapter.add("Kategorier");
-        adapter.add("Rekommendationer");
-        adapter.add("Satta betyg");
-
-        setListAdapter(adapter);
+        // TODO: Investigate if we can use the SearchSuggestionProvider for the search view.
+        // TODO: Handle the ime option actionSearch.
+        mSearchView = (AutoCompleteTextView) findViewById(R.id.search_text);
+        ImageButton searchButton = (ImageButton) findViewById(R.id.btn_search);
+        searchButton.setOnClickListener(this);
+        Button scanButton = (Button) findViewById(R.id.btn_scan);
+        scanButton.setOnClickListener(this);
+        Button categoryButton = (Button) findViewById(R.id.btn_lists);
+        categoryButton.setOnClickListener(this);
+        Button recommendationButton = (Button) findViewById(R.id.btn_recommendations);
+        recommendationButton.setOnClickListener(this);
+        Button ratedDrinksButton = (Button) findViewById(R.id.btn_rated_drinks);
+        ratedDrinksButton.setOnClickListener(this);
     }
-
-    /*
-     * @see android.app.ListActivity#onListItemClick(android.widget.ListView, android.view.View, int, long)
-     */
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        switch (position) {
-        case 0:
-            onSearchRequested();
-            break;
-        case 1:
-            IntentIntegrator.initiateScan(StartActivity.this);
-            break;
-        case 2:
-            Intent i = new Intent(StartActivity.this, CategoryActivity.class);
-            startActivity(i);
-            break;
-        case 3:
-            if (AuthStore.getInstance().hasAuthentication(this)) {
-                Intent recIntent = new Intent(this, SearchResultActivity.class);
-                recIntent.setAction(SearchResultActivity.ACTION_USER_RECOMMENDATIONS);
-                startActivity(recIntent);
-            } else {
-                showDialog(DIALOG_NOT_AUTHENTICATED);
-            }
-            break;
-        case 4:
-            if (AuthStore.getInstance().hasAuthentication(this)) {
-                Intent ratingIntent = new Intent(this, SearchResultActivity.class);
-                ratingIntent.setAction(SearchResultActivity.ACTION_USER_RATINGS);
-                startActivity(ratingIntent);
-            } else {
-                showDialog(DIALOG_NOT_AUTHENTICATED);
-            }
-            break;
-        }
-    }
-
-
 
     @Override
     public boolean onSearchRequested() {
@@ -211,6 +178,42 @@ public class StartActivity extends ListActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //Tracker.getInstance().stop();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+        case R.id.btn_search:
+            Intent searchIntent = new Intent(this, SearchResultActivity.class);
+            searchIntent.setAction(Intent.ACTION_SEARCH);
+            searchIntent.putExtra(SearchManager.QUERY, mSearchView.getText().toString());
+            startActivity(searchIntent);            
+            break;
+        case R.id.btn_lists:
+            Intent i = new Intent(StartActivity.this, CategoryActivity.class);
+            startActivity(i);
+            break;
+        case R.id.btn_recommendations:
+            if (AuthStore.getInstance().hasAuthentication(this)) {
+                Intent recIntent = new Intent(this, SearchResultActivity.class);
+                recIntent.setAction(SearchResultActivity.ACTION_USER_RECOMMENDATIONS);
+                startActivity(recIntent);
+            } else {
+                showDialog(DIALOG_NOT_AUTHENTICATED);
+            }
+            break;
+        case R.id.btn_scan:
+            IntentIntegrator.initiateScan(this);
+            break;
+        case R.id.btn_rated_drinks:
+            if (AuthStore.getInstance().hasAuthentication(this)) {
+                Intent ratingIntent = new Intent(this, SearchResultActivity.class);
+                ratingIntent.setAction(SearchResultActivity.ACTION_USER_RATINGS);
+                startActivity(ratingIntent);
+            } else {
+                showDialog(DIALOG_NOT_AUTHENTICATED);
+            }
+            break;
+        }
     }
 }
