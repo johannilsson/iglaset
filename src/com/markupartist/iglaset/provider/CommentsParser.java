@@ -69,7 +69,7 @@ class CommentsParser extends DefaultHandler {
     }
 
     public void characters(char ch[], int start, int length) {
-        mCurrentText = (new String(ch).substring(start, start + length).trim());
+        mCurrentText = new String(ch, start, length).trim();
 
         if (mInComment) {
             mCurrentCommentString += mCurrentText.replaceAll("\n", "");

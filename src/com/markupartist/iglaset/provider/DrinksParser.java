@@ -71,8 +71,8 @@ class DrinksParser extends DefaultHandler {
         }
     }
 
-    public void characters(char ch[], int start, int length) {
-        mCurrentText = (new String(ch).substring(start, start + length).trim());
+    public void characters(char ch[], int start, int length) {  
+    	mCurrentText = new String(ch, start, length).trim();
         //Log.d(TAG, "currentText: " + mCurrentText);
         if (inDescription /*&& !TextUtils.isEmpty(mCurrentText)*/) {
             mCurrentDescription += mCurrentText.replaceAll("\n", "<br>");
