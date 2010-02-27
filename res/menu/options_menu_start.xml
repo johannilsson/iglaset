@@ -2,11 +2,11 @@
     <item 
         android:id="@+id/menu_preferences"
         android:title="@string/settings"
-        android:icon="@drawable/ic_menu_preferences"
+        android:icon="@android:drawable/ic_menu_preferences"
         />
 	<item 
 		android:id="@+id/about"
 		android:title="@string/about"
-		android:icon="@drawable/ic_menu_info_details"
+		android:icon="@android:drawable/ic_menu_info_details"
 		/>
 </menu>

@@ -22,7 +22,7 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:textColor="#000"
-	android:textSize="22dip"
+	android:textAppearance="?android:attr/textAppearanceLarge"
 	android:padding="15dip"
 	/>
 
