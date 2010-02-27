@@ -211,7 +211,6 @@ public class SearchResultActivity extends ListActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //Tracker.getInstance().stop();
     }
 
     @Override
@@ -280,6 +279,9 @@ public class SearchResultActivity extends ListActivity implements
         switch (item.getItemId()) {
             case R.id.menu_search:
                 onSearchRequested();
+                return true;
+            case R.id.menu_home:
+                startActivity(new Intent(this, StartActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);

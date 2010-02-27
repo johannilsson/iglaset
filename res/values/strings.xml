@@ -3,6 +3,7 @@
     <string name="app_name">iglaset</string>
     <string name="search_label">Sök</string>
     <string name="search_description">Namn, artikelnummer eller valfri text</string>
+    <string name="home_label">Hem</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
     <string name="searching">Söker...</string>

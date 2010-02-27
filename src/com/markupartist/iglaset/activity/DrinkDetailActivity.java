@@ -437,6 +437,9 @@ public class DrinkDetailActivity extends ListActivity {
             case R.id.menu_add_comment:
             	tryShowAuthenticatedDialog(DIALOG_ADD_COMMENT);
             	return true;
+            case R.id.menu_home:
+                startActivity(new Intent(this, StartActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
