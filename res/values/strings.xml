@@ -25,7 +25,7 @@
     <string name="goto_iglaset">Visa på iglaset.se</string>
     <string name="rate">Sätt betyg</string>
     <string name="scan_barcode">Scanna</string>
-    <string name="scan_barcode_description">Scanna streckkod, 1000+ artiklar i databasen.</string>
+    <string name="scan_barcode_description">Scanna streckkod, 1000+ koder i databasen.</string>
     <string name="update_barcode">Scanna EAN till produkt</string>
     <string name="my_rating">Mitt betyg</string>
     <string name="add_rating">Sätt betyg</string>
