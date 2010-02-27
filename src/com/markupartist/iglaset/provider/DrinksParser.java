@@ -30,6 +30,8 @@ class DrinksParser extends DefaultHandler {
     private String mCurrentTagType;
     private boolean mInName;
     private String mCurrentName = "";
+    private StringBuffer mTextBuffer = null;
+    boolean mIsBuffering = false; 
 
     public ArrayList<Drink> parseDrinks(InputStream in, ArrayList<Drink> drinks) {
         try {
@@ -68,16 +70,28 @@ class DrinksParser extends DefaultHandler {
             inDescription = true;
         } else if (name.equals("name")) {
             mInName = true;
+        } else if (name.equals("small")) {
+            startBuffer();
+        } else if (name.equals("medium")) {
+            startBuffer();
+        } else if (name.equals("large")) {
+            startBuffer();
         }
     }
 
-    public void characters(char ch[], int start, int length) {  
+    public void characters(char ch[], int start, int length) {
+        // TODO: We should rewrite this parse and use the buffer mechanism
+        // instead of checking internal states like mInName etc.
     	mCurrentText = new String(ch, start, length).trim();
         //Log.d(TAG, "currentText: " + mCurrentText);
         if (inDescription /*&& !TextUtils.isEmpty(mCurrentText)*/) {
             mCurrentDescription += mCurrentText.replaceAll("\n", "<br>");
         } else if (mInName) {
             mCurrentName += mCurrentText;
+        }
+
+        if (mIsBuffering) {
+            mTextBuffer.append(ch, start, length);
         }
     }
 
@@ -110,12 +124,21 @@ class DrinksParser extends DefaultHandler {
                 inDescription = false;
             } else if (name.equals("avg_rating") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.setRating(mCurrentText);
-            } else if (name.equals("small") && !TextUtils.isEmpty(mCurrentText)) {
-                mCurrentDrink.setImageUrl(Drink.ImageSize.SMALL, mCurrentText);
-            } else if (name.equals("medium") && !TextUtils.isEmpty(mCurrentText)) {
-                mCurrentDrink.setImageUrl(Drink.ImageSize.MEDIUM, mCurrentText);
-            } else if (name.equals("large") && !TextUtils.isEmpty(mCurrentText)) {
-                mCurrentDrink.setImageUrl(Drink.ImageSize.LARGE, mCurrentText);
+            } else if (name.equals("small")) {
+                endBuffer();
+                if (!TextUtils.isEmpty(mTextBuffer.toString())) {
+                    mCurrentDrink.setImageUrl(Drink.ImageSize.SMALL, mTextBuffer.toString());
+                }
+            } else if (name.equals("medium")) {
+                endBuffer();
+                if (!TextUtils.isEmpty(mTextBuffer.toString())) {
+                    mCurrentDrink.setImageUrl(Drink.ImageSize.MEDIUM, mTextBuffer.toString());
+                }
+            } else if (name.equals("large")) {
+                endBuffer();
+                if (!TextUtils.isEmpty(mTextBuffer.toString())) {
+                    mCurrentDrink.setImageUrl(Drink.ImageSize.LARGE, mTextBuffer.toString());
+                }
             } else if (name.equals("user_rating") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.setUserRating(Float.parseFloat(mCurrentText));
             }
@@ -125,5 +148,14 @@ class DrinksParser extends DefaultHandler {
             mDrinks.add(mCurrentDrink);
         }
 
+    }
+
+    private void startBuffer() {
+        mTextBuffer = new StringBuffer("");
+        mIsBuffering = true;
+    }
+
+    private void endBuffer() {
+        mIsBuffering = false;
     }
 }
