@@ -29,10 +29,12 @@ Changelog
       on iglaset.se"
     * Show icon that indicates if the user has rated an article
     * If origin and origin country is the same just show one of them 
-    * Drink images in lists and drink detail views are now clickable for a fullscreen
-      image view
+    * Drink images in lists and drink detail views are now clickable for a
+      fullscreen image view
     * Commenting support added
-
+    * User recommended articles
+    * User Rated articles
+    * Redesigned start activity
 * 1.2.3
     * Added a retry dialog for network problems for searches and for crowdsourcing
       barcodes, Closes #3
