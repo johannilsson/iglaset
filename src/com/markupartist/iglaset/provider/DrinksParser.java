@@ -126,17 +126,17 @@ class DrinksParser extends DefaultHandler {
                 mCurrentDrink.setRating(mCurrentText);
             } else if (name.equals("small")) {
                 endBuffer();
-                if (!TextUtils.isEmpty(mTextBuffer.toString())) {
+                if (!TextUtils.isEmpty(mTextBuffer)) {
                     mCurrentDrink.setImageUrl(Drink.ImageSize.SMALL, mTextBuffer.toString());
                 }
             } else if (name.equals("medium")) {
                 endBuffer();
-                if (!TextUtils.isEmpty(mTextBuffer.toString())) {
+                if (!TextUtils.isEmpty(mTextBuffer)) {
                     mCurrentDrink.setImageUrl(Drink.ImageSize.MEDIUM, mTextBuffer.toString());
                 }
             } else if (name.equals("large")) {
                 endBuffer();
-                if (!TextUtils.isEmpty(mTextBuffer.toString())) {
+                if (!TextUtils.isEmpty(mTextBuffer)) {
                     mCurrentDrink.setImageUrl(Drink.ImageSize.LARGE, mTextBuffer.toString());
                 }
             } else if (name.equals("user_rating") && !TextUtils.isEmpty(mCurrentText)) {
