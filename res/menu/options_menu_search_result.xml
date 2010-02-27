@@ -4,4 +4,8 @@
         android:title="@string/search_label"
         android:icon="@android:drawable/ic_menu_search"
         />
+    <item
+        android:id="@+id/menu_home"
+        android:title="@string/home_label"
+        android:icon="@drawable/ic_menu_home"/>
 </menu>

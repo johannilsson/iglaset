@@ -3,6 +3,7 @@
     <string name="app_name">iglaset</string>
     <string name="search_label">Sök</string>
     <string name="search_description">Namn, artikelnummer eller valfri text</string>
+    <string name="home_label">Hem</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
     <string name="searching">Söker...</string>
@@ -15,7 +16,7 @@
     <string name="no_comments">Inga kommentarer än</string>
     <string name="comments">Kommentarer</string>
     <string name="about">Om</string>
-    <string name="about_this_app">iglaset.se är en av Sveriges största dryckesdatabaser med kommentarer och betyg.\n\nViss aktivitet i appen trackas anonymt till Google Analytics.\n\nUtvecklad av Johan Nilsson.</string>
+    <string name="about_this_app">iglaset.se är en av Sveriges största dryckesdatabaser med kommentarer och betyg.\n\nUtvecklad av Johan Nilsson och Marco Alanen.</string>
     <string name="settings">Inställningar</string>
     <string name="search_preferences">Sök</string>
     <string name="clear_search_history_preference">Radera sökhistorik</string>

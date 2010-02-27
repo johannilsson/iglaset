@@ -34,7 +34,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
-import com.markupartist.iglaset.util.Tracker;
 
 public class StartActivity extends Activity implements android.view.View.OnClickListener {
     private static final String TAG = "StartActivity";
@@ -87,7 +86,6 @@ public class StartActivity extends Activity implements android.view.View.OnClick
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.about:
-                Tracker.getInstance().trackEvent(item);
                 showDialog(DIALOG_ABOUT);
                 return true;
             case R.id.menu_preferences:
