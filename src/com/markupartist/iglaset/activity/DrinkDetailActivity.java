@@ -19,9 +19,9 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.format.Time;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,7 +52,6 @@ import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.DrinksStore;
 import com.markupartist.iglaset.provider.Drink.Volume;
 import com.markupartist.iglaset.util.ImageLoader;
-import com.markupartist.iglaset.util.Tracker;
 
 public class DrinkDetailActivity extends ListActivity {
     /**
@@ -107,7 +106,6 @@ public class DrinkDetailActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Tracker.getInstance().trackPageView("article detail");
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         requestWindowFeature(Window.FEATURE_NO_TITLE); 
@@ -419,7 +417,6 @@ public class DrinkDetailActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_goto_iglaset:
-                Tracker.getInstance().trackEvent(item);
                 // Since iglaset.se does not really care about the name we just
                 // removes the slash because otherwise iglaset.se will parse it
                 // as a directory.

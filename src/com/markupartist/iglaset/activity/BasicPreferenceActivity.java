@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.AuthenticationException;
-import com.markupartist.iglaset.util.Tracker;
 
 public class BasicPreferenceActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
     private static final String TAG = "BasicPreferenceActivity";
@@ -32,8 +31,6 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Tracker.getInstance().trackPageView("preferences");
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);

@@ -40,7 +40,6 @@ import com.markupartist.iglaset.provider.RecommendationSearchCriteria;
 import com.markupartist.iglaset.provider.SearchCriteria;
 import com.markupartist.iglaset.provider.AuthStore.Authentication;
 import com.markupartist.iglaset.util.ImageLoader;
-import com.markupartist.iglaset.util.Tracker;
 
 public class SearchResultActivity extends ListActivity implements
         SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener, SearchDrinkErrorListener {
@@ -146,8 +145,6 @@ public class SearchResultActivity extends ListActivity implements
                 sSearchCriteria.setToken(mToken);
 
                 searchDrinksTask.execute(sSearchCriteria);
-
-                Tracker.getInstance().trackPageView("search result");
             } else if (queryIntent.hasExtra(EXTRA_SEARCH_CATEGORY_ID)) {
                 final int category = queryIntent.getExtras()
                     .getInt(EXTRA_SEARCH_CATEGORY_ID);
@@ -159,8 +156,6 @@ public class SearchResultActivity extends ListActivity implements
                 sSearchCriteria.setToken(mToken);
 
                 searchDrinksTask.execute(sSearchCriteria);
-
-                Tracker.getInstance().trackPageView("search result category");
             } else if (queryIntent.hasExtra(EXTRA_SEARCH_BARCODE)) {
                 String barcode = queryIntent.getStringExtra(EXTRA_SEARCH_BARCODE);
 
@@ -171,8 +166,6 @@ public class SearchResultActivity extends ListActivity implements
                 sSearchCriteria.setToken(mToken);
 
                 searchDrinksTask.execute(sSearchCriteria);
-
-                Tracker.getInstance().trackPageView("search result barcode");
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
                 setTitle(R.string.recommendations_label);
 
