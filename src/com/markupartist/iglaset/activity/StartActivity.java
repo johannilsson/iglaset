@@ -1,17 +1,23 @@
 package com.markupartist.iglaset.activity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,8 +26,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
-import android.widget.ListView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -47,6 +54,7 @@ public class StartActivity extends Activity implements android.view.View.OnClick
         // TODO: Investigate if we can use the SearchSuggestionProvider for the search view.
         // TODO: Handle the ime option actionSearch.
         mSearchView = (AutoCompleteTextView) findViewById(R.id.search_text);
+        mSearchView.setAdapter(new AutoCompleteSearchAdapter(this, R.layout.simple_list_row_inverted));
         ImageButton searchButton = (ImageButton) findViewById(R.id.btn_search);
         searchButton.setOnClickListener(this);
         Button scanButton = (Button) findViewById(R.id.btn_scan);
@@ -59,10 +67,13 @@ public class StartActivity extends Activity implements android.view.View.OnClick
         ratedDrinksButton.setOnClickListener(this);
     }
 
+    /**
+     * We don't allow searches from this activity since we have a search at the
+     * top already.
+     */
     @Override
     public boolean onSearchRequested() {
-        startSearch(null, false, null, false); 
-        return true;
+        return false;
     }
 
     @Override
@@ -214,6 +225,56 @@ public class StartActivity extends Activity implements android.view.View.OnClick
                 showDialog(DIALOG_NOT_AUTHENTICATED);
             }
             break;
+        }
+    }
+
+    /**
+     * Adapter for the search view. Queries the recent suggestions database
+     * internally.
+     * @author johan
+     */
+    public class AutoCompleteSearchAdapter extends ArrayAdapter<String> implements Filterable {
+
+        public AutoCompleteSearchAdapter(Context context, int textViewResourceId) {
+            super(context, textViewResourceId);
+        }
+
+        @Override
+        public Filter getFilter() {
+            Filter nameFilter = new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults filterResults = new FilterResults();
+                    if (constraint != null) {
+                        Uri searchUri = Uri.parse("content://" + SearchSuggestionProvider.AUTHORITY + "/suggestions");
+                        String[] args = new String [] { constraint + "%" };
+                        Cursor cur = managedQuery(searchUri, SearchRecentSuggestions.QUERIES_PROJECTION_1LINE,
+                                "display1 LIKE ?", args, null);
+
+                        ArrayList<String> list = new ArrayList<String>();
+                        while (cur.moveToNext()) {
+                            list.add(cur.getString(2));
+                        }
+                        filterResults.count = list.size();
+                        filterResults.values = list;
+                    }
+                    return filterResults;
+                }
+
+                // For the unchecked cast of the filter results value.
+                @SuppressWarnings("unchecked")
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    if (results != null && results.count > 0) {
+                        clear();
+                        for (String value : (List<String>)results.values) {
+                            add(value);
+                        }
+                        notifyDataSetChanged();
+                    }
+                }
+            };
+            return nameFilter;
         }
     }
 }
