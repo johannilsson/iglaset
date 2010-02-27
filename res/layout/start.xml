@@ -33,7 +33,7 @@
             android:textColor="#000"
             android:singleLine="true"
             android:layout_weight="1"
-            android:imeOptions="actionSearch"
+            android:imeOptions="actionDone"
             />
         <ImageButton
                 android:id="@+id/btn_search"
