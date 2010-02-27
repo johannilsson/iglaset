@@ -20,7 +20,12 @@
         <ImageView 
             android:id="@+id/drink_image"
             android:src="@drawable/noimage"
-            android:background="@drawable/border" android:layout_marginRight="5dip" android:layout_width="54px" android:layout_height="54px" android:layout_gravity="center_vertical|center_horizontal"/>
+            android:background="@drawable/border"
+            android:layout_marginRight="5dip"
+            android:layout_width="54px"
+            android:layout_height="54px"
+            android:layout_gravity="center_vertical|center_horizontal"
+            />
             <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -63,11 +68,6 @@
                         android:layout_height="fill_parent"
                         android:layout_margin="0dip"
                     >
-                        <!-- 
-                            TODO: set origin and country in one element and a filter
-                            if origin and country is the same. 
-                        -->
-                        
     		            <TextView
                             android:id="@+id/drink_origin_country"
                             android:layout_width="wrap_content"
@@ -77,7 +77,7 @@
                             android:maxLines="1"
                             android:paddingRight="4dip"
                             android:text="Sverige"
-                        android:scrollHorizontally="true"/>
+                            android:scrollHorizontally="true"/>
     		            <TextView
                             android:id="@+id/drink_alcohol_percent"
                             android:layout_width="wrap_content"
