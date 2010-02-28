@@ -231,7 +231,8 @@ public class StartActivity extends Activity implements android.view.View.OnClick
      * internally.
      * @author johan
      */
-    public class AutoCompleteSearchAdapter extends ArrayAdapter<String> implements Filterable {
+    public class AutoCompleteSearchAdapter extends ArrayAdapter<String>
+            implements Filterable {
 
         public AutoCompleteSearchAdapter(Context context, int textViewResourceId) {
             super(context, textViewResourceId);
@@ -244,9 +245,13 @@ public class StartActivity extends Activity implements android.view.View.OnClick
                 protected FilterResults performFiltering(CharSequence constraint) {
                     FilterResults filterResults = new FilterResults();
                     if (constraint != null) {
-                        Uri searchUri = Uri.parse("content://" + SearchSuggestionProvider.AUTHORITY + "/suggestions");
+                        Uri searchUri =
+                            Uri.parse(String.format("content://%s/suggestions",
+                                    SearchSuggestionProvider.AUTHORITY));
+
                         String[] args = new String [] { constraint + "%" };
-                        Cursor cur = managedQuery(searchUri, SearchRecentSuggestions.QUERIES_PROJECTION_1LINE,
+                        Cursor cur = managedQuery(searchUri,
+                                SearchRecentSuggestions.QUERIES_PROJECTION_1LINE,
                                 "display1 LIKE ?", args, null);
 
                         ArrayList<String> list = new ArrayList<String>();
@@ -255,6 +260,8 @@ public class StartActivity extends Activity implements android.view.View.OnClick
                         }
                         filterResults.count = list.size();
                         filterResults.values = list;
+
+                        stopManagingCursor(cur);
                     }
                     return filterResults;
                 }
