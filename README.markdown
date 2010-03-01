@@ -22,6 +22,12 @@ TODO and wish list
 * Sort by rating
 * more more
 
+Schedule
+--------
+* Show item descriptions
+* JSON instead of SAX
+* (Integrade droid-fu (http://github.com/kaeppler/droid-fu))
+
 Changelog
 ---------
 * NEXT
