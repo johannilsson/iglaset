@@ -30,7 +30,7 @@ Schedule
 
 Changelog
 ---------
-* NEXT
+* 1.3.0
     * Fixed bug with some articles ended up on 404 page after clicked on "view
       on iglaset.se"
     * Show icon that indicates if the user has rated an article
@@ -41,6 +41,7 @@ Changelog
     * User recommended articles
     * User Rated articles
     * Redesigned start activity
+    * Adaptions for different screen sizes
 * 1.2.3
     * Added a retry dialog for network problems for searches and for crowdsourcing
       barcodes, Closes #3
