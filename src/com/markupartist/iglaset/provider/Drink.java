@@ -11,7 +11,7 @@ import android.text.TextUtils;
 public class Drink implements Parcelable {
     // TODO: We should crop depending on the screen size instead.
     private static String THUMB_RESIZE_BASE_URL =
-        "http://api.iglaset.se/resizely/crop/54x54/?url=";
+        "http://api.iglaset.se/resizely/crop/50x50/?url=";
     private int mId;
     private String mName;
     private String mOrigin;
