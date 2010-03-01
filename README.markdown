@@ -26,7 +26,7 @@ Schedule
 --------
 * Show item descriptions
 * JSON instead of SAX
-* (Integrade droid-fu (http://github.com/kaeppler/droid-fu))
+* (Integrate droid-fu (http://github.com/kaeppler/droid-fu))
 
 Changelog
 ---------
