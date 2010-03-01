@@ -17,15 +17,7 @@
         android:paddingRight="0dip"
         android:paddingBottom="0dip"
         >
-        <ImageView 
-            android:id="@+id/drink_image"
-            android:src="@drawable/noimage"
-            android:background="@drawable/border"
-            android:layout_marginRight="5dip"
-            android:layout_width="54px"
-            android:layout_height="54px"
-            android:layout_gravity="center_vertical|center_horizontal"
-            />
+        <include layout="@layout/article_image_thumb_view" />
             <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
