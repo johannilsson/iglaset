@@ -124,6 +124,8 @@ class DrinksParser extends DefaultHandler {
                 inDescription = false;
             } else if (name.equals("avg_rating") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.setRating(mCurrentText);
+            } else if (name.equals("comments") && !TextUtils.isEmpty(mCurrentText)) {
+            	mCurrentDrink.setCommentCount(Integer.parseInt(mCurrentText));
             } else if (name.equals("small")) {
                 endBuffer();
                 if (!TextUtils.isEmpty(mTextBuffer)) {
