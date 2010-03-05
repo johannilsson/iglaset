@@ -106,11 +106,11 @@ public class Drink implements Parcelable {
         dest.writeInt(mYear);
         dest.writeString(mDescription);
         dest.writeString(mRating);
+        dest.writeInt(mCommentCount);
         dest.writeMap(mImages);
         dest.writeTypedList(mVolumes);
         dest.writeMap(mTags);
-        dest.writeFloat(mUserRating);
-        dest.writeInt(mCommentCount);
+        dest.writeFloat(mUserRating);        
     }
 
     public static final Creator<Drink> CREATOR = new Creator<Drink>() {
