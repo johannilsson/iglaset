@@ -82,10 +82,10 @@ class DrinksParser extends DefaultHandler {
     public void characters(char ch[], int start, int length) {
         // TODO: We should rewrite this parse and use the buffer mechanism
         // instead of checking internal states like mInName etc.
-    	mCurrentText = new String(ch, start, length).trim();
+    	mCurrentText = new String(ch, start, length);
         //Log.d(TAG, "currentText: " + mCurrentText);
         if (inDescription /*&& !TextUtils.isEmpty(mCurrentText)*/) {
-            mCurrentDescription += mCurrentText.replaceAll("\n", "<br>");
+        	mCurrentDescription += mCurrentText; //.replaceAll("\n", "<br/>");
         } else if (mInName) {
             mCurrentName += mCurrentText;
         }
@@ -99,7 +99,7 @@ class DrinksParser extends DefaultHandler {
                 throws SAXException {
         if (mCurrentDrink != null) {
             if (name.trim().equals("name") && !TextUtils.isEmpty(mCurrentText)) {
-                mCurrentDrink.setName(mCurrentName);
+                mCurrentDrink.setName(mCurrentName.trim());
                 mInName = false;
                 mCurrentName = ""; // Reset the name
             } else if (name.equals("producer") && !TextUtils.isEmpty(mCurrentText)) {
@@ -120,7 +120,7 @@ class DrinksParser extends DefaultHandler {
             } else if (name.equals("tag") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.addTag(mCurrentTagType, mCurrentText);
             } else if (name.equals("commercial_desc")) {
-                mCurrentDrink.setDescription(mCurrentDescription);
+                mCurrentDrink.setDescription(mCurrentDescription.trim().replaceAll("\n", "<br/>"));
                 inDescription = false;
             } else if (name.equals("avg_rating") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.setRating(mCurrentText);
