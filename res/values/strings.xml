@@ -56,5 +56,5 @@
     <string name="failed">Misslyckades</string>
 <string name="manufacturers_description">Tillverkarens beskrivning</string>
 <string name="show_description">Visa beskrivning</string>
-<string name="hide_description">Göm beskrivning</string>
+<string name="hide">Göm</string>
 </resources>

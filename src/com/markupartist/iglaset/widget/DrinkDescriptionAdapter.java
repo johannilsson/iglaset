@@ -86,7 +86,7 @@ public class DrinkDescriptionAdapter extends BaseAdapter implements OnClickListe
 			this.textView.setVisibility(TextView.GONE);
 		}
 		else {
-			this.textRow.setText(R.string.hide_description);
+			this.textRow.setText(R.string.hide);
 			this.textRow.setCompoundDrawables(this.iconOpened, null,null, null);
 			this.textView.setVisibility(TextView.VISIBLE);
 		}
