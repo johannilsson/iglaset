@@ -90,6 +90,8 @@ class DrinksParser extends DefaultHandler {
         	mCurrentDescription += mCurrentText;
         } else if (mInName) {
             mCurrentName += mCurrentText;
+        } else {
+        	mCurrentText = mCurrentText.trim();
         }
 
         if (mIsBuffering) {
