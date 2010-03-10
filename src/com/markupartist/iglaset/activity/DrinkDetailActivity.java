@@ -43,7 +43,6 @@ import android.widget.SimpleAdapter.ViewBinder;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.markupartist.iglaset.R;
-import com.markupartist.iglaset.activity.SectionedAdapter.Section;
 import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.BarcodeStore;
 import com.markupartist.iglaset.provider.Comment;
@@ -52,6 +51,9 @@ import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.DrinksStore;
 import com.markupartist.iglaset.provider.Drink.Volume;
 import com.markupartist.iglaset.util.ImageLoader;
+import com.markupartist.iglaset.widget.DrinkDescriptionAdapter;
+import com.markupartist.iglaset.widget.SectionedAdapter;
+import com.markupartist.iglaset.widget.SectionedAdapter.Section;
 
 public class DrinkDetailActivity extends ListActivity {
     /**
@@ -155,6 +157,11 @@ public class DrinkDetailActivity extends ListActivity {
         //TextView descriptionTextView = (TextView) findViewById(R.id.drink_description);
         //descriptionTextView.setText(Html.fromHtml(drink.getDescription()));
 
+        if(true == drink.hasDescription()) {
+        	DrinkDescriptionAdapter adapter = new DrinkDescriptionAdapter(this, drink.getDescription());
+        	mSectionedAdapter.addSection(0, getText(R.string.manufacturers_description), adapter);
+        }
+        
         HashMap<String, ArrayList<String>> tags = drink.getTags();
         for (String type : tags.keySet()) {
             ArrayList<String> nameList = tags.get(type);
@@ -760,7 +767,7 @@ public class DrinkDetailActivity extends ListActivity {
             onUpdatedDrink(drink);
         }
     }
-
+    
     private class VolumeAdapter extends ArrayAdapter<Volume> {
         public VolumeAdapter(Context context, List<Volume> objects) {
             super(context, R.layout.volume_row, objects);
