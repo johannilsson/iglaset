@@ -57,6 +57,8 @@ class DrinksParser extends DefaultHandler {
     public void startElement(String uri, String name, String qName, Attributes atts) {
         if (name.equals("article")) {
             mCurrentDrink = new Drink(Integer.parseInt(atts.getValue("id").trim()));
+            mCurrentDescription = "";
+            mCurrentName = "";
         } else if (name.equals("supplier") && !TextUtils.isEmpty(atts.getValue("url").trim())) {
             mCurrentDrink.setSupplierUrl(atts.getValue("url").trim());
         } else if (name.equals("volume")) {
@@ -66,7 +68,7 @@ class DrinksParser extends DefaultHandler {
             mCurrentVolume.setRetired(Integer.parseInt(atts.getValue("retired").trim()));
         } else if (name.equals("tag")) {
             mCurrentTagType = atts.getValue("type").trim();
-        } else if (name.equals("commercial_desc")) {
+        } else if (name.equals("commercial_desc")) {        	
             inDescription = true;
         } else if (name.equals("name")) {
             mInName = true;
@@ -85,7 +87,7 @@ class DrinksParser extends DefaultHandler {
     	mCurrentText = new String(ch, start, length);
         //Log.d(TAG, "currentText: " + mCurrentText);
         if (inDescription /*&& !TextUtils.isEmpty(mCurrentText)*/) {
-        	mCurrentDescription += mCurrentText; //.replaceAll("\n", "<br/>");
+        	mCurrentDescription += mCurrentText;
         } else if (mInName) {
             mCurrentName += mCurrentText;
         }
