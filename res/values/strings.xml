@@ -54,7 +54,7 @@
     <string name="add_comment">Lägg till kommentar</string>
     <string name="comment_saved">Kommentar sparad</string>
     <string name="failed">Misslyckades</string>
-<string name="manufacturers_description">Tillverkarens beskrivning</string>
-<string name="show_description">Visa beskrivning</string>
-<string name="hide">Göm</string>
+    <string name="manufacturers_description">Tillverkarens beskrivning</string>
+    <string name="show_description">Visa beskrivning</string>
+    <string name="hide">Göm</string>
 </resources>
