@@ -24,8 +24,6 @@ class DrinksParser extends DefaultHandler {
     private ArrayList<Drink> mDrinks;
     private String mCurrentText;
     private Drink mCurrentDrink;
-    private String mCurrentDescription = "";
-    private boolean inDescription = false;
     private Volume mCurrentVolume;
     private String mCurrentTagType;
     private boolean mInName;
@@ -57,7 +55,6 @@ class DrinksParser extends DefaultHandler {
     public void startElement(String uri, String name, String qName, Attributes atts) {
         if (name.equals("article")) {
             mCurrentDrink = new Drink(Integer.parseInt(atts.getValue("id").trim()));
-            mCurrentDescription = "";
             mCurrentName = "";
         } else if (name.equals("supplier") && !TextUtils.isEmpty(atts.getValue("url").trim())) {
             mCurrentDrink.setSupplierUrl(atts.getValue("url").trim());
@@ -68,8 +65,8 @@ class DrinksParser extends DefaultHandler {
             mCurrentVolume.setRetired(Integer.parseInt(atts.getValue("retired").trim()));
         } else if (name.equals("tag")) {
             mCurrentTagType = atts.getValue("type").trim();
-        } else if (name.equals("commercial_desc")) {        	
-            inDescription = true;
+        } else if (name.equals("commercial_desc")) {
+            startBuffer();
         } else if (name.equals("name")) {
             mInName = true;
         } else if (name.equals("small")) {
@@ -86,9 +83,7 @@ class DrinksParser extends DefaultHandler {
         // instead of checking internal states like mInName etc.
     	mCurrentText = new String(ch, start, length);
         //Log.d(TAG, "currentText: " + mCurrentText);
-        if (inDescription /*&& !TextUtils.isEmpty(mCurrentText)*/) {
-        	mCurrentDescription += mCurrentText;
-        } else if (mInName) {
+    	if (mInName) {
             mCurrentName += mCurrentText;
         } else {
         	mCurrentText = mCurrentText.trim();
@@ -124,8 +119,9 @@ class DrinksParser extends DefaultHandler {
             } else if (name.equals("tag") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.addTag(mCurrentTagType, mCurrentText);
             } else if (name.equals("commercial_desc")) {
-                mCurrentDrink.setDescription(mCurrentDescription.trim().replaceAll("\n", "<br/>"));
-                inDescription = false;
+                endBuffer();
+                mCurrentDrink.setDescription(mTextBuffer.toString()
+                        .trim().replaceAll("\n", "<br/>"));
             } else if (name.equals("avg_rating") && !TextUtils.isEmpty(mCurrentText)) {
                 mCurrentDrink.setRating(mCurrentText);
             } else if (name.equals("comments") && !TextUtils.isEmpty(mCurrentText)) {
