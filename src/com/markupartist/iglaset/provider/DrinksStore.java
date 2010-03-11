@@ -17,7 +17,6 @@ import org.apache.http.message.BasicNameValuePair;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.markupartist.iglaset.provider.AuthStore.Authentication;
 import com.markupartist.iglaset.util.HttpManager;
 
 public class DrinksStore {

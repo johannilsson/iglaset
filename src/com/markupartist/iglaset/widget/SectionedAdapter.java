@@ -17,7 +17,7 @@
 	along with this program.	If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.markupartist.iglaset.activity;
+package com.markupartist.iglaset.widget;
 
 import java.util.LinkedList;
 
@@ -40,7 +40,7 @@ abstract public class SectionedAdapter extends BaseAdapter {
         super();
     }
 
-    public void addSection(int id, String caption, Adapter adapter) {
+    public void addSection(int id, CharSequence caption, Adapter adapter) {
         sections.add(new Section(id, caption, adapter));
     }
 
@@ -204,10 +204,10 @@ abstract public class SectionedAdapter extends BaseAdapter {
         return (position);
     }
 
-    class Section {
+    public class Section {
         int id;
-        CharSequence caption;
-        Adapter adapter;
+        public CharSequence caption;
+        public Adapter adapter;
 
         Section(int id, CharSequence caption, Adapter adapter) {
             this.id = id;

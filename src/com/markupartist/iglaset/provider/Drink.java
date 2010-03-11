@@ -278,6 +278,10 @@ public class Drink implements Parcelable {
     public String getDescription() {
         return mDescription;
     }
+    
+    public Boolean hasDescription() {
+    	return TextUtils.isEmpty(mDescription) == false;
+    }
 
     public void setDescription(String description) {
         this.mDescription = description;

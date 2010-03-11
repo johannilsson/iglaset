@@ -24,12 +24,13 @@ TODO and wish list
 
 Schedule
 --------
-* Show item descriptions
 * JSON instead of SAX
 * (Integrate droid-fu (http://github.com/kaeppler/droid-fu))
 
 Changelog
 ---------
+Next:
+    * Show item descriptions
 * 1.3.0
     * Fixed bug with some articles ended up on 404 page after clicked on "view
       on iglaset.se"
