@@ -20,7 +20,6 @@ import com.markupartist.iglaset.R;
  */
 public class DrinkDescriptionAdapter extends BaseAdapter implements OnClickListener {
 
-	private Context context;
 	private View view;
 	private TextView textRow;
 	private TextView textView;
@@ -34,30 +33,25 @@ public class DrinkDescriptionAdapter extends BaseAdapter implements OnClickListe
 	 * HTML.
 	 */
 	public DrinkDescriptionAdapter(Context context, String description) {
-		this.context = context;
 		
 		LayoutInflater inflater = LayoutInflater.from(context);
-		this.view = inflater.inflate(R.layout.article_description, null);
+		view = inflater.inflate(R.layout.article_description, null);
 
-		this.iconOpened = getDrawable(R.drawable.expander_ic_maximized);
-		this.iconClosed = getDrawable(R.drawable.expander_ic_minimized);
+		iconOpened = context.getResources().getDrawable(R.drawable.expander_ic_maximized);
+		iconOpened.setBounds(0, 0, iconOpened.getIntrinsicWidth(), iconOpened.getIntrinsicHeight());
+		iconClosed = context.getResources().getDrawable(R.drawable.expander_ic_minimized);
+		iconClosed.setBounds(0, 0, iconOpened.getIntrinsicWidth(), iconClosed.getIntrinsicHeight());
 		
-		this.textRow = (TextView) this.view.findViewById(R.id.description_row);
-		this.textView = (TextView) this.view.findViewById(R.id.description_text);
-		this.textView.setText(android.text.Html.fromHtml(description));
+		textRow = (TextView) this.view.findViewById(R.id.description_row);
+		textView = (TextView) this.view.findViewById(R.id.description_text);
+		textView.setText(android.text.Html.fromHtml(description));
 		
 		// Use the same click listener for both text views. This makes it easy
 		// for the user to disable an opened description.
-		this.textRow.setOnClickListener(this);
-		this.textView.setOnClickListener(this);
+		textRow.setOnClickListener(this);
+		textView.setOnClickListener(this);
 	}
 
-	private Drawable getDrawable(int id) {
-		Drawable drawable = this.context.getResources().getDrawable(id);
-		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-		return drawable;
-	}
-	
 	@Override
 	public int getCount() {
 		return 1;
