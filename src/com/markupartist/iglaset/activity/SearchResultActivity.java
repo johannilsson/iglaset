@@ -186,7 +186,7 @@ public class SearchResultActivity extends ListActivity implements
                 searchDrinksTask.execute(sSearchCriteria); 
             }
         } else {
-            initList(data);
+        	onDrinkData(data);
         }
     }
 
@@ -289,7 +289,19 @@ public class SearchResultActivity extends ListActivity implements
 
     public void onSearchDrinkComplete(ArrayList<Drink> result) {
         setProgressBarIndeterminateVisibility(false);
-        initList(result);
+        onDrinkData(result);
+    }
+    
+    private void onDrinkData(ArrayList<Drink> drinks) {
+    	if(drinks.size() == 1) {
+    		// Open the drink details and close the activity
+            Intent i = new Intent(this, DrinkDetailActivity.class);
+            i.putExtra("com.markupartist.iglaset.Drink", drinks.get(0));
+            startActivity(i);
+            finish();
+        } else {
+        	initList(drinks);
+        }
     }
 
     public void onSearchDrinkProgress() {

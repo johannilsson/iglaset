@@ -31,6 +31,7 @@ Changelog
 ---------
 Next:
     * Show item descriptions
+    * Searches with only 1 result will go straight to the drink details
 * 1.3.0
     * Fixed bug with some articles ended up on 404 page after clicked on "view
       on iglaset.se"
