@@ -254,6 +254,8 @@ public class StartActivity extends Activity implements android.view.View.OnClick
                                 SearchRecentSuggestions.QUERIES_PROJECTION_1LINE,
                                 "display1 LIKE ?", args, null);
 
+                        startManagingCursor(cur);
+
                         ArrayList<String> list = new ArrayList<String>();
                         while (cur.moveToNext()) {
                             list.add(cur.getString(2));
