@@ -74,15 +74,15 @@ public class DrinkDescriptionAdapter extends BaseAdapter implements OnClickListe
 
 	@Override
 	public void onClick(View view) {
-		if(this.textView.getVisibility() == TextView.VISIBLE) {
+		if(this.textView.getVisibility() == View.VISIBLE) {
 			this.textRow.setText(R.string.show_description);
 			this.textRow.setCompoundDrawables(this.iconClosed, null,null, null);
-			this.textView.setVisibility(TextView.GONE);
+			this.textView.setVisibility(View.GONE);
 		}
 		else {
 			this.textRow.setText(R.string.hide);
 			this.textRow.setCompoundDrawables(this.iconOpened, null,null, null);
-			this.textView.setVisibility(TextView.VISIBLE);
+			this.textView.setVisibility(View.VISIBLE);
 		}
 	}
 
