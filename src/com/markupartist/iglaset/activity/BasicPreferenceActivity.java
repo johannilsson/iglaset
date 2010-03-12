@@ -134,13 +134,13 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
             String key) {
         if (key.equals("preference_password")) {
             Toast.makeText(BasicPreferenceActivity.this, 
-                    "Loggar in", Toast.LENGTH_SHORT).show();
+                    R.string.logging_in, Toast.LENGTH_SHORT).show();
             mAuthUserTask = new AuthUserTask();
             mAuthUserTask.execute(this);
         } else if (key.equals("preference_username") 
                 && sharedPreferences.contains("preference_password")) {
             Toast.makeText(BasicPreferenceActivity.this, 
-                    "Loggar in", Toast.LENGTH_SHORT).show();
+                    R.string.logging_in, Toast.LENGTH_SHORT).show();
             mAuthUserTask = new AuthUserTask();
             mAuthUserTask.execute(this);
         }

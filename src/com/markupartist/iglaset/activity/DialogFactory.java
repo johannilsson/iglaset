@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface.OnClickListener;
+import com.markupartist.iglaset.R;
 
 /**
  * @author marco
@@ -21,7 +22,7 @@ public class DialogFactory {
         .setIcon(android.R.drawable.ic_dialog_alert)
         .setTitle("Ett fel inträffade")
         .setMessage("Kunde inte ansluta till servern. Försök igen, eller Cancel för att gå tillbaka till föregående vy.")
-        .setPositiveButton("Försök igen", onClickListener)
+        .setPositiveButton(R.string.retry, onClickListener)
         .setNegativeButton(activity.getText(android.R.string.cancel), onClickListener)
         .create();
 	}

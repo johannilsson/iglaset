@@ -473,7 +473,7 @@ public class DrinkDetailActivity extends ListActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Ett fel inträffade")
                 .setMessage("Misslyckades med att spara streckkoden")
-                .setPositiveButton("Försök igen", new OnClickListener() {
+                .setPositiveButton(R.string.retry, new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         new SuggestBarcodeTask().execute(
