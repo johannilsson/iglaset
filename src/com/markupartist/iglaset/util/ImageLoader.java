@@ -107,11 +107,12 @@ public class ImageLoader {
     }
 
     public void clearQueue() {
-        mQueue = new LinkedList<Group>();
+        mQueue.clear();
     }
 
     public void clearCache() {
-        mUrlToBitmap = new HashMap<String, Bitmap>();
+    	Log.d(TAG, "Flushing image cache");
+        mUrlToBitmap.clear();
     }
 
     public void cancel() {
@@ -282,4 +283,8 @@ public class ImageLoader {
             }
         }
     }
+
+	public static boolean hasInstance() {
+		return sInstance != null;
+	}
 }

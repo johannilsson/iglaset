@@ -34,6 +34,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
+import com.markupartist.iglaset.util.ImageLoader;
 
 public class StartActivity extends Activity implements android.view.View.OnClickListener {
     private static final String TAG = "StartActivity";
@@ -65,6 +66,16 @@ public class StartActivity extends Activity implements android.view.View.OnClick
         Button ratedDrinksButton = (Button) findViewById(R.id.btn_rated_drinks);
         ratedDrinksButton.setOnClickListener(this);
     }
+    
+    @Override
+    public void onLowMemory() {
+    	if(true == ImageLoader.hasInstance()) {
+    		ImageLoader.getInstance().clearCache();
+    	}
+    	
+    	super.onLowMemory();
+    }
+    
 
     /**
      * We don't allow searches from this activity since we have a search at the
