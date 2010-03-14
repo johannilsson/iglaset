@@ -25,7 +25,7 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
 	/**
 	 * DrinkImageViewerDialog constructor. Creates the dialog and starts downloading
 	 * the specified image. Note that the dialog is not shown automatically.
-	 * @param context Calling context.
+	 * @param activity Parent activity.
 	 * @param drink Drink containing the image to show. If the image is not null then
 	 * the dialog will try to show the  drink's largest available image. If that image
 	 * is not available on the server or if there is a network connection issue then an
