@@ -23,7 +23,7 @@ public class DialogFactory {
         .setTitle("Ett fel inträffade")
         .setMessage("Kunde inte ansluta till servern. Försök igen, eller Cancel för att gå tillbaka till föregående vy.")
         .setPositiveButton(R.string.retry, onClickListener)
-        .setNegativeButton(activity.getText(android.R.string.cancel), onClickListener)
+        .setNegativeButton(android.R.string.cancel, onClickListener)
         .create();
 	}
 }
