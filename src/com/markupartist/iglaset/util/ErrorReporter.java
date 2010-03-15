@@ -209,20 +209,20 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
         return sInstance;
     }
 
-    private void sendErrorMail(Context _context, String ErrorContent) {
+    private void sendErrorMail(Context context, String ErrorContent) {
         Intent sendIntent = new Intent(Intent.ACTION_SEND);
-        String subject = _context.getResources().getString(
+        String subject = context.getResources().getString(
                 R.string.crash_report_mail_subject);
-        String body = _context.getResources().getString(
+        String body = context.getResources().getString(
                 R.string.crash_report_mail_body)
                 + "\n\n" + ErrorContent + "\n\n";
         sendIntent.putExtra(Intent.EXTRA_EMAIL,
-                new String[] { _context.getResources().getString(
+                new String[] { context.getResources().getString(
                         R.string.crash_report_email) });
         sendIntent.putExtra(Intent.EXTRA_TEXT, body);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
         sendIntent.setType("message/rfc822");
-        _context.startActivity(Intent.createChooser(sendIntent, "Title:"));
+        context.startActivity(Intent.createChooser(sendIntent, "Title:"));
     }
 
     private void saveAsFile(String ErrorContent) {
