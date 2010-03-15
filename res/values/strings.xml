@@ -59,4 +59,10 @@
     <string name="manufacturers_description">Tillverkarens beskrivning</string>
     <string name="show_description">Visa beskrivning</string>
     <string name="hide">Göm</string>
+    <string name="cancel">Avbryt</string>
+    <string name="crash_report_dialog_title">Skicka krashrapport?</string>
+    <string name="crash_report_dialog_message">Ett fel inträffade, vill du skicka en krashrapport för att få det här felet fixat?</string>
+    <string name="crash_report_email">iglaset-crashreport@markupartist.com</string><!-- Do not translate -->
+    <string name="crash_report_mail_subject">iglaset krashrapport</string><!-- Do not translate -->
+    <string name="crash_report_mail_body">Genom att skicka denna krashrapport hjälper du oss att fixa buggen. Informationen kommer inte att nyttjas för något annat.</string>
 </resources>

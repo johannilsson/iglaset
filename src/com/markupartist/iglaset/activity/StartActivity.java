@@ -34,6 +34,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
+import com.markupartist.iglaset.util.ErrorReporter;
 import com.markupartist.iglaset.util.ImageLoader;
 
 public class StartActivity extends Activity implements android.view.View.OnClickListener {
@@ -48,6 +49,9 @@ public class StartActivity extends Activity implements android.view.View.OnClick
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final ErrorReporter reporter = ErrorReporter.getInstance();
+        reporter.checkErrorAndReport(this);
 
         setContentView(R.layout.start);
 
@@ -122,7 +126,7 @@ public class StartActivity extends Activity implements android.view.View.OnClick
                         startActivity(prefIntent);
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .create();
         case DIALOG_ABOUT:
             PackageManager pm = getPackageManager();
