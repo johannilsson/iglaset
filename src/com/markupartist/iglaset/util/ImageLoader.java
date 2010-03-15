@@ -34,6 +34,10 @@ public class ImageLoader {
         return sInstance;
     }
 
+	static public boolean hasInstance() {
+		return sInstance != null;
+	}
+    
     private HashMap<String, Bitmap> mUrlToBitmap;
     private Queue<Group> mQueue;
     private DownloadThread mThread;
@@ -111,8 +115,12 @@ public class ImageLoader {
     }
 
     public void clearCache() {
-    	Log.d(TAG, "Flushing image cache");
-        mUrlToBitmap.clear();
+    	// Only clear if it contains something. This reduces the log entries and make the
+    	// ones printed to the log actually mean something when debugging.
+    	if(mUrlToBitmap.size() > 0) {
+    		Log.d(TAG, "Flushing image cache");
+    		mUrlToBitmap.clear();
+    	}
     }
 
     public void cancel() {
@@ -283,8 +291,4 @@ public class ImageLoader {
             }
         }
     }
-
-	public static boolean hasInstance() {
-		return sInstance != null;
-	}
 }
