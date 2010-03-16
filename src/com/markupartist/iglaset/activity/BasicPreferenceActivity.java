@@ -77,19 +77,19 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
         case DIALOG_CLEAR_SEARCH_HISTORY:
             return new AlertDialog.Builder(this)
                 .setTitle(R.string.clear_search_history_preference)
-                .setMessage(getText(R.string.clear_search_history_summary_preference))
+                .setMessage(R.string.clear_search_history_summary_preference)
                 .setCancelable(true)
-                .setPositiveButton(getText(R.string.yes), new OnClickListener() {
+                .setPositiveButton(R.string.yes, new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
                                 BasicPreferenceActivity.this, 
                                 SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
                         suggestions.clearHistory();
-                        Toast.makeText(BasicPreferenceActivity.this, getText(R.string.search_history_cleared), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BasicPreferenceActivity.this, R.string.search_history_cleared, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton(getText(R.string.no), new OnClickListener() {                    
+                .setNegativeButton(R.string.no, new OnClickListener() {                    
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -98,8 +98,8 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
                 .create();
         case DIALOG_AUTH_FAILED:
             return new AlertDialog.Builder(this)
-            .setTitle(getText(R.string.login_failed))
-            .setMessage(getText(R.string.login_failed_message))
+            .setTitle(R.string.login_failed)
+            .setMessage(R.string.login_failed_message)
             .setPositiveButton("Ok", new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -118,7 +118,7 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
      */
     private void userAuthenticated() {        
         Toast.makeText(BasicPreferenceActivity.this, 
-                getText(R.string.login_success), Toast.LENGTH_SHORT).show();
+                R.string.login_success, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -132,17 +132,14 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
             String key) {
-        if (key.equals("preference_password")) {
-            Toast.makeText(BasicPreferenceActivity.this, 
-                    R.string.logging_in, Toast.LENGTH_SHORT).show();
-            mAuthUserTask = new AuthUserTask();
-            mAuthUserTask.execute(this);
-        } else if (key.equals("preference_username") 
-                && sharedPreferences.contains("preference_password")) {
-            Toast.makeText(BasicPreferenceActivity.this, 
-                    R.string.logging_in, Toast.LENGTH_SHORT).show();
-            mAuthUserTask = new AuthUserTask();
-            mAuthUserTask.execute(this);
+        if (key.equals("preference_password") || key.equals("preference_username")) {
+        	if(sharedPreferences.contains("preference_password") &&
+        	   sharedPreferences.contains("preference_username")) {
+	            Toast.makeText(BasicPreferenceActivity.this, 
+	                    R.string.logging_in, Toast.LENGTH_SHORT).show();
+	            mAuthUserTask = new AuthUserTask();
+	            mAuthUserTask.execute(this);
+        	}
         }
     }
 
