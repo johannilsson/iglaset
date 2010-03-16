@@ -105,7 +105,7 @@ public class StartActivity extends Activity implements android.view.View.OnClick
         switch(id) {
         case DIALOG_NOT_AUTHENTICATED:
             return new AlertDialog.Builder(this)
-                .setTitle(getText(R.string.not_logged_in))
+                .setTitle(R.string.not_logged_in)
                 .setMessage(R.string.login_to_proceed_message)
                 .setPositiveButton("Logga in", new OnClickListener() {
                     @Override
@@ -131,15 +131,15 @@ public class StartActivity extends Activity implements android.view.View.OnClick
                 .setTitle(getText(R.string.app_name) + " " + version)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 //.setView(findViewById(R.id.about_dialog_text))
-                .setMessage(getText(R.string.about_this_app))
+                .setMessage(R.string.about_this_app)
                 .setCancelable(true)
-                .setPositiveButton(getText(android.R.string.ok), new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ;
                     }
                 })
-                .setNeutralButton(getText(R.string.donate), new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.donate, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW,
@@ -147,7 +147,7 @@ public class StartActivity extends Activity implements android.view.View.OnClick
                         startActivity(browserIntent);
                     }
                 })
-                .setNegativeButton(getText(R.string.feedback), new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.feedback, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
