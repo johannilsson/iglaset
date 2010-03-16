@@ -8,6 +8,7 @@
             android:key="preference_username"
             android:title="Användarnamn"
             android:summary="Ditt användarnamn på iglaset.se"
+            android:singleLine="true"
         />
         <EditTextPreference 
             android:key="preference_password"
@@ -15,6 +16,7 @@
             android:summary="Ditt lösenord på iglaset.se"
             android:dependency="preference_username"
             android:password="true"
+            android:singleLine="true"
         />
     </PreferenceCategory>
     <PreferenceCategory
