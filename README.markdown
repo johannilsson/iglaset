@@ -30,6 +30,7 @@ Schedule
 Changelog
 ---------
 Next:
+    * Added a crash reporter
     * Show item descriptions
     * Searches with only 1 result will go straight to the drink details
 * 1.3.0
