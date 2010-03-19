@@ -57,7 +57,7 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
 	public void setDrink(Drink drink) {
 		this.drink = drink;
 		
-		if(null != this.drink) {
+		if(null != drink) {
 			loadImage(drink.getLargestImageUrl());
 		}
 	}
