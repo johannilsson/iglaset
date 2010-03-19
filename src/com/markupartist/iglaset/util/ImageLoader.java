@@ -161,25 +161,38 @@ public class ImageLoader {
 
     private void onLoad() {
         if (mThread != null) {
-            Group group = mThread.group;
-            if (group.bitmap != null) {
-                if (group.cache) {
-                    mUrlToBitmap.put(group.url, group.bitmap);
-                }
-                if (group.image != null) {
-                    group.image.setImageBitmap(group.bitmap);
-                }
+        	Group group = mThread.group;
+        	switch(mThread.status) {
+        	case DownloadThread.STATUS_OK:
+	            if (group.bitmap != null) {
+	                if (group.cache) {
+	                    mUrlToBitmap.put(group.url, group.bitmap);
+	                }
+	                if (group.image != null) {
+	                    group.image.setImageBitmap(group.bitmap);
+	                }
+	            } else if (mMissing != null && group.image != null) {
+	            	group.image.setImageBitmap(mMissing);
+	            }
+	            
                 if(null != group.eventHandler) {
                 	group.eventHandler.onFinished();
                 }
-            } else if (mMissing != null) {
-                if (group.image != null) {
-                    group.image.setImageBitmap(mMissing);
+	            break;
+        	case DownloadThread.STATUS_DECODE_FAILED:
+        		if (mMissing != null && group.image != null) {
+        			group.image.setImageBitmap(mMissing);
+	            }
+
+                if(null != group.eventHandler) {
+                	group.eventHandler.onDecodeFailed();
                 }
-            }
-            else if(group.eventHandler != null) {
-            	group.eventHandler.onDownloadError();
-            }
+        		break;
+        	case DownloadThread.STATUS_ERROR:
+	            if(null != group.eventHandler) {
+	            	group.eventHandler.onDownloadError();
+	            }
+        	}
         }
         mThread = null;
         mBusy = false;
@@ -206,6 +219,11 @@ public class ImageLoader {
     	 * Called when download finished successfully.
     	 */
     	public void onFinished();
+    	
+    	/**
+    	 * Called when an image was downloaded but the decoding failed.
+    	 */
+    	public void onDecodeFailed();
     }
 
     private class Group {
@@ -234,6 +252,26 @@ public class ImageLoader {
         };
         private HttpURLConnection mConn;
         public Group group;
+        
+        /**
+         * Image downloading status code.
+         */
+        public int status;
+        
+        /**
+         * Status ok. Image downloaded and decoded successfully.
+         */
+        public static final int STATUS_OK = 0;
+        
+        /**
+         * Download error. Usually a network problem.
+         */
+        public static final int STATUS_ERROR = 1;
+        
+        /**
+         * Image downloaded but decoding failed.
+         */
+        public static final int STATUS_DECODE_FAILED = 2;
 
         public DownloadThread(Group group) {
             this.group = group;
@@ -256,21 +294,29 @@ public class ImageLoader {
                 out.flush();
                 final byte[] data = dataStream.toByteArray();
                 group.bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                if(null == group.bitmap) {
+                	status = STATUS_DECODE_FAILED;
+                } else {
+                	status = STATUS_OK;
+                }
 
                 inStream.close();
                 mConn.disconnect();
                 inStream = null;
                 mConn = null;
             } catch (Exception ex) {
+            	status = STATUS_ERROR;
             	Log.d(TAG, "Download failed: " + ex.getMessage());
                 // nothing
             }
+            
             if (inStream != null) {
                 try {
                     inStream.close();
                 } catch (Exception ex) {
                 }
             }
+            
             disconnect();
             inStream = null;
             mConn = null;

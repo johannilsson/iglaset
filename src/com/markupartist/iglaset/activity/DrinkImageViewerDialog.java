@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.Drink;
@@ -56,7 +57,7 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
 	public void setDrink(Drink drink) {
 		this.drink = drink;
 		
-		if(null != this.drink) {
+		if(null != drink) {
 			loadImage(drink.getLargestImageUrl());
 		}
 	}
@@ -105,5 +106,11 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
 	@Override
 	public void onClick(View v) {
 		dismiss();
+	}
+
+	@Override
+	public void onDecodeFailed() {
+		dismiss();
+		Toast.makeText(getContext(), R.string.image_decode_failed, Toast.LENGTH_LONG).show();
 	}
 }

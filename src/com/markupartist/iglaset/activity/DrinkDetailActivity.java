@@ -612,6 +612,11 @@ public class DrinkDetailActivity extends ListActivity {
     	case DIALOG_ADD_COMMENT:
     		AlertDialog alert = (AlertDialog) dialog;
     		alert.getButton(Dialog.BUTTON_POSITIVE).setEnabled(false);
+    		break;
+    	case DIALOG_SHOW_DRINK_IMAGE:
+    		DrinkImageViewerDialog imageViewer = (DrinkImageViewerDialog) dialog;
+    		imageViewer.setDrink(sDrink);
+    		break;
     	}
     }
     
