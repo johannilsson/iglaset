@@ -192,6 +192,7 @@ public class ImageLoader {
 	            if(null != group.eventHandler) {
 	            	group.eventHandler.onDownloadError();
 	            }
+	            break;
         	}
         }
         mThread = null;
