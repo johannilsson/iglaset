@@ -349,6 +349,7 @@ public class SearchResultActivity extends ListActivity implements
     	case DIALOG_DRINK_IMAGE:
     		DrinkImageViewerDialog imageDialog = (DrinkImageViewerDialog) dialog;
     		imageDialog.setDrink(mClickedDrink);
+    		imageDialog.load();
     	}
     }
 

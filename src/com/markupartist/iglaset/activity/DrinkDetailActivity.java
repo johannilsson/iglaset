@@ -615,7 +615,7 @@ public class DrinkDetailActivity extends ListActivity {
     		break;
     	case DIALOG_SHOW_DRINK_IMAGE:
     		DrinkImageViewerDialog imageViewer = (DrinkImageViewerDialog) dialog;
-    		imageViewer.setDrink(sDrink);
+    		imageViewer.load();
     		break;
     	}
     }
