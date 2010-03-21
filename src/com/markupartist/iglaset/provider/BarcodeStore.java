@@ -37,13 +37,9 @@ public class BarcodeStore {
                 BARCODES_BASE_URI, barcode, drinkId, authToken);
 
         final HttpGet get = new HttpGet(suggestUri);
-
-        HttpEntity entity = null;
-
         final HttpResponse response = HttpManager.execute(get);
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             Log.d(TAG, "added");
-            entity = response.getEntity();
             return true;
         } else {
             Log.d(TAG, "Failed " + response.getStatusLine().getStatusCode());
