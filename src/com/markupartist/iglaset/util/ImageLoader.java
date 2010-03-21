@@ -227,7 +227,7 @@ public class ImageLoader {
     	public void onDecodeFailed();
     }
 
-    private class Group {
+    private static class Group {
         public Group(ImageView image, String url, Bitmap bitmap, boolean cache, EventHandler eventHandler) {
             this.image = image;
             this.url = url;

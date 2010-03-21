@@ -204,7 +204,7 @@ abstract public class SectionedAdapter extends BaseAdapter {
         return (position);
     }
 
-    public class Section {
+    public static class Section {
         int id;
         public CharSequence caption;
         public Adapter adapter;
