@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.Drink;
@@ -30,6 +31,8 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
 	 * the dialog will try to show the  drink's largest available image. If that image
 	 * is not available on the server or if there is a network connection issue then an
 	 * error will be shown, allowing the user to retry or abort.
+	 * 
+	 * \see load
 	 */
 	public DrinkImageViewerDialog(Context context, Drink drink) {
 		super(context);
@@ -42,32 +45,26 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
     	imageView = (ImageView) findViewById(R.id.drink_image);
     	imageView.setOnClickListener(this);
     	progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-    	
-    	if(null != this.drink) {
-    		loadImage(this.drink.getLargestImageUrl());
-    	}
 	}
 	
 	/**
-	 * Attach drink to dialog. This will, if drink is not null, immediately try
-	 * to download the drink's largest image.
+	 * Attach drink to dialog. Note that this will not download the image. It has to
+	 * be explicitly downloaded via DrinkImageViewerDialog.load
 	 * @param drink Drink to attach to the image viewer.
 	 */
 	public void setDrink(Drink drink) {
 		this.drink = drink;
-		
-		if(null != this.drink) {
-			loadImage(drink.getLargestImageUrl());
-		}
 	}
     
-    /**
-     * Tells the ImageLoader helper to start loading a URL into this view.
-     * @param url Image URL to load.
-     */
-    private void loadImage(String url) {
-    	ImageLoader.getInstance().load(imageView, url, true, this);
-    }
+	/**
+	 * Download the drink's largest image if a drink has been attached to this dialog.
+	 */
+	public void load() {
+		if(null != drink) {
+	    	ImageLoader.getInstance().load(
+	    			imageView, drink.getLargestImageUrl(), true, this);
+		}
+	}
 
 	@Override
 	public void onDownloadError() {
@@ -76,8 +73,8 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
             public void onClick(DialogInterface dialog, int which) {
             	switch(which) {
             	case Dialog.BUTTON_POSITIVE:
-            		DrinkImageViewerDialog viewerDialog = DrinkImageViewerDialog.this;
-            		viewerDialog.loadImage(viewerDialog.drink.getLargestImageUrl());
+            		show();
+            		load();
             		break;
             	case Dialog.BUTTON_NEGATIVE:
             		dismiss();
@@ -87,6 +84,7 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
             }
 		};
 		
+		hide();
 		DialogFactory.createNetworkProblemDialog(getContext(), onClickListener).show();
 	}
 
@@ -105,5 +103,11 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventH
 	@Override
 	public void onClick(View v) {
 		dismiss();
+	}
+
+	@Override
+	public void onDecodeFailed() {
+		dismiss();
+		Toast.makeText(getContext(), R.string.image_decode_failed, Toast.LENGTH_SHORT).show();
 	}
 }

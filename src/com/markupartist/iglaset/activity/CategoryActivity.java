@@ -59,7 +59,7 @@ public class CategoryActivity extends ListActivity {
         return categories;
     }
 
-    private class Category {
+    private static class Category {
         private int mId;
         private String mName;
 
