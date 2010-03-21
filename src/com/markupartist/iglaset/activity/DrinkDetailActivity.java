@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -163,10 +164,10 @@ public class DrinkDetailActivity extends ListActivity {
         }
         
         HashMap<String, ArrayList<String>> tags = drink.getTags();
-        for (String type : tags.keySet()) {
-            ArrayList<String> nameList = tags.get(type);
-            mSectionedAdapter.addSection(0, type, new ArrayAdapter<String>(this, 
-                    R.layout.simple_row, nameList));
+        Set<Map.Entry<String, ArrayList<String>>> nameSet = tags.entrySet();
+        for (Map.Entry<String, ArrayList<String>> entry : nameSet) {
+            mSectionedAdapter.addSection(0, entry.getKey(), new ArrayAdapter<String>(this, 
+                    R.layout.simple_row, entry.getValue()));
         }
 
         ArrayList<Volume> volumes = drink.getVolumes();
