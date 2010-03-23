@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -18,7 +17,7 @@ import com.markupartist.iglaset.R;
  * 
  * @author marco
  */
-public class DrinkDescriptionAdapter extends BaseAdapter implements OnClickListener {
+public class DrinkDescriptionAdapter extends BaseAdapter {
 
 	private View view;
 	private TextView textRow;
@@ -45,11 +44,6 @@ public class DrinkDescriptionAdapter extends BaseAdapter implements OnClickListe
 		textRow = (TextView) this.view.findViewById(R.id.description_row);
 		textView = (TextView) this.view.findViewById(R.id.description_text);
 		textView.setText(android.text.Html.fromHtml(description));
-		
-		// Use the same click listener for both text views. This makes it easy
-		// for the user to disable an opened description.
-		textRow.setOnClickListener(this);
-		textView.setOnClickListener(this);
 	}
 
 	@Override
@@ -72,18 +66,19 @@ public class DrinkDescriptionAdapter extends BaseAdapter implements OnClickListe
 		return this.view;
 	}
 
-	@Override
-	public void onClick(View view) {
-		if(this.textView.getVisibility() == View.VISIBLE) {
-			this.textRow.setText(R.string.show_description);
-			this.textRow.setCompoundDrawables(this.iconClosed, null,null, null);
-			this.textView.setVisibility(View.GONE);
+	/**
+	 * Toggle visibility (expanded/collapsed) of the description text.
+	 */
+	public void toggleVisibility() {
+		if(textView.getVisibility() == View.VISIBLE) {
+			textRow.setText(R.string.show_description);
+			textRow.setCompoundDrawables(this.iconClosed, null,null, null);
+			textView.setVisibility(View.GONE);
 		}
 		else {
-			this.textRow.setText(R.string.hide);
-			this.textRow.setCompoundDrawables(this.iconOpened, null,null, null);
-			this.textView.setVisibility(View.VISIBLE);
+			textRow.setText(R.string.hide);
+			textRow.setCompoundDrawables(this.iconOpened, null,null, null);
+			textView.setVisibility(View.VISIBLE);
 		}
 	}
-
 }

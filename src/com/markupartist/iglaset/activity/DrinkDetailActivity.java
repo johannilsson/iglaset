@@ -402,6 +402,9 @@ public class DrinkDetailActivity extends ListActivity {
             }
         } else if (section.adapter instanceof UserRatingAdapter) {
         	tryShowAuthenticatedDialog(DIALOG_RATE);
+        } else if (section.adapter instanceof DrinkDescriptionAdapter) {
+        	DrinkDescriptionAdapter description = (DrinkDescriptionAdapter) section.adapter;
+        	description.toggleVisibility();
         }
     }
 
