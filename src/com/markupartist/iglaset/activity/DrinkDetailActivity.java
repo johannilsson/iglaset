@@ -629,7 +629,7 @@ public class DrinkDetailActivity extends ListActivity {
         switch (requestCode) {
             case REQUEST_CODE_SETTINGS_CHANGED:
                 new GetDrinkTask().execute(sDrink.getId());
-                // TODO Break here? FindBugs complains about switch fallthrough
+                break;
             case IntentIntegrator.REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -643,6 +643,7 @@ public class DrinkDetailActivity extends ListActivity {
                         Log.d(TAG, "NO SCAN RESULT");
                     }   
                 }
+                break;
         }
     }
 
