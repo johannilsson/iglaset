@@ -104,7 +104,7 @@ public class SearchResultActivity extends ListActivity implements
             auth = AuthStore.getInstance().getAuthentication(this);
             mToken = auth.token;
         } catch (AuthenticationException e) {
-            Log.d(TAG, "User not authenticated...");
+            Log.e(TAG, "User not authenticated...");
         }
 
         //mToken = AuthStore.getInstance().getStoredToken(this);
@@ -215,7 +215,10 @@ public class SearchResultActivity extends ListActivity implements
 
     @Override
     protected void onDestroy() {
-    	mSearchDrinksTask.cancel(true);
+    	if(null != mSearchDrinksTask) {
+    		mSearchDrinksTask.cancel(true);
+    	}
+    	
         super.onDestroy();
     }
 
