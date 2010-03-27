@@ -84,7 +84,12 @@ public class SearchResultActivity extends ListActivity implements
      * create the drink image viewer dialog.
      */
     private Drink mClickedDrink;
-
+    
+	/**
+	 * Task object to be executed when searching.
+	 */
+	private SearchDrinksTask mSearchDrinksTask;
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,9 +127,9 @@ public class SearchResultActivity extends ListActivity implements
             final String queryAction = queryIntent.getAction();
             final TextView searchText = (TextView) findViewById(R.id.search_progress_text);
 
-            SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
-            searchDrinksTask.setSearchDrinkCompletedListener(this);
-            searchDrinksTask.setSearchDrinkErrorListener(this);
+            mSearchDrinksTask = new SearchDrinksTask();
+            mSearchDrinksTask.setSearchDrinkCompletedListener(this);
+            mSearchDrinksTask.setSearchDrinkErrorListener(this);
 
             Log.d(TAG, "action: " + queryAction);
             
@@ -136,7 +141,7 @@ public class SearchResultActivity extends ListActivity implements
                 suggestions.saveRecentQuery(queryString, null);
 
                 String searchingText = searchText.getText() + " \"" + queryString + "\"";
-                searchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
+                mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchText.setText(searchingText);
                 setTitle(searchingText);
 
@@ -144,7 +149,7 @@ public class SearchResultActivity extends ListActivity implements
                 sSearchCriteria.setQuery(queryString);
                 sSearchCriteria.setToken(mToken);
 
-                searchDrinksTask.execute(sSearchCriteria);
+                mSearchDrinksTask.execute(sSearchCriteria);
             } else if (queryIntent.hasExtra(EXTRA_SEARCH_CATEGORY_ID)) {
                 final int category = queryIntent.getExtras()
                     .getInt(EXTRA_SEARCH_CATEGORY_ID);
@@ -155,7 +160,7 @@ public class SearchResultActivity extends ListActivity implements
                 sSearchCriteria.setCategory(category);
                 sSearchCriteria.setToken(mToken);
 
-                searchDrinksTask.execute(sSearchCriteria);
+                mSearchDrinksTask.execute(sSearchCriteria);
             } else if (queryIntent.hasExtra(EXTRA_SEARCH_BARCODE)) {
                 String barcode = queryIntent.getStringExtra(EXTRA_SEARCH_BARCODE);
 
@@ -165,7 +170,7 @@ public class SearchResultActivity extends ListActivity implements
                 sSearchCriteria.setBarcode(barcode);
                 sSearchCriteria.setToken(mToken);
 
-                searchDrinksTask.execute(sSearchCriteria);
+                mSearchDrinksTask.execute(sSearchCriteria);
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
                 setTitle(R.string.recommendations_label);
 
@@ -174,7 +179,7 @@ public class SearchResultActivity extends ListActivity implements
                         auth.userId);
                 sSearchCriteria.setToken(mToken);
 
-                searchDrinksTask.execute(sSearchCriteria); 
+                mSearchDrinksTask.execute(sSearchCriteria); 
             } else if (ACTION_USER_RATINGS.equals(queryAction)) {
                 setTitle(R.string.rated_articles_label);
 
@@ -183,7 +188,7 @@ public class SearchResultActivity extends ListActivity implements
                         auth.userId);
                 sSearchCriteria.setToken(mToken);
 
-                searchDrinksTask.execute(sSearchCriteria); 
+                mSearchDrinksTask.execute(sSearchCriteria); 
             }
         } else {
         	onDrinkData(data);
@@ -210,6 +215,7 @@ public class SearchResultActivity extends ListActivity implements
 
     @Override
     protected void onDestroy() {
+    	mSearchDrinksTask.cancel(true);
         super.onDestroy();
     }
 
