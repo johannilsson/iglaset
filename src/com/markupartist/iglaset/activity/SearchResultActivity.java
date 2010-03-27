@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
@@ -215,7 +216,7 @@ public class SearchResultActivity extends ListActivity implements
 
     @Override
     protected void onDestroy() {
-    	if(null != mSearchDrinksTask) {
+    	if(null != mSearchDrinksTask && mSearchDrinksTask.getStatus() == AsyncTask.Status.RUNNING) {
     		mSearchDrinksTask.cancel(true);
     	}
     	
