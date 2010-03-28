@@ -19,16 +19,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -36,7 +39,7 @@ import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.util.ErrorReporter;
 
-public class StartActivity extends Activity implements android.view.View.OnClickListener {
+public class StartActivity extends Activity implements android.view.View.OnClickListener, TextView.OnEditorActionListener {
     private static final String TAG = "StartActivity";
 
     private static final int DIALOG_ABOUT = 0;
@@ -57,6 +60,7 @@ public class StartActivity extends Activity implements android.view.View.OnClick
         // TODO: Handle the ime option actionSearch, for now we are just using actionDone.
         mSearchView = (AutoCompleteTextView) findViewById(R.id.search_text);
         mSearchView.setAdapter(new AutoCompleteSearchAdapter(this, R.layout.simple_list_row_inverted));
+        mSearchView.setOnEditorActionListener(this);
 
         ImageButton searchButton = (ImageButton) findViewById(R.id.btn_search);
         searchButton.setOnClickListener(this);
@@ -193,14 +197,18 @@ public class StartActivity extends Activity implements android.view.View.OnClick
         super.onDestroy();
     }
 
+    private void doSearch() {
+        Intent searchIntent = new Intent(this, SearchResultActivity.class);
+        searchIntent.setAction(Intent.ACTION_SEARCH);
+        searchIntent.putExtra(SearchManager.QUERY, mSearchView.getText().toString());
+        startActivity(searchIntent); 
+    }
+    
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.btn_search:
-            Intent searchIntent = new Intent(this, SearchResultActivity.class);
-            searchIntent.setAction(Intent.ACTION_SEARCH);
-            searchIntent.putExtra(SearchManager.QUERY, mSearchView.getText().toString());
-            startActivity(searchIntent);            
+        	doSearch();
             break;
         case R.id.btn_lists:
             Intent i = new Intent(StartActivity.this, CategoryActivity.class);
@@ -288,4 +296,17 @@ public class StartActivity extends Activity implements android.view.View.OnClick
             return nameFilter;
         }
     }
+
+	@Override
+	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		if(v.length() > 0) {
+			boolean isEnterKey = (null != event && event.getKeyCode() == KeyEvent.KEYCODE_ENTER);
+			if(actionId == EditorInfo.IME_ACTION_SEARCH || true == isEnterKey) {
+				doSearch();
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
