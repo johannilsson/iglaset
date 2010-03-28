@@ -28,7 +28,7 @@ class DrinksParser extends DefaultHandler {
     private String mCurrentTagType;
     private boolean mInName;
     private String mCurrentName = "";
-    private StringBuffer mTextBuffer = null;
+    private StringBuilder mTextBuffer = null;
     boolean mIsBuffering = false; 
 
     public ArrayList<Drink> parseDrinks(InputStream in, ArrayList<Drink> drinks) {
@@ -153,7 +153,7 @@ class DrinksParser extends DefaultHandler {
     }
 
     private void startBuffer() {
-        mTextBuffer = new StringBuffer("");
+        mTextBuffer = new StringBuilder();
         mIsBuffering = true;
     }
 
