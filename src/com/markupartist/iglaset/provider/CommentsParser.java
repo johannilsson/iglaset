@@ -24,8 +24,12 @@ class CommentsParser extends DefaultHandler {
     private String mCurrentText;
     private Comment mCurrentComment;
     private boolean mInComment = false;
-    private String mCurrentCommentString = "";
-
+    private StringBuilder mCurrentCommentString;
+    
+    public CommentsParser() {
+    	mCurrentCommentString = new StringBuilder();
+    }
+    
     public ArrayList<Comment> parseComments(InputStream in, ArrayList<Comment> comments) {
         try {
             mComments = comments;
@@ -72,9 +76,9 @@ class CommentsParser extends DefaultHandler {
         mCurrentText = new String(ch, start, length).trim();
 
         if (mInComment) {
-            mCurrentCommentString += mCurrentText.replaceAll("\n", "");
+            mCurrentCommentString.append(mCurrentText.replaceAll("\n", ""));
         } else {
-            mCurrentCommentString = "";
+            mCurrentCommentString.setLength(0);
         }
     }
 
@@ -82,7 +86,7 @@ class CommentsParser extends DefaultHandler {
                 throws SAXException {
         if (mCurrentComment != null) {
             if (name.trim().equals("comment") && !TextUtils.isEmpty(mCurrentCommentString)) {
-                mCurrentComment.setComment(mCurrentCommentString.trim().replaceAll("\n", ""));
+                mCurrentComment.setComment(mCurrentCommentString.toString().trim());
                 mInComment = false;
             }
         }
