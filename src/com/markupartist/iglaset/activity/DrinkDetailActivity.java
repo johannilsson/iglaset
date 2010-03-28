@@ -786,8 +786,9 @@ public class DrinkDetailActivity extends ListActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            // Skip recycling for now...
-            convertView = getLayoutInflater().inflate(R.layout.volume_row, parent, false);
+        	if(null == convertView) {
+        		convertView = getLayoutInflater().inflate(R.layout.volume_row, parent, false);
+        	}
 
             Volume volume = getItem(position);
             TextView id = (TextView) convertView.findViewById(R.id.volume_id);
