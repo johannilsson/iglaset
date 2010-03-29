@@ -10,41 +10,44 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         >
+        <!-- Empty dummy to prevent AutoCompleteTextView from receiving focus -->
+        <LinearLayout
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_width="0px"
+            android:layout_height="0px"
+            />
     <LinearLayout 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:addStatesFromChildren="true"
         android:gravity="center_vertical"
         android:paddingTop="10dip"
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        >
-        <!-- Empty dummy to prevent AutoCompleteTextView from receiving focus -->
-        <LinearLayout
-            android:focusable="true" android:focusableInTouchMode="true"
-            android:layout_width="0px" android:layout_height="0px"
-        />
+        android:paddingBottom="10dip"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip">
         <AutoCompleteTextView 
             android:id="@+id/search_text"
             android:dropDownWidth="fill_parent"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:textColor="#000"
             android:singleLine="true"
             android:layout_weight="1"
             android:imeOptions="actionSearch"
             android:lines="1"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:background="@drawable/textfield_search"
+            />
         <ImageButton
                 android:id="@+id/btn_search"
                 android:src="@android:drawable/ic_search_category_default"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dip"
-                android:layout_marginRight="2dip"
-                android:layout_marginBottom="2dip"
-                android:padding="5dip"
-            />
+                android:layout_height="fill_parent"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip"
+                android:background="@drawable/btn_search_dialog"
+                />
     </LinearLayout>
     <TableLayout
         android:layout_width="fill_parent"
