@@ -128,7 +128,7 @@ public class DrinksStore {
             DrinksParser drinksParser = new DrinksParser();
             drinksParser.parseDrinks(entity.getContent(), drinks);
         } catch (IOException e) {
-            Log.d(TAG, "Failed to read data: " + e.getMessage());
+            Log.e(TAG, "Failed to read data: " + e.getMessage());
         }
 
         Drink drink = null;
@@ -149,7 +149,7 @@ public class DrinksStore {
             entity = response.getEntity();
             entity.getContent();
         } catch (IOException e) {
-            Log.d(TAG, "Failed to read data: " + e.getMessage());
+            Log.e(TAG, "Failed to read data: " + e.getMessage());
         }
     }
 

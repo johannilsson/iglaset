@@ -26,15 +26,15 @@
         />
         <AutoCompleteTextView 
             android:id="@+id/search_text"
-            android:hint="Sök"
             android:dropDownWidth="fill_parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000"
             android:singleLine="true"
             android:layout_weight="1"
-            android:imeOptions="actionDone"
-            />
+            android:imeOptions="actionSearch"
+            android:lines="1"
+            android:inputType="text"/>
         <ImageButton
                 android:id="@+id/btn_search"
                 android:src="@android:drawable/ic_search_category_default"
