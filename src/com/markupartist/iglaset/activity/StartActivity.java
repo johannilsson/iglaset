@@ -57,7 +57,6 @@ public class StartActivity extends Activity implements android.view.View.OnClick
 
         setContentView(R.layout.start);
 
-        // TODO: Handle the ime option actionSearch, for now we are just using actionDone.
         mSearchView = (AutoCompleteTextView) findViewById(R.id.search_text);
         mSearchView.setAdapter(new AutoCompleteSearchAdapter(this, R.layout.simple_list_row_inverted));
         mSearchView.setOnEditorActionListener(this);
