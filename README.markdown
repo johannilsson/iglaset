@@ -4,7 +4,7 @@ iglaset Android App
 Search in one of Swedens largest liquor databases [iglaset.se](http://iglaset.se) 
 with comments and ratings from real users.
 
-Note, the application is in Swedish.
+![Screenshot of iglaset for Android](http://farm3.static.flickr.com/2711/4477147518_a9ca59a30c_o.png "iglaset for Android")
 
 Setting up the project
 ----------------------
