@@ -126,8 +126,7 @@ public class DrinkDetailActivity extends ListActivity {
         mSectionedAdapter.addSectionFirst(0, getText(R.string.my_rating), mUserRatingAdapter);
 
         if (mToken != null) {
-            mGetDrinkTask = new GetDrinkTask();
-            mGetDrinkTask.execute(drink.getId());
+        	launchGetDrinkTask(drink);
         }
 
         TextView nameTextView = (TextView) findViewById(R.id.drink_name);
