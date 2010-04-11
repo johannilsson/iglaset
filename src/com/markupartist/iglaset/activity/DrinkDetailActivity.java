@@ -104,6 +104,8 @@ public class DrinkDetailActivity extends ListActivity {
     private static Drink sDrink;
     private UserRatingAdapter mUserRatingAdapter;
     private String mToken;
+    private GetDrinkTask mGetDrinkTask;
+    private GetCommentsTask mGetCommentsTask;
 
     /** Called when the activity is first created. */
     @Override
@@ -124,7 +126,7 @@ public class DrinkDetailActivity extends ListActivity {
         mSectionedAdapter.addSectionFirst(0, getText(R.string.my_rating), mUserRatingAdapter);
 
         if (mToken != null) {
-            new GetDrinkTask().execute(drink.getId());
+        	launchGetDrinkTask(drink);
         }
 
         TextView nameTextView = (TextView) findViewById(R.id.drink_name);
@@ -184,7 +186,7 @@ public class DrinkDetailActivity extends ListActivity {
         @SuppressWarnings("unchecked")
         final ArrayList<Comment> comments = (ArrayList<Comment>) getLastNonConfigurationInstance();
         if (comments == null) {
-            new GetCommentsTask().execute(drink.getId());
+            launchGetCommentsTask(drink);
         } else {
             updateCommentsInUi(comments);
         }
@@ -201,6 +203,8 @@ public class DrinkDetailActivity extends ListActivity {
 
     @Override
     protected void onDestroy() {
+    	cancelGetDrinkTask();
+    	cancelGetCommentsTask();
         super.onDestroy();
         //Tracker.getInstance().stop();
     }
@@ -621,6 +625,8 @@ public class DrinkDetailActivity extends ListActivity {
     		DrinkImageViewerDialog imageViewer = (DrinkImageViewerDialog) dialog;
     		imageViewer.load();
     		break;
+    	default:
+    		break;
     	}
     }
     
@@ -628,7 +634,8 @@ public class DrinkDetailActivity extends ListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CODE_SETTINGS_CHANGED:
-                new GetDrinkTask().execute(sDrink.getId());
+            	cancelGetDrinkTask();
+            	launchGetDrinkTask(sDrink);
                 break;
             case IntentIntegrator.REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
@@ -647,6 +654,25 @@ public class DrinkDetailActivity extends ListActivity {
         }
     }
 
+    /**
+     * Create and execute a task to fetch the current drink's comments.
+     */
+    private void launchGetCommentsTask(Drink drink) {
+        mGetCommentsTask = new GetCommentsTask();
+        mGetCommentsTask.execute(drink.getId());
+    }
+    
+    /**
+     * Cancel current GetCommentsTask if it has been created and if it is
+     * currently executing.
+     */
+    private void cancelGetCommentsTask() {
+    	if(null != mGetCommentsTask && mGetCommentsTask.getStatus() == AsyncTask.Status.RUNNING) {
+    		mGetCommentsTask.cancel(true);
+    		mGetCommentsTask = null;
+    	}
+    }
+    
     /**
      * Background task for fetching comments
      */
@@ -724,7 +750,7 @@ public class DrinkDetailActivity extends ListActivity {
 				
 				// TODO: We might want to inject the comment directly into the adapter,
 				// but just refresh all the comments for now.
-				new GetCommentsTask().execute(sDrink.getId());
+				launchGetCommentsTask(sDrink);
 			} else {
 				// TODO: Show a retry/cancel here or maybe a better text than just "failed"?
 				Toast.makeText(DrinkDetailActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
@@ -760,6 +786,25 @@ public class DrinkDetailActivity extends ListActivity {
                 showDialog(DIALOG_SUGGEST_BARCODE_FAIL);
             }
         }
+    }
+    
+    /**
+     * Create and execute a task to fetch the current drink.
+     */
+    private void launchGetDrinkTask(Drink drink) {
+        mGetDrinkTask = new GetDrinkTask();
+        mGetDrinkTask.execute(drink.getId());
+    }
+    
+    /**
+     * Cancel current GetDrinkTask if it has been created and if it is
+     * currently executing.
+     */
+    private void cancelGetDrinkTask() {
+    	if(null != mGetDrinkTask && mGetDrinkTask.getStatus() == AsyncTask.Status.RUNNING) {
+    		mGetDrinkTask.cancel(true);
+    		mGetDrinkTask = null;
+    	}
     }
     
     /**
