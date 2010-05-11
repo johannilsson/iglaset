@@ -400,7 +400,11 @@ public class SearchResultActivity extends ListActivity implements
                     dvh = new DrinkViewHolder(convertView);
                     convertView.setTag(dvh);
             } else {
-                dvh = (DrinkViewHolder) convertView.getTag();    
+                dvh = (DrinkViewHolder) convertView.getTag(); 
+
+                // Change to the default image or else the thumbnail will show
+                // an old image used in the reused view. The user won't notice it.
+                dvh.getImageView().setImageResource(R.drawable.noimage);
             }
 
             final Drink drink = getItem(position);
