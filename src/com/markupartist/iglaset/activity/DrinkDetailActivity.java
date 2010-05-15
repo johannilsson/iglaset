@@ -154,7 +154,10 @@ public class DrinkDetailActivity extends ListActivity {
 				showDialog(DIALOG_SHOW_DRINK_IMAGE);
 			}
 		});
-        ImageLoader.getInstance().load(imageView, drink.getThumbnailUrl(), 
+        
+        final int w = imageView.getDrawable().getIntrinsicWidth();
+        final int h = imageView.getDrawable().getIntrinsicHeight();
+        ImageLoader.getInstance().load(imageView, drink.getThumbnailUrl(w, h), 
                 true, R.drawable.noimage, null);
         
         //TextView descriptionTextView = (TextView) findViewById(R.id.drink_description);
