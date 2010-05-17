@@ -9,9 +9,8 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 public class Drink implements Parcelable {
-    // TODO: We should crop depending on the screen size instead.
-    private static String THUMB_RESIZE_BASE_URL =
-        "http://api.iglaset.se/resizely/crop/50x50/?url=";
+    private static String THUMB_RESIZE_FORMAT =
+    	"http://api.iglaset.se/resizely/crop/%dx%d/?url=%s";
     private int mId;
     private String mName;
     private String mOrigin;
@@ -141,11 +140,14 @@ public class Drink implements Parcelable {
     
     /**
      * Get the thumbnail URL for this article.
+     * @param width Thumbnail width in pixels.
+     * @param height Thumbnail height in pixels.
      * @return Thumbnail URL or null if not available.
      */
-    public String getThumbnailUrl() {
-    	if(null != mImages && mImages.size() > 0)
-    		return THUMB_RESIZE_BASE_URL + getSmallestImageUrl();
+    public String getThumbnailUrl(int width, int height) {
+    	if(null != mImages && mImages.size() > 0) {
+    		return String.format(THUMB_RESIZE_FORMAT, width, height, getSmallestImageUrl());
+    	}
     	
     	return null;
     }

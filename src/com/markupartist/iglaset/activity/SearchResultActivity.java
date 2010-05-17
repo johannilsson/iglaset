@@ -400,7 +400,11 @@ public class SearchResultActivity extends ListActivity implements
                     dvh = new DrinkViewHolder(convertView);
                     convertView.setTag(dvh);
             } else {
-                dvh = (DrinkViewHolder) convertView.getTag();    
+                dvh = (DrinkViewHolder) convertView.getTag(); 
+
+                // Change to the default image or else the thumbnail will show
+                // an old image used in the reused view. The user won't notice it.
+                dvh.getImageView().setImageResource(R.drawable.noimage);
             }
 
             final Drink drink = getItem(position);
@@ -417,7 +421,11 @@ public class SearchResultActivity extends ListActivity implements
                 dvh.getOriginCountryView().setText(drink.getConcatenatedOrigin());
                 dvh.getAlcoholView().setText(drink.getAlcoholPercent());
 
-                ImageLoader.getInstance().load(dvh.getImageView(), drink.getThumbnailUrl(), true, R.drawable.noimage, null);
+                final int w = dvh.getImageView().getDrawable().getIntrinsicWidth();
+                final int h = dvh.getImageView().getDrawable().getIntrinsicHeight();
+                ImageLoader.getInstance().load(dvh.getImageView(),
+                		drink.getThumbnailUrl(w, h), true, R.drawable.noimage,
+                		null);
                 dvh.getImageView().setTag(drink);
                 dvh.getImageView().setOnClickListener(mImageClickListener);
             }
