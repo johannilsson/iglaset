@@ -26,6 +26,14 @@
 	        android:title="@string/clear_search_history_preference"
 	        android:summary="@string/clear_search_history_summary_preference"
 	        />
+        <ListPreference
+            android:title="Län"
+            android:summary="Förvalt län för koll av lagersaldo."
+            android:key="sb_search_county"
+            android:entries="@array/sb_county_names"
+            android:entryValues="@array/sb_county_ids"
+            android:defaultValue="0"
+            />
     </PreferenceCategory>
 
 </PreferenceScreen>

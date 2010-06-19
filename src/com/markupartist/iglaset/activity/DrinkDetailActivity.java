@@ -8,18 +8,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.Time;
@@ -401,12 +404,7 @@ public class DrinkDetailActivity extends ListActivity {
 
         if (item instanceof Volume) {
             Volume volume = (Volume) item;
-            if (!volume.isRetired()) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://systembolaget.se/SokDrycker/Produkt?VaruNr="
-                                + volume.getArticleId()));
-                startActivity(browserIntent);
-            }
+            startActivity(createInventoryIntent(volume));
         } else if (section.adapter instanceof UserRatingAdapter) {
         	tryShowAuthenticatedDialog(DIALOG_RATE);
         } else if (section.adapter instanceof DrinkDescriptionAdapter) {
@@ -809,7 +807,22 @@ public class DrinkDetailActivity extends ListActivity {
     		mGetDrinkTask = null;
     	}
     }
-    
+
+    private Intent createInventoryIntent(Volume volume) {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(getApplicationContext());
+        String county = sharedPreferences
+                .getString("sb_search_county", "0");
+
+        Uri uri = Uri.parse(String.format(
+                "http://mobil.systembolaget.se/SokDryck/SokDryck.aspx?artnr=%s&lan=%s",
+                String.valueOf(volume.getArticleId()), county));
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+
+        return intent;
+    }
+
     /**
      * Background task for fetching a drink.
      */
