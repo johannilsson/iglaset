@@ -29,7 +29,7 @@ Schedule
 
 Changelog
 ---------
-Next:
+* Next:
     * Changed link to Systembolaget to link to their inventory mobile friendly page    
 * 1.3.2
     * Fixed several crashes when exiting various dialogs when a network activity was in progress
