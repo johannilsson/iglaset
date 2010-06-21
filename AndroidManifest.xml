@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.markupartist.iglaset"
-      xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="34" android:versionName="1.3.1">
+      xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="35" android:versionName="1.3.2">
     <supports-screens
         android:largeScreens="true"
         android:normalScreens="true"
@@ -24,7 +24,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="com.markupartist.iglaset.action.USER_RECOMMENDATIONS" />
                 <action android:name="com.markupartist.iglaset.action.USER_RATINGS" />
-                <category android:name="android.intent.category.SAMPLE_CODE" />
             </intent-filter>
             <!-- This intent-filter identifies this activity as "searchable" -->
             <intent-filter>
@@ -55,7 +54,6 @@
                   android:theme="@android:style/Theme.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.SAMPLE_CODE" />
             </intent-filter>
         </activity>
 

@@ -29,6 +29,12 @@ Schedule
 
 Changelog
 ---------
+* Next:
+    * Changed link to Systembolaget to link to their inventory mobile friendly page    
+* 1.3.2
+    * Fixed several crashes when exiting various dialogs when a network activity was in progress
+    * Larger thumbnails for HDPI screens
+    * Aesthetic fixes for the search bar
 * 1.3.1
     * Added a crash reporter
     * Show item descriptions

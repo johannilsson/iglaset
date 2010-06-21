@@ -335,11 +335,11 @@ public class SearchResultActivity extends ListActivity implements
 		                public void onClick(DialogInterface dialog, int which) {
 		                	switch(which) {
 		                	case Dialog.BUTTON_POSITIVE:
-			                    SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
-			                    searchDrinksTask.setSearchDrinkCompletedListener(SearchResultActivity.this);
-			                    searchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
-			                    searchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
-			                    searchDrinksTask.execute(sSearchCriteria);
+		                	    mSearchDrinksTask = new SearchDrinksTask();
+		                	    mSearchDrinksTask.setSearchDrinkCompletedListener(SearchResultActivity.this);
+		                	    mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
+		                	    mSearchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
+		                	    mSearchDrinksTask.execute(sSearchCriteria);
 			                    break;
 		                	case Dialog.BUTTON_NEGATIVE:
 		                		finish();
@@ -388,11 +388,11 @@ public class SearchResultActivity extends ListActivity implements
             if (shouldAppend(position)) {
                 Toast.makeText(SearchResultActivity.this, getText(R.string.loading_articles), Toast.LENGTH_LONG).show();
                 sSearchCriteria.setPage(mPage.addAndGet(1));
-                SearchDrinksTask searchDrinksTask = new SearchDrinksTask();
-                searchDrinksTask.setSearchDrinkCompletedListener(this);
-                searchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
-                searchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
-                searchDrinksTask.execute(sSearchCriteria);
+                mSearchDrinksTask = new SearchDrinksTask();
+                mSearchDrinksTask.setSearchDrinkCompletedListener(this);
+                mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
+                mSearchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
+                mSearchDrinksTask.execute(sSearchCriteria);
             }
 
             if (convertView == null) {
