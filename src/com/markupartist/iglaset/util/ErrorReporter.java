@@ -163,42 +163,42 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
     }
 
     public void uncaughtException(Thread t, Throwable e) {
-        String Report = "";
         Date CurDate = new Date();
-        Report += "Error Report collected on : " + CurDate.toString();
-        Report += "\n";
-        Report += "\n";
-        Report += "Informations :";
-        Report += "\n";
-        Report += "==============";
-        Report += "\n";
-        Report += "\n";
-        Report += createInformationString();
+        StringBuffer report = new StringBuffer();
+        report.append("Error Report collected on : ").append(CurDate.toString());
+        report.append("\n");
+        report.append("\n");
+        report.append("Informations :");
+        report.append("\n");
+        report.append("==============");
+        report.append("\n");
+        report.append("\n");
+        report.append(createInformationString());
 
-        Report += "\n\n";
-        Report += "Stack : \n";
-        Report += "======= \n";
+        report.append("\n\n");
+        report.append("Stack : \n");
+        report.append("======= \n");
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
         e.printStackTrace(printWriter);
         String stacktrace = result.toString();
-        Report += stacktrace;
+        report.append(stacktrace);
 
-        Report += "\n";
-        Report += "Cause : \n";
-        Report += "======= \n";
+        report.append("\n");
+        report.append("Cause : \n");
+        report.append("======= \n");
 
         // If the exception was thrown in a background thread inside
         // AsyncTask, then the actual exception can be found with getCause
         Throwable cause = e.getCause();
         while (cause != null) {
             cause.printStackTrace(printWriter);
-            Report += result.toString();
+            report.append(result.toString());
             cause = cause.getCause();
         }
         printWriter.close();
-        Report += "****  End of current Report ***";
-        saveAsFile(Report);
+        report.append("****  End of current Report ***");
+        saveAsFile(report.toString());
         // SendErrorMail( Report );
         mPreviousHandler.uncaughtException(t, e);
     }
@@ -259,7 +259,7 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
     public void checkErrorAndSendMail(Context context) {
         try {
             if (isThereAnyErrorFile()) {
-                String WholeErrorText = "";
+            	StringBuffer buffer = new StringBuffer(); 
                 String[] ErrorFileList = getErrorFileList();
                 int curIndex = 0;
                 // We limit the number of crash reports to send ( in order not
@@ -267,14 +267,14 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
                 final int MaxSendMail = 5;
                 for (String curString : ErrorFileList) {
                     if (curIndex++ <= MaxSendMail) {
-                        WholeErrorText += "New Trace collected :\n";
-                        WholeErrorText += "=====================\n ";
+                        buffer.append("New Trace collected :\n");
+                        buffer.append("=====================\n ");
                         String filePath = mFilePath + "/" + curString;
                         BufferedReader input = new BufferedReader(
                                 new FileReader(filePath));
                         String line;
                         while ((line = input.readLine()) != null) {
-                            WholeErrorText += line + "\n";
+                            buffer.append(line).append("\n");
                         }
                         input.close();
                     }
@@ -284,7 +284,7 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
                     //curFile.delete();
                     deleteFile(curString);
                 }
-                sendErrorMail(context, WholeErrorText);
+                sendErrorMail(context, buffer.toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
