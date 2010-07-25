@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent" android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:id="@+id/tagSearchLayout"
+        android:fadingEdge="none" android:background="@drawable/list_selector_background">
+        
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:paddingTop="15dip"
+            android:paddingRight="5dip"
+            android:paddingLeft="5dip"
+            android:text="Sök" />
+        <TextView
+            android:layout_height="wrap_content"
+            android:id="@+id/tagSearchSelectedText"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:paddingRight="5dip"
+            android:paddingBottom="15dip"
+            android:paddingLeft="5dip"
+            android:text="0 markerade taggar (sök allt)"
+            android:layout_width="fill_parent"/>
+     </LinearLayout><ImageView android:layout_height="wrap_content" android:layout_width="fill_parent" android:background="@drawable/menu_separator"></ImageView>
+    
+     <ListView 
+        android:id="@+id/android:list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:dividerHeight="0.1dip"></ListView>
+
+
+
+</LinearLayout>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view
+    class="com.markupartist.iglaset.widget.CheckedTagView" 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:layout_width="fill_parent">
+  
+    <CheckBox
+		android:focusable="false"
+		android:clickable="false"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:gravity="center_vertical"
+		android:layout_marginRight="5dip"
+		android:id="@android:id/checkbox"
+		android:layout_marginLeft="5dip"/> 
+    <TextView
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textColor="?android:attr/textColorPrimary"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:paddingTop="15dip"
+		android:paddingRight="5dip"
+		android:paddingBottom="15dip"
+		android:paddingLeft="5dip"
+		android:layout_weight="1.0"
+		android:id="@+id/tagName"/>
+</view>
