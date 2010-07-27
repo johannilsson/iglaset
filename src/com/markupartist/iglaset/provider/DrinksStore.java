@@ -23,7 +23,7 @@ public class DrinksStore {
     private static DrinksStore mInstance;
     private static String TAG = "DrinksStore";
     private static String ARTICLES_BASE_URI =
-        "http://api.iglaset.se/api/articles/xml/";
+    	"http://www.iglaset.se/articles.xml";
     private static String RATE_BASE_URI =
         "http://api.iglaset.se/api/rate/";
     /**
@@ -192,14 +192,16 @@ public class DrinksStore {
      */
     private String buildSearchUri(SearchCriteria searchCriteria) {
         Log.d(TAG, "building search uri from " + searchCriteria);
-        String searchUri = ARTICLES_BASE_URI + "?";
+    	
+    	StringBuilder builder = new StringBuilder();    	
+        builder.append(ARTICLES_BASE_URI).append("?");
+        builder.append("page=").append(searchCriteria.getPage());
+
         if (!TextUtils.isEmpty(searchCriteria.getQuery()))
-            searchUri += "&search=" + URLEncoder.encode(searchCriteria.getQuery());
-        if (!TextUtils.isEmpty(searchCriteria.getToken()))
-            searchUri += "&token=" + searchCriteria.getToken();
+        	builder.append("&str=").append(URLEncoder.encode(searchCriteria.getQuery()));
         if (searchCriteria.getCategory() > 0)
-            searchUri += "&category=" + searchCriteria.getCategory();
-        searchUri += "&page=" + searchCriteria.getPage();
-        return searchUri;
+        	builder.append("&category=").append(searchCriteria.getCategory());
+        
+        return builder.toString();
     }
 }
