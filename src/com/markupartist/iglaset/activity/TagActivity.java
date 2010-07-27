@@ -2,20 +2,24 @@ package com.markupartist.iglaset.activity;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.TreeMap;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.Tag;
 import com.markupartist.iglaset.provider.TagsStore;
+import com.markupartist.iglaset.util.StringUtils;
 import com.markupartist.iglaset.widget.SectionedAdapter;
-import com.markupartist.iglaset.widget.TagAdapter;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,6 +31,22 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
     private SectionedAdapter sectionedAdapter;
     private TreeMap<String, ArrayList<Tag>> tagMap;
     private GetTagsTask getTagsTask;
+    
+    /**
+     * @author marco
+     * Data holder for passing data between screen rotations.
+     */
+    private static class InstanceHolder {
+    	/**
+    	 * Selected items on rotation.
+    	 */
+    	SparseBooleanArray selectedItems;
+    	
+    	/**
+    	 * Available tags on rotation.
+    	 */
+    	TreeMap<String, ArrayList<Tag>> tags;
+    }
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,15 +72,16 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
             }
         };
         
-        this.setListAdapter(sectionedAdapter);
+        //this.setListAdapter(sectionedAdapter);
         getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         
         // Use old values if available
-        @SuppressWarnings("unchecked")
-		final TreeMap<String, ArrayList<Tag>> tagMap = (TreeMap<String, ArrayList<Tag>>) getLastNonConfigurationInstance();
-        if(null != tagMap) {
-        	setTagMap(tagMap);
+        final InstanceHolder holder = (InstanceHolder) getLastNonConfigurationInstance();
+        if(null != holder) {
+        	setTagMap(holder.tags);
+        	updateSelected(holder.selectedItems);
         	updateSelectedCount();
+
         } else {
             int categoryId = extras.getInt(EXTRA_CATEGORY_ID);
         	launchGetTagsTask(categoryId);
@@ -74,8 +95,17 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
     }
     
     @Override
+    protected void onRestoreInstanceState(Bundle state) {
+    	super.onRestoreInstanceState(state);
+    }
+    
+    @Override
     public Object onRetainNonConfigurationInstance() {
-        return this.tagMap;
+    	InstanceHolder holder = new InstanceHolder();
+    	holder.tags = this.tagMap;
+    	holder.selectedItems = getListView().getCheckedItemPositions();
+    	return holder;
+        //return this.tagMap;
     }
     
     @Override
@@ -92,28 +122,52 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 		}
 	}
 	
+    private void updateSelected(SparseBooleanArray selected) {
+    	for(int i=0; i<selected.size(); ++i) {
+    		getListView().setItemChecked(
+    				selected.keyAt(i),
+    				selected.valueAt(i));
+    	}
+    }
+	
 	private void updateSelectedCount() {
-        // Update number of selected tags
         TextView numSelectedView = (TextView) findViewById(R.id.tagSearchSelectedText);
-        int numSelected = getListView().getCheckItemIds().length;
-        if(0 == numSelected) {
-        	numSelectedView.setText("0 markerade taggar (sök allt)");
-        } else if(1 == numSelected) {
-            numSelectedView.setText("1 markerad tagg");
+        StringBuilder builder = new StringBuilder();
+        
+        SparseBooleanArray selected = getListView().getCheckedItemPositions();
+        if(0 == selected.size()) {
+        	builder.append("0 markerade taggar (sök allt)");
         } else {
-        	numSelectedView.setText(Integer.toString(numSelected) + " markerade taggar");
+        	// Concatenate the name of the selected tags.
+        	ArrayList<String> selectedList = new ArrayList<String>();
+        	for(int i=0; i<selected.size(); ++i) {
+        		if(true == selected.valueAt(i)) {
+        			Tag tag = (Tag) getListView().getItemAtPosition(selected.keyAt(i));
+        			selectedList.add(tag.getName());
+        		}
+        	}
+        	
+        	builder.append(Integer.toString(selectedList.size())).append(" ");
+        	builder.append(selectedList.size() == 1 ? "tagg" : "taggar").append(": ");
+        	builder.append(StringUtils.join(selectedList, ", "));        			
         }
+        
+        numSelectedView.setText(builder.toString());
 	}
 	
 	private void setTagMap(TreeMap<String, ArrayList<Tag>> tagMap) {
 		this.tagMap = tagMap;
+		
+        LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);
+        progressBar.setVisibility(View.GONE);
+		
 		populateList(this.tagMap);
 	}
 	
 	private void populateList(TreeMap<String, ArrayList<Tag>> tagMap) {
 		int sectionId = 1;
 		for(String tagType : tagMap.keySet()) {
-			TagAdapter adapter = new TagAdapter(this, tagMap.get(tagType));
+			ArrayAdapter<Tag> adapter = new ArrayAdapter<Tag>(this, android.R.layout.simple_list_item_multiple_choice, tagMap.get(tagType));
 			sectionedAdapter.addSection(sectionId++, tagType, adapter);
 		}
 		
@@ -143,8 +197,8 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 			
 			try {
 				ArrayList<Tag> categoryTags = TagsStore.getTags(params[0]);
-				// Move the tags over to a map to have one section per tag type
 				
+				// Move the tags over to a map to have one section per tag type
 				for(Tag tag : categoryTags) {
 					ArrayList<Tag> list = tagMap.get(tag.getType());
 					if(null == list) {
@@ -155,7 +209,6 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 					list.add(tag);
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			

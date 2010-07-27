@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent" android:layout_height="wrap_content">
+    android:layout_width="fill_parent" android:layout_height="fill_parent">
     <LinearLayout
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -30,7 +30,8 @@
             android:paddingLeft="5dip"
             android:text="0 markerade taggar (sök allt)"
             android:layout_width="fill_parent"/>
-     </LinearLayout><ImageView android:layout_height="wrap_content" android:layout_width="fill_parent" android:background="@drawable/menu_separator"></ImageView>
+     
+</LinearLayout><ImageView android:layout_height="wrap_content" android:layout_width="fill_parent" android:background="@drawable/menu_separator"></ImageView><include layout="@layout/progress_bar" android:layout_height="fill_parent" android:layout_width="fill_parent"></include>
     
      <ListView 
         android:id="@+id/android:list"
