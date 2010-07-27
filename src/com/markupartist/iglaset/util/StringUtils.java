@@ -4,16 +4,15 @@ import java.util.Iterator;
 import java.util.List;
 
 public class StringUtils {
-	public static String join(List<String> list, String delimiter) {
+	public static String join(Object[] list, String delimiter) {
 		StringBuilder builder = new StringBuilder();
-		Iterator<String> iter = list.iterator();
-    	while(iter.hasNext()) {
-    		builder.append(iter.next());
-    		if(iter.hasNext()) {
-    			builder.append(delimiter);
-    		}
-    	}
-    	
+		for(int i=0; i<list.length; ++i) {
+			builder.append(list[i]);
+			if(i < (list.length -1)) {
+				builder.append(delimiter);
+			}
+		}
+
     	return builder.toString();
 	}
 }
