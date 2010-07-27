@@ -18,12 +18,15 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.markupartist.iglaset.util.HttpManager;
+import com.markupartist.iglaset.util.StringUtils;
 
 public class DrinksStore {
     private static DrinksStore mInstance;
     private static String TAG = "DrinksStore";
     private static String ARTICLES_BASE_URI =
     	"http://www.iglaset.se/articles.xml";
+    private static String ARTICLE_DETAILS_URI =
+    	"http://api.iglaset.se/api/articles/xml/";
     private static String RATE_BASE_URI =
         "http://api.iglaset.se/api/rate/";
     /**
@@ -49,7 +52,6 @@ public class DrinksStore {
     public ArrayList<Drink> searchDrinks(SearchCriteria searchCriteria)
             throws IOException {
         final ArrayList<Drink> drinks = new ArrayList<Drink>();
-
         final HttpGet get = new HttpGet(buildSearchUri(searchCriteria));
         HttpEntity entity = null;
 
@@ -114,7 +116,7 @@ public class DrinksStore {
     }
 
     public Drink getDrink(int id, String token) {
-        String searchUri = ARTICLES_BASE_URI + id;
+        String searchUri = ARTICLE_DETAILS_URI + id;
         if (!TextUtils.isEmpty(token)) {
             searchUri += "/?token=" + token;
         }
@@ -201,6 +203,14 @@ public class DrinksStore {
         	builder.append("&str=").append(URLEncoder.encode(searchCriteria.getQuery()));
         if (searchCriteria.getCategory() > 0)
         	builder.append("&category=").append(searchCriteria.getCategory());
+        
+        if (null != searchCriteria.getTags()) {
+        	ArrayList<Integer> tags = searchCriteria.getTags();
+        	if(tags.size() > 0) {
+        		builder.append("&tags[]=");
+        		builder.append(StringUtils.join(tags.toArray(), "&tags[]="));
+        	}
+        }
         
         return builder.toString();
     }
