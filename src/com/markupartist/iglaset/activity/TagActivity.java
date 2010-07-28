@@ -218,8 +218,8 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
         progressBar.setVisibility(View.GONE);
         
 		this.tagMap = tagMap;
-		if(tagMap.size() == 0) {
-			// Instantly search if we have no tags
+		if(tagMap.size() <= 1) {
+			// Instantly search if we have no or only one tag
 			doSearch();
 		} else {
 			populateList(this.tagMap);
