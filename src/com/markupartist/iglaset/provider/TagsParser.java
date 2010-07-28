@@ -66,6 +66,7 @@ public class TagsParser extends DefaultHandler {
     		if(currentTag.getId() != Tag.UNDEFINED_ID) {
     			tags.add(currentTag);
     		}
+    		currentTag = null;
     	} else if(name.equals("tag_type")) {
     		currentTag.setType(builder.toString().trim());
     	} else if(name.equals("name")) {
@@ -76,6 +77,8 @@ public class TagsParser extends DefaultHandler {
     }
 
     public void characters(char ch[], int start, int length) {
-    	builder.append(ch, start, length);
+    	if(null != currentTag) {
+    		builder.append(ch, start, length);
+    	}
     }
 }
