@@ -172,7 +172,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 	
     /**
      * Update ListView selection. This is necessary since the ListView will retain the selected
-     * items on screen rotation, but there's no way of fetching those items from the program.
+     * items on screen rotation but there's no way of fetching those items from the program.
      * As a result you will see items checked but a call to getListView().getCheckedItemPositions
      * will return an empty list.
      * @param selected Checkbox state before rotation.
