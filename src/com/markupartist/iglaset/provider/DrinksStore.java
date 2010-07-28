@@ -203,6 +203,8 @@ public class DrinksStore {
         	builder.append("&str=").append(URLEncoder.encode(searchCriteria.getQuery()));
         if (searchCriteria.getCategory() > 0)
         	builder.append("&category=").append(searchCriteria.getCategory());
+        if (!TextUtils.isEmpty(searchCriteria.getToken()))
+        	builder.append("&token=").append(searchCriteria.getToken());
         
         if (null != searchCriteria.getTags()) {
         	ArrayList<Integer> tags = searchCriteria.getTags();
