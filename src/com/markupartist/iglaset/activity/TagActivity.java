@@ -2,7 +2,6 @@ package com.markupartist.iglaset.activity;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.TreeMap;
 
 import com.markupartist.iglaset.R;
@@ -23,6 +22,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * @author marco
+ * Activity responsible for displaying a drink category's attached tags and allowing the user to
+ * do detailed tag searching.
+ */
 public class TagActivity extends ListActivity implements View.OnClickListener {
 	
     static final String EXTRA_CATEGORY_ID = "com.markupartist.iglaset.search.categoryId";
@@ -31,6 +35,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
     private SectionedAdapter sectionedAdapter;
     private TreeMap<String, ArrayList<Tag>> tagMap;
     private GetTagsTask getTagsTask;
+    private int categoryId;
     
     /**
      * @author marco
@@ -55,24 +60,23 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 
         setContentView(R.layout.tag_list);
         setTitle(extras.getString(EXTRA_CATEGORY_NAME));
+        categoryId = extras.getInt(EXTRA_CATEGORY_ID);
         
         View tagSearchLayout = this.findViewById(R.id.tagSearchLayout);
         tagSearchLayout.setOnClickListener(this);
         
         sectionedAdapter = new SectionedAdapter() {
             protected View getHeaderView(Section section, int index, View convertView, ViewGroup parent) {
-                TextView result = (TextView) convertView;
-
-                if(null == result) {
-                    result = (TextView) getLayoutInflater().inflate(R.layout.header, null);
+                TextView textView = (TextView) convertView;
+                if(null == textView) {
+                    textView = (TextView) getLayoutInflater().inflate(R.layout.header, null);
                 }
 
-                result.setText(section.caption);
-                return result;
+                textView.setText(section.caption);
+                return textView;
             }
         };
         
-        //this.setListAdapter(sectionedAdapter);
         getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         
         // Use old values if available
@@ -80,10 +84,8 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
         if(null != holder) {
         	setTagMap(holder.tags);
         	updateSelected(holder.selectedItems);
-        	updateSelectedCount();
-
+        	updateSelectedTagText();
         } else {
-            int categoryId = extras.getInt(EXTRA_CATEGORY_ID);
         	launchGetTagsTask(categoryId);
     	}
     }
@@ -105,23 +107,48 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
     	holder.tags = this.tagMap;
     	holder.selectedItems = getListView().getCheckedItemPositions();
     	return holder;
-        //return this.tagMap;
     }
     
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        updateSelectedCount();
+        updateSelectedTagText();
     }
 
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
 		case R.id.tagSearchLayout:
+			doSearch();
 			break;
 		}
 	}
 	
+	private void doSearch() {
+        Intent searchIntent = new Intent(this, SearchResultActivity.class);
+        searchIntent.putExtra(SearchResultActivity.EXTRA_SEARCH_CATEGORY_ID, categoryId);
+
+        // Transfer the IDs of the checked items to an array
+        SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
+        ArrayList<Integer> checkedIds = new ArrayList<Integer>();
+        for(int i=0; i<checkedItems.size(); ++i) {
+        	if(true == checkedItems.valueAt(i)) {
+	        	Tag tag = (Tag) getListView().getItemAtPosition(checkedItems.keyAt(i));
+	        	checkedIds.add(tag.getId());
+        	}
+        }
+        
+        searchIntent.putExtra(SearchResultActivity.EXTRA_SEARCH_TAGS, checkedIds);
+        startActivity(searchIntent); 
+	}
+	
+    /**
+     * Update ListView selection. This is necessary since the ListView will retain the selected
+     * items on screen rotation, but there's no way of fetching those items from the program.
+     * As a result you will see items checked but a call to getListView().getCheckedItemPositions
+     * will return an empty list.
+     * @param selected Checkbox state before rotation.
+     */
     private void updateSelected(SparseBooleanArray selected) {
     	for(int i=0; i<selected.size(); ++i) {
     		getListView().setItemChecked(
@@ -130,13 +157,16 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
     	}
     }
 	
-	private void updateSelectedCount() {
+	/**
+	 * Update the text showing the selected tags (if any).
+	 */
+	private void updateSelectedTagText() {
         TextView numSelectedView = (TextView) findViewById(R.id.tagSearchSelectedText);
         StringBuilder builder = new StringBuilder();
         
         SparseBooleanArray selected = getListView().getCheckedItemPositions();
         if(0 == selected.size()) {
-        	builder.append("0 markerade taggar (sök allt)");
+        	builder.append(getText(R.string.no_selected_tags));
         } else {
         	// Concatenate the name of the selected tags.
         	ArrayList<String> selectedList = new ArrayList<String>();
@@ -148,26 +178,36 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
         	}
         	
         	builder.append(Integer.toString(selectedList.size())).append(" ");
-        	builder.append(selectedList.size() == 1 ? "tagg" : "taggar").append(": ");
-        	builder.append(StringUtils.join(selectedList, ", "));        			
+        	builder.append(selectedList.size() == 1 ? getText(R.string.tag) : getText(R.string.tags)).append(": ");
+        	builder.append(StringUtils.join(selectedList.toArray(), ", "));        			
         }
         
         numSelectedView.setText(builder.toString());
 	}
 	
 	private void setTagMap(TreeMap<String, ArrayList<Tag>> tagMap) {
-		this.tagMap = tagMap;
-		
         LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);
         progressBar.setVisibility(View.GONE);
-		
-		populateList(this.tagMap);
+        
+		this.tagMap = tagMap;
+		if(tagMap.size() == 0) {
+			// Instantly search if we have no tags
+			doSearch();
+		} else {
+			populateList(this.tagMap);
+		}
 	}
 	
 	private void populateList(TreeMap<String, ArrayList<Tag>> tagMap) {
 		int sectionId = 1;
 		for(String tagType : tagMap.keySet()) {
-			ArrayAdapter<Tag> adapter = new ArrayAdapter<Tag>(this, android.R.layout.simple_list_item_multiple_choice, tagMap.get(tagType));
+			ArrayAdapter<Tag> adapter = new ArrayAdapter<Tag>(this, android.R.layout.simple_list_item_multiple_choice, tagMap.get(tagType)) {
+				@Override
+				public long getItemId(int position) {
+					return getItem(position).getId();
+				}
+			};
+			
 			sectionedAdapter.addSection(sectionId++, tagType, adapter);
 		}
 		
@@ -176,12 +216,21 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 		setListAdapter(sectionedAdapter);
 	}
 	
+    /**
+     * Launch an async task to fetch tags assigned to a specified category. If a tag fetch task is
+     * already running then that task will get canceled.
+     * @param category Category tags to fetch.
+     */
     private void launchGetTagsTask(int category) {
     	cancelGetTagsTask();
         getTagsTask = new GetTagsTask();
         getTagsTask.execute(category);
     }
     
+    /**
+     * Cancel the getTagsTask if one is running. If the task has not been created or if it's
+     * not executing then this will do nothing.
+     */
     private void cancelGetTagsTask() {
     	if(null != getTagsTask && getTagsTask.getStatus() == AsyncTask.Status.RUNNING) {
     		getTagsTask.cancel(true);
