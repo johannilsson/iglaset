@@ -82,7 +82,6 @@ class DrinksParser extends DefaultHandler {
         // TODO: We should rewrite this parse and use the buffer mechanism
         // instead of checking internal states like mInName etc.
     	mCurrentText = new String(ch, start, length);
-        //Log.d(TAG, "currentText: " + mCurrentText);
     	if (mInName) {
             mCurrentName += mCurrentText;
         } else {
