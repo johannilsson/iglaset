@@ -10,8 +10,11 @@ import com.markupartist.iglaset.provider.TagsStore;
 import com.markupartist.iglaset.util.StringUtils;
 import com.markupartist.iglaset.widget.SectionedAdapter;
 
+import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
@@ -31,6 +34,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 	
     static final String EXTRA_CATEGORY_ID = "com.markupartist.iglaset.search.categoryId";
     static final String EXTRA_CATEGORY_NAME = "com.markupartist.iglaset.search.categoryName";
+    private static final int DIALOG_SEARCH_NETWORK_PROBLEM = 0;
 
     private SectionedAdapter sectionedAdapter;
     private TreeMap<String, ArrayList<Tag>> tagMap;
@@ -107,6 +111,30 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
     	holder.tags = this.tagMap;
     	holder.selectedItems = getListView().getCheckedItemPositions();
     	return holder;
+    }
+    
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch(id) {
+        case DIALOG_SEARCH_NETWORK_PROBLEM:
+        	return DialogFactory.createNetworkProblemDialog(
+        			this,
+        			new OnClickListener() {
+		                @Override
+		                public void onClick(DialogInterface dialog, int which) {
+		                	switch(which) {
+		                	case Dialog.BUTTON_POSITIVE:
+		                		launchGetTagsTask(categoryId);
+			                    break;
+		                	case Dialog.BUTTON_NEGATIVE:
+		                		finish();
+		                		break;
+		                	}
+		                }
+		             });
+        }
+        
+        return null;
     }
     
     @Override
@@ -242,10 +270,11 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 
 		@Override
 		protected TreeMap<String, ArrayList<Tag>> doInBackground(Integer... params) {
-			TreeMap<String, ArrayList<Tag>> tagMap = new TreeMap<String, ArrayList<Tag>>();
+			TreeMap<String, ArrayList<Tag>> tagMap = null;
 			
 			try {
 				ArrayList<Tag> categoryTags = TagsStore.getTags(params[0]);
+				tagMap = new TreeMap<String, ArrayList<Tag>>();
 				
 				// Move the tags over to a map to have one section per tag type
 				for(Tag tag : categoryTags) {
@@ -272,7 +301,12 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
         @Override
         protected void onPostExecute(TreeMap<String, ArrayList<Tag>> result) {
             setProgressBarIndeterminateVisibility(false);
-            setTagMap(result);
+            
+            if(null != result) {
+            	setTagMap(result);
+            } else {
+                showDialog(DIALOG_SEARCH_NETWORK_PROBLEM);
+            }
         }
 	}
 }
