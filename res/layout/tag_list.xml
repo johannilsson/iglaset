@@ -28,8 +28,7 @@
             android:paddingRight="5dip"
             android:paddingBottom="15dip"
             android:paddingLeft="5dip"
-            android:text="0 markerade taggar (sök allt)"
-            android:layout_width="fill_parent"/>
+            android:layout_width="fill_parent" android:text="@string/no_selected_tags"/>
      
 </LinearLayout><ImageView android:layout_height="wrap_content" android:layout_width="fill_parent" android:background="@drawable/menu_separator"></ImageView><include layout="@layout/progress_bar" android:layout_height="fill_parent" android:layout_width="fill_parent"></include>
     
