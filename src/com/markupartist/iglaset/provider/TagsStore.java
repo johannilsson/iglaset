@@ -6,14 +6,10 @@ import java.util.ArrayList;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-
-import android.util.Log;
-
 import com.markupartist.iglaset.util.HttpManager;
 
 public class TagsStore {
 
-	private static final String TAG = TagsStore.class.getSimpleName();
     private static final String TAGS_BASE_URI = "http://www.iglaset.se/tags/";
     
 	/**
@@ -31,7 +27,6 @@ public class TagsStore {
 		   .append(Integer.toString(category))
 		   .append(".xml");
 		
-		Log.d(TAG, "Reading tags from " + uri.toString());
 		final HttpGet get = new HttpGet(uri.toString());
         HttpEntity entity = null;
 
