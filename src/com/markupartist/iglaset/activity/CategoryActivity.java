@@ -12,8 +12,6 @@ import android.widget.ListView;
 import com.markupartist.iglaset.R;
 
 public class CategoryActivity extends ListActivity {
-    private static final String TAG = "CategoryActivity";
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
