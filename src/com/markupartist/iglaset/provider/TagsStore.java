@@ -16,6 +16,13 @@ public class TagsStore {
 	private static final String TAG = TagsStore.class.getSimpleName();
     private static final String TAGS_BASE_URI = "http://www.iglaset.se/tags/";
     
+	/**
+	 * Fetch all available tags for a specified category.
+	 * 
+	 * @param category Category on which to search for tags.
+	 * @return List of tags attached to the category. Note that the list might be empty.
+	 * @throws IOException
+	 */
 	public static ArrayList<Tag> getTags(int category) throws IOException {
 		assert(category >= 0);
 		
