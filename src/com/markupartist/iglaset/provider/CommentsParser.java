@@ -22,8 +22,8 @@ class CommentsParser extends DefaultHandler {
     private static final String TAG = "CommentsParser";
     private ArrayList<Comment> mComments = null;
     private Comment mCurrentComment;
-    private StringBuilder mBuilder;
-    private Time mCreatedTime;
+    private StringBuilder mBuilder = null;
+    private Time mCreatedTime = null;
 
     @Override
     public void startDocument() throws SAXException {

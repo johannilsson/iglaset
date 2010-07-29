@@ -2,6 +2,8 @@ package com.markupartist.iglaset.activity;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.markupartist.iglaset.R;
@@ -149,6 +151,8 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 		case R.id.tagSearchLayout:
 			doSearch();
 			break;
+		default:
+			break;
 		}
 	}
 	
@@ -228,15 +232,15 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 	
 	private void populateList(TreeMap<String, ArrayList<Tag>> tagMap) {
 		int sectionId = 1;
-		for(String tagType : tagMap.keySet()) {
-			ArrayAdapter<Tag> adapter = new ArrayAdapter<Tag>(this, android.R.layout.simple_list_item_multiple_choice, tagMap.get(tagType)) {
+		for(Map.Entry<String, ArrayList<Tag>> entry : tagMap.entrySet()) {
+			ArrayAdapter<Tag> adapter = new ArrayAdapter<Tag>(this, android.R.layout.simple_list_item_multiple_choice, entry.getValue()) {
 				@Override
 				public long getItemId(int position) {
 					return getItem(position).getId();
 				}
 			};
 			
-			sectionedAdapter.addSection(sectionId++, tagType, adapter);
+			sectionedAdapter.addSection(sectionId++, entry.getKey(), adapter);
 		}
 		
 		// notifyDataSetChanged causes null references in the adapter's
