@@ -87,7 +87,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
         
         // Use old values if available
         final InstanceHolder holder = (InstanceHolder) getLastNonConfigurationInstance();
-        if(null != holder) {
+        if(null != holder && null != holder.tags) {
         	setTagMap(holder.tags);
         	updateSelected(holder.selectedItems);
         	updateSelectedTagText();
