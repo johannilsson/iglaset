@@ -126,6 +126,7 @@ class DrinksParser extends DefaultHandler {
 
         if (name.trim().equals("article")) {
             mDrinks.add(mCurrentDrink);
+            mCurrentDrink = null;
         }
         
         mTextBuffer.setLength(0);
