@@ -3,6 +3,7 @@ package com.markupartist.iglaset.activity;
 import java.util.ArrayList;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.markupartist.iglaset.provider.BarcodeStore;
 import com.markupartist.iglaset.provider.Drink;
@@ -16,6 +17,7 @@ import com.markupartist.iglaset.provider.SearchCriteria;
  */
 public class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<Drink>> {
 
+	private final static String TAG = SearchDrinksTask.class.getSimpleName();
     private SearchDrinkProgressUpdatedListener mSearchDrinkProgressUpdatedListener;
     private SearchDrinkCompletedListener mSearchDrinkCompletedListener;
     private SearchDrinkErrorListener mSearchDrinkErrorListener;
@@ -43,6 +45,7 @@ public class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<
             }
         } catch (Exception e) {
             mCaughtException = e;
+            Log.d(TAG, e.toString());
         }
         return null;
     }

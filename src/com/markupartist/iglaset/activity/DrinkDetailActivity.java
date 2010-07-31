@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -498,7 +497,7 @@ public class DrinkDetailActivity extends ListActivity {
                 ratingValue.setText("Ditt betyg " + userRating);
                 final RatingBar ratingBar = (RatingBar) layout.findViewById(R.id.add_user_rating);
                 ratingBar.setNumStars(5);
-                ratingBar.setStepSize((float) 0.5);
+                ratingBar.setStepSize(0.5f);
                 ratingBar.setRating(userRating / 2);
                 ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
                     public void onRatingChanged(RatingBar ratingBar, float rating,

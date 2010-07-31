@@ -1,5 +1,7 @@
 package com.markupartist.iglaset.provider;
 
+import java.util.ArrayList;
+
 import android.text.TextUtils;
 
 /**
@@ -11,6 +13,7 @@ public class SearchCriteria {
     private int mPage = 1;
     private String mToken;
     private String mBarcode;
+    private ArrayList<Integer> mTags;
 
     public String getQuery() {
         return mQuery;
@@ -61,6 +64,15 @@ public class SearchCriteria {
         return mBarcode;
     }
 
+    public SearchCriteria setTags(ArrayList<Integer> tags) {
+    	mTags = tags;
+    	return this;
+    }
+    
+    public ArrayList<Integer> getTags() {
+    	return mTags;
+    }
+    
     @Override
     public String toString() {
         return "SearchCriteria [" 
@@ -68,6 +80,7 @@ public class SearchCriteria {
             + ", mPage=" + mPage
             + ", mQuery=" + mQuery 
             + ", mBarcode=" + mBarcode
+            + ", mTags=" + mTags
             + "]";
     }
 }

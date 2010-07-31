@@ -12,8 +12,6 @@ import android.widget.ListView;
 import com.markupartist.iglaset.R;
 
 public class CategoryActivity extends ListActivity {
-    private static final String TAG = "CategoryActivity";
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,8 +32,9 @@ public class CategoryActivity extends ListActivity {
         super.onListItemClick(l, v, position, id);
         Category category = (Category) getListAdapter().getItem(position);
 
-        Intent i = new Intent(this, SearchResultActivity.class);
-        i.putExtra(SearchResultActivity.EXTRA_SEARCH_CATEGORY_ID, category.getId());
+        Intent i = new Intent(this, TagActivity.class);
+        i.putExtra(TagActivity.EXTRA_CATEGORY_ID, category.getId());
+        i.putExtra(TagActivity.EXTRA_CATEGORY_NAME, category.getName());
         startActivity(i);
     }
 

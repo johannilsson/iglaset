@@ -61,6 +61,8 @@ public class SearchResultActivity extends ListActivity implements
         "com.markupartist.iglaset.search.barcode";
     static final String EXTRA_SEARCH_CATEGORY_ID =
         "com.markupartist.iglaset.search.categoryId";
+    static final String EXTRA_SEARCH_TAGS =
+    	"com.markupartist.iglaset.search.tags";
     static final String EXTRA_CLICKED_DRINK =
         "com.markupartist.iglaset.search.clickedDrink";
 
@@ -133,7 +135,9 @@ public class SearchResultActivity extends ListActivity implements
             mSearchDrinksTask.setSearchDrinkErrorListener(this);
 
             Log.d(TAG, "action: " + queryAction);
+            sSearchCriteria = null;
             
+            // Search actions
             if (Intent.ACTION_SEARCH.equals(queryAction)) {
                 final String queryString = queryIntent.getStringExtra(SearchManager.QUERY);
                 // Record the query string in the recent queries suggestions provider.
@@ -148,49 +152,47 @@ public class SearchResultActivity extends ListActivity implements
 
                 sSearchCriteria = new SearchCriteria();
                 sSearchCriteria.setQuery(queryString);
-                sSearchCriteria.setToken(mToken);
-
-                mSearchDrinksTask.execute(sSearchCriteria);
-            } else if (queryIntent.hasExtra(EXTRA_SEARCH_CATEGORY_ID)) {
-                final int category = queryIntent.getExtras()
-                    .getInt(EXTRA_SEARCH_CATEGORY_ID);
-
-                setTitle(R.string.search_results);
-
-                sSearchCriteria = new SearchCriteria();
-                sSearchCriteria.setCategory(category);
-                sSearchCriteria.setToken(mToken);
-
-                mSearchDrinksTask.execute(sSearchCriteria);
-            } else if (queryIntent.hasExtra(EXTRA_SEARCH_BARCODE)) {
-                String barcode = queryIntent.getStringExtra(EXTRA_SEARCH_BARCODE);
-
-                setTitle(R.string.search_results);
-
-                sSearchCriteria = new SearchCriteria();
-                sSearchCriteria.setBarcode(barcode);
-                sSearchCriteria.setToken(mToken);
-
-                mSearchDrinksTask.execute(sSearchCriteria);
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
                 setTitle(R.string.recommendations_label);
 
                 sSearchCriteria = new RecommendationSearchCriteria();
                 ((RecommendationSearchCriteria) sSearchCriteria).setUserId(
                         auth.userId);
-                sSearchCriteria.setToken(mToken);
-
-                mSearchDrinksTask.execute(sSearchCriteria); 
             } else if (ACTION_USER_RATINGS.equals(queryAction)) {
                 setTitle(R.string.rated_articles_label);
 
                 sSearchCriteria = new RatingSearchCriteria();
                 ((RatingSearchCriteria) sSearchCriteria).setUserId(
                         auth.userId);
-                sSearchCriteria.setToken(mToken);
-
-                mSearchDrinksTask.execute(sSearchCriteria); 
+            } else {
+            	sSearchCriteria = new SearchCriteria();
             }
+            
+            // Search parameters
+            if (queryIntent.hasExtra(EXTRA_SEARCH_CATEGORY_ID)) {
+                final int category = queryIntent.getExtras()
+                    .getInt(EXTRA_SEARCH_CATEGORY_ID);
+
+                setTitle(R.string.search_results);
+                sSearchCriteria.setCategory(category);
+            }
+            
+            if (queryIntent.hasExtra(EXTRA_SEARCH_BARCODE)) {
+                String barcode = queryIntent.getStringExtra(EXTRA_SEARCH_BARCODE);
+
+                setTitle(R.string.search_results);
+                sSearchCriteria.setBarcode(barcode);
+            }
+            
+            if (queryIntent.hasExtra(EXTRA_SEARCH_TAGS)) {
+                setTitle(R.string.search_results);
+                ArrayList<Integer> tags = queryIntent.getIntegerArrayListExtra(EXTRA_SEARCH_TAGS);
+                sSearchCriteria.setTags(tags);
+            }
+            
+            sSearchCriteria.setToken(mToken);
+            mSearchDrinksTask.execute(sSearchCriteria);	
+
         } else {
         	onDrinkData(data);
         }
