@@ -92,6 +92,10 @@ public class DrinkDetailActivity extends ListActivity {
      */
     private static final int DIALOG_ADD_COMMENT = 6;
     /**
+     * The id for the network problem dialog.
+     */
+    private static final int DIALOG_SEARCH_NETWORK_PROBLEM = 7;
+    /**
      * The request code for indicating that settings has been changed
      */
     protected static final int REQUEST_CODE_SETTINGS_CHANGED = 0;
@@ -610,6 +614,22 @@ public class DrinkDetailActivity extends ListActivity {
             	 });
             	
             	return dialog;
+            	
+            case DIALOG_SEARCH_NETWORK_PROBLEM:
+            	return DialogFactory.createNetworkProblemDialog(
+            			this,
+            			new OnClickListener() {
+    		                @Override
+    		                public void onClick(DialogInterface dialog, int which) {
+    		                	switch(which) {
+    		                	case Dialog.BUTTON_POSITIVE:
+    		                    	launchGetDrinkTask(sDrink);
+    			                    break;
+    		                	case Dialog.BUTTON_NEGATIVE:
+    		                		break;
+    		                	}
+    		                }
+    		             });
         }
         return null;
     }
@@ -835,7 +855,11 @@ public class DrinkDetailActivity extends ListActivity {
 
         @Override
         protected void onPostExecute(Drink drink) {
-            onUpdatedDrink(drink);
+        	if(null != drink) {
+        		onUpdatedDrink(drink);
+        	} else {
+                showDialog(DIALOG_SEARCH_NETWORK_PROBLEM);
+        	}
         }
     }
     
