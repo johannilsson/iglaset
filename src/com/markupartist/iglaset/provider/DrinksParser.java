@@ -119,8 +119,8 @@ class DrinksParser extends DefaultHandler {
                 if (!TextUtils.isEmpty(mTextBuffer)) {
                     mCurrentDrink.setImageUrl(Drink.ImageSize.LARGE, result);
                 }
-            } else if (name.equals("user_rating")) {
-                mCurrentDrink.setUserRating(Float.parseFloat(result));
+            } else if (name.equals("user_rating") && result.length() > 0) {
+            	mCurrentDrink.setUserRating(Float.parseFloat(result));
             }
         }
 
