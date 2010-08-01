@@ -98,7 +98,7 @@ class DrinksParser extends DefaultHandler {
                 mCurrentVolume.setVolume(Integer.parseInt(result));
                 mCurrentDrink.addVolume(mCurrentVolume);
             } else if (name.equals("tag")) {
-                mCurrentDrink.addTag(mCurrentTagType, mTextBuffer.toString());
+                mCurrentDrink.addTag(mCurrentTagType, result);
             } else if (name.equals("commercial_desc")) {
             	// Use newline as <br>. That's why the distilled "result" variable
             	// cannot be used.
