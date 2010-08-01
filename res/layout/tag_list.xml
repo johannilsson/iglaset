@@ -9,7 +9,8 @@
         android:clickable="true"
         android:focusable="true"
         android:id="@+id/tagSearchLayout"
-        android:fadingEdge="none" android:background="@drawable/list_selector_background">
+        android:fadingEdge="none"
+        android:background="@android:drawable/list_selector_background">
         
         <TextView
             android:layout_height="wrap_content"
