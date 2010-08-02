@@ -48,6 +48,10 @@
         <activity android:name=".activity.CategoryActivity"
                   android:theme="@android:style/Theme.Light">
         </activity>
+        
+        <activity android:name=".activity.TagActivity"
+                  android:theme="@android:style/Theme.Light">
+        </activity>
 
         <activity android:name=".activity.BasicPreferenceActivity" 
                   android:label="@string/settings"

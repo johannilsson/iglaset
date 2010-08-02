@@ -31,6 +31,9 @@ Changelog
 ---------
 * Next:
     * Changed link to Systembolaget to link to their inventory mobile friendly page    
+    * Added support for tag browsing
+    * Crash fixes in the drink detail view
+    * Optimization in the search result view
 * 1.3.2
     * Fixed several crashes when exiting various dialogs when a network activity was in progress
     * Larger thumbnails for HDPI screens

@@ -21,13 +21,15 @@ import android.util.Log;
 class CommentsParser extends DefaultHandler {
     private static final String TAG = "CommentsParser";
     private ArrayList<Comment> mComments = null;
-    private String mCurrentText;
     private Comment mCurrentComment;
-    private boolean mInComment = false;
-    private StringBuilder mCurrentCommentString;
-    
-    public CommentsParser() {
-    	mCurrentCommentString = new StringBuilder();
+    private StringBuilder mBuilder = null;
+    private Time mCreatedTime = null;
+
+    @Override
+    public void startDocument() throws SAXException {
+        super.startDocument();
+    	mBuilder = new StringBuilder();
+    	mCreatedTime = new Time();
     }
     
     public ArrayList<Comment> parseComments(InputStream in, ArrayList<Comment> comments) {
@@ -57,42 +59,36 @@ class CommentsParser extends DefaultHandler {
             mCurrentComment.setDrinkId(Integer.parseInt(atts.getValue("article_id").trim()));
             mCurrentComment.setUserId(Integer.parseInt(atts.getValue("user_id").trim()));
             mCurrentComment.setNickname(atts.getValue("nickname").trim());
-            Time created = new Time();
+
             // The api returns the created time as RFC 2445.
-            created.parse(atts.getValue("created").trim());
-            mCurrentComment.setCreated(created);
+            mCreatedTime.parse(atts.getValue("created").trim());
+            mCurrentComment.setCreated(mCreatedTime);
             
             int rating = 0;
             if (!TextUtils.isEmpty(atts.getValue("user_rating").trim())) {
                 rating = Integer.parseInt(atts.getValue("user_rating").trim());
             }
+            
             mCurrentComment.setRating(rating);
-
-            mInComment = true;
         }
     }
 
     public void characters(char ch[], int start, int length) {
-        mCurrentText = new String(ch, start, length).trim();
-
-        if (mInComment) {
-            mCurrentCommentString.append(mCurrentText.replaceAll("\n", ""));
-        } else {
-            mCurrentCommentString.setLength(0);
-        }
+    	// Discard the data if we're not inside a comment tag.
+    	if(null != mCurrentComment) {
+    		mBuilder.append(ch, start, length);
+    	}
     }
 
     public void endElement(String uri, String name, String qName)
                 throws SAXException {
-        if (mCurrentComment != null) {
-            if (name.trim().equals("comment") && !TextUtils.isEmpty(mCurrentCommentString)) {
-                mCurrentComment.setComment(mCurrentCommentString.toString().trim());
-                mInComment = false;
-            }
-        }
-
-        if (name.trim().equals("comment")) {
+        if (name.equals("comment") && null != mCurrentComment) {
+        	String comment = mBuilder.toString().replaceAll("\n", "").trim();
+            mCurrentComment.setComment(comment);
             mComments.add(mCurrentComment);
+            mCurrentComment = null;
         }
+        
+        mBuilder.setLength(0);
     }
 }

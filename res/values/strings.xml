@@ -66,4 +66,7 @@
     <string name="crash_report_mail_subject">iglaset krashrapport</string><!-- Do not translate -->
     <string name="crash_report_mail_body">Genom att skicka denna krashrapport hjälper du oss att fixa buggen. Informationen kommer inte att nyttjas för något annat.</string>
     <string name="image_decode_failed">Trasig bildfil</string>
+    <string name="no_selected_tags">0 markerade taggar (sök allt)</string>
+    <string name="tag">tagg</string>
+    <string name="tags">taggar</string>
 </resources>

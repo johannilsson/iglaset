@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -92,6 +91,10 @@ public class DrinkDetailActivity extends ListActivity {
      * The id for showing the comment add dialog.
      */
     private static final int DIALOG_ADD_COMMENT = 6;
+    /**
+     * The id for the network problem dialog.
+     */
+    private static final int DIALOG_SEARCH_NETWORK_PROBLEM = 7;
     /**
      * The request code for indicating that settings has been changed
      */
@@ -498,7 +501,7 @@ public class DrinkDetailActivity extends ListActivity {
                 ratingValue.setText("Ditt betyg " + userRating);
                 final RatingBar ratingBar = (RatingBar) layout.findViewById(R.id.add_user_rating);
                 ratingBar.setNumStars(5);
-                ratingBar.setStepSize((float) 0.5);
+                ratingBar.setStepSize(0.5f);
                 ratingBar.setRating(userRating / 2);
                 ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
                     public void onRatingChanged(RatingBar ratingBar, float rating,
@@ -611,6 +614,22 @@ public class DrinkDetailActivity extends ListActivity {
             	 });
             	
             	return dialog;
+            	
+            case DIALOG_SEARCH_NETWORK_PROBLEM:
+            	return DialogFactory.createNetworkProblemDialog(
+            			this,
+            			new OnClickListener() {
+    		                @Override
+    		                public void onClick(DialogInterface dialog, int which) {
+    		                	switch(which) {
+    		                	case Dialog.BUTTON_POSITIVE:
+    		                    	launchGetDrinkTask(sDrink);
+    			                    break;
+    		                	case Dialog.BUTTON_NEGATIVE:
+    		                		break;
+    		                	}
+    		                }
+    		             });
         }
         return null;
     }
@@ -836,7 +855,11 @@ public class DrinkDetailActivity extends ListActivity {
 
         @Override
         protected void onPostExecute(Drink drink) {
-            onUpdatedDrink(drink);
+        	if(null != drink) {
+        		onUpdatedDrink(drink);
+        	} else {
+                showDialog(DIALOG_SEARCH_NETWORK_PROBLEM);
+        	}
         }
     }
     
