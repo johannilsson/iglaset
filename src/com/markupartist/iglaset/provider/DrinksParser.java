@@ -98,7 +98,7 @@ class DrinksParser extends DefaultHandler {
                 mCurrentVolume.setVolume(Integer.parseInt(result));
                 mCurrentDrink.addVolume(mCurrentVolume);
             } else if (name.equals("tag")) {
-                mCurrentDrink.addTag(mCurrentTagType, mTextBuffer.toString());
+                mCurrentDrink.addTag(mCurrentTagType, result);
             } else if (name.equals("commercial_desc")) {
             	// Use newline as <br>. That's why the distilled "result" variable
             	// cannot be used.
@@ -119,8 +119,8 @@ class DrinksParser extends DefaultHandler {
                 if (!TextUtils.isEmpty(mTextBuffer)) {
                     mCurrentDrink.setImageUrl(Drink.ImageSize.LARGE, result);
                 }
-            } else if (name.equals("user_rating")) {
-                mCurrentDrink.setUserRating(Float.parseFloat(result));
+            } else if (name.equals("user_rating") && result.length() > 0) {
+            	mCurrentDrink.setUserRating(Float.parseFloat(result));
             }
         }
 
