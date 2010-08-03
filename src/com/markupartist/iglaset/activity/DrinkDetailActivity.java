@@ -166,6 +166,12 @@ public class DrinkDetailActivity extends ListActivity {
         ImageLoader.getInstance().load(imageView, drink.getThumbnailUrl(w, h), 
                 true, R.drawable.noimage, null);
         
+        TextView ratingCountView = (TextView) findViewById(R.id.drink_rating_count);
+        ratingCountView.setText(String.valueOf(drink.getRatingCount()));
+        
+        TextView commentCountView = (TextView) findViewById(R.id.drink_comment_count);
+        commentCountView.setText(String.valueOf(drink.getCommentCount()));
+        
         //TextView descriptionTextView = (TextView) findViewById(R.id.drink_description);
         //descriptionTextView.setText(Html.fromHtml(drink.getDescription()));
 

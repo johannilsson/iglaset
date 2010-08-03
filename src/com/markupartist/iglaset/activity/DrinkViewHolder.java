@@ -19,6 +19,8 @@ public class DrinkViewHolder {
     private TextView alcoholView;
     private ImageView imageView;
     private Drawable glassIcon = null;
+    private TextView commentCountView;
+    private TextView ratingCountView;
 
     public DrinkViewHolder(View layout) {
         this.layout = layout;
@@ -74,5 +76,19 @@ public class DrinkViewHolder {
     		glassIcon.setBounds(0, 0, glassIcon.getIntrinsicWidth(), glassIcon.getIntrinsicHeight());
     	}
     	return glassIcon;
+    }
+    
+    public TextView getCommentCountView() {
+    	if(null == commentCountView) {
+    		commentCountView = (TextView) layout.findViewById(R.id.drink_comment_count);
+    	}
+    	return commentCountView;
+    }
+    
+    public TextView getRatingCountView() {
+    	if(null == ratingCountView) {
+    		ratingCountView = (TextView) layout.findViewById(R.id.drink_rating_count);
+    	}
+    	return ratingCountView;
     }
 }

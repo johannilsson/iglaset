@@ -121,6 +121,10 @@ class DrinksParser extends DefaultHandler {
                 }
             } else if (name.equals("user_rating") && result.length() > 0) {
             	mCurrentDrink.setUserRating(Float.parseFloat(result));
+            } else if (name.equals("comments")) {
+            	mCurrentDrink.setCommentCount(Integer.parseInt(result));
+            } else if (name.equals("ratings")) {
+            	mCurrentDrink.setRatingCount(Integer.parseInt(result));
             }
         }
 
