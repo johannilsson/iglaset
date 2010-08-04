@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent" android:layout_height="fill_parent">
-    <LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+    <RelativeLayout
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -20,7 +22,19 @@
             android:paddingTop="15dip"
             android:paddingRight="5dip"
             android:paddingLeft="5dip"
-            android:text="Sök" />
+            android:text="Sök"
+            android:layout_alignParentTop="true"
+            android:id="@+id/tagSearchText"
+            android:layout_alignParentLeft="true"/>
+            
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentRight="true"
+            android:src="@android:drawable/ic_search_category_default"
+            android:paddingRight="7dip"
+            android:id="@+id/tagSearchIcon" />
+        
         <TextView
             android:layout_height="wrap_content"
             android:id="@+id/tagSearchSelectedText"
@@ -29,9 +43,12 @@
             android:paddingRight="5dip"
             android:paddingBottom="15dip"
             android:paddingLeft="5dip"
-            android:layout_width="fill_parent" android:text="@string/no_selected_tags"/>
-     
-    </LinearLayout>
+            android:layout_width="fill_parent"
+            android:text="@string/no_selected_tags"
+            android:layout_below="@id/tagSearchText"
+            android:layout_toLeftOf="@id/tagSearchIcon"/>
+
+    </RelativeLayout>
     <ImageView
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
