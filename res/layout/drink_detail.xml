@@ -21,12 +21,13 @@
         android:textColor="?android:attr/textColorPrimary"
         android:textStyle="bold"
         android:text="Name"
-        android:ellipsize="marquee"
         android:id="@+id/drink_name"
-        android:lines="1"
         android:paddingRight="4dip"
         android:layout_width="wrap_content"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+        android:lines="1"
+        android:scrollHorizontally="true"
+        android:ellipsize="end"/>
         
     <TextView
         android:layout_below="@+id/drink_name"
