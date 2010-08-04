@@ -422,6 +422,8 @@ public class SearchResultActivity extends ListActivity implements
                 }
                 dvh.getOriginCountryView().setText(drink.getConcatenatedOrigin());
                 dvh.getAlcoholView().setText(drink.getAlcoholPercent());
+                dvh.getRatingCountView().setText(String.valueOf(drink.getRatingCount()));
+                dvh.getCommentCountView().setText(String.valueOf(drink.getCommentCount()));
 
                 final int w = dvh.getImageView().getDrawable().getIntrinsicWidth();
                 final int h = dvh.getImageView().getDrawable().getIntrinsicHeight();

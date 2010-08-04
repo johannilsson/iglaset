@@ -25,7 +25,8 @@
         android:id="@+id/drink_name"
         android:lines="1"
         android:paddingRight="4dip"
-        android:layout_width="wrap_content"/>
+        android:layout_width="wrap_content"
+        android:layout_alignParentTop="true"/>
         
     <TextView
         android:layout_below="@+id/drink_name"
@@ -48,13 +49,36 @@
         android:textColor="?android:attr/textColorSecondary"/>
 
     <RatingBar
-        android:layout_height="wrap_content"
         android:layout_below="@id/drink_origin_country"
         android:layout_width="wrap_content"
         android:id="@+id/drink_rating"
         android:numStars="10"
         android:stepSize="1"
+        android:layout_toRightOf="@id/drink_image"
+        android:layout_height="wrap_content"
         style="?android:attr/ratingBarStyleSmall"
-        android:layout_toRightOf="@id/drink_image"/>
+        android:paddingTop="2dip"
+        android:paddingBottom="2dip"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:drawableRight="@drawable/sym_action_chat"
+        android:id="@+id/drink_comment_count"
+        android:text="0"
+        android:layout_alignRight="@id/drink_alcohol_percent"
+        android:layout_alignBaseline="@id/drink_alcohol_percent"/>
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/drink_rating_count"
+        android:text="0"
+        android:drawableRight="@drawable/rate_star_small_on"
+        android:layout_alignTop="@id/drink_rating"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@id/drink_rating"
+        android:gravity="center_vertical"/>
 
 </RelativeLayout>

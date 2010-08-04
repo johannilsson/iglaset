@@ -26,6 +26,7 @@ public class Drink implements Parcelable {
     private HashMap<String, ArrayList<String>> mTags;
     private float mUserRating;
     private int mCommentCount;
+    private int mRatingCount;
     private TreeMap<ImageSize, String> mImages;
     
     public enum ImageSize {
@@ -51,6 +52,7 @@ public class Drink implements Parcelable {
         mDescription = in.readString();
         mRating = in.readString();
         mCommentCount = in.readInt();
+        mRatingCount = in.readInt();
         
         mImages = new TreeMap<ImageSize, String>();
         in.readMap(mImages, ClassLoader.getSystemClassLoader());
@@ -106,6 +108,7 @@ public class Drink implements Parcelable {
         dest.writeString(mDescription);
         dest.writeString(mRating);
         dest.writeInt(mCommentCount);
+        dest.writeInt(mRatingCount);
         dest.writeMap(mImages);
         dest.writeTypedList(mVolumes);
         dest.writeMap(mTags);
@@ -323,6 +326,14 @@ public class Drink implements Parcelable {
      */
     public void setCommentCount(int count) {
     	mCommentCount = count;
+    }
+    
+    public int getRatingCount() {
+    	return mRatingCount;
+    }
+    
+    public void setRatingCount(int count) {
+    	mRatingCount = count;
     }
     
     @Override
