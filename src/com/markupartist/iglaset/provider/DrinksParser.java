@@ -102,7 +102,7 @@ class DrinksParser extends DefaultHandler {
             } else if (name.equals("commercial_desc")) {
             	// Use newline as <br>. That's why the distilled "result" variable
             	// cannot be used.
-                mCurrentDrink.setDescription(mTextBuffer.toString().replaceAll("\n", "<br/>"));
+                mCurrentDrink.setDescription(mTextBuffer.toString().trim().replaceAll("\n", "<br/>"));
             } else if (name.equals("avg_rating")) {
                 mCurrentDrink.setRating(result);
             } else if (name.equals("comments")) {
