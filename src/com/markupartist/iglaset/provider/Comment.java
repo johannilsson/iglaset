@@ -6,12 +6,12 @@ import android.text.format.Time;
 public class Comment {
     private int mDrinkId;
     private int mUserId;
-    private Time mCreated;
+    private Time mCreated = new Time();
     private String mComment;
     private String mNickname;
     private int mRating = 0;
 
-    public Comment() {        
+    public Comment() {
     }
 
     public int getDrinkId() {
@@ -30,7 +30,7 @@ public class Comment {
         return mCreated;
     }
     public void setCreated(Time created) {
-        this.mCreated = created;
+        this.mCreated.set(created);
     }
     public String getComment() {
         return mComment;
