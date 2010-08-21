@@ -24,7 +24,7 @@ public class Drink implements Parcelable {
     private String mRating = "0";
     private ArrayList<Volume> mVolumes;
     private HashMap<String, ArrayList<String>> mTags;
-    private int mUserRating;
+    private float mUserRating;
     private int mCommentCount;
     private int mRatingCount;
     private TreeMap<ImageSize, String> mImages;
@@ -63,7 +63,7 @@ public class Drink implements Parcelable {
         mTags = new HashMap<String, ArrayList<String>>();
         in.readMap(mTags, ClassLoader.getSystemClassLoader());
 
-        mUserRating = in.readInt();
+        mUserRating = in.readFloat();
     }
 
     public void addVolume(Volume volume) {
@@ -112,7 +112,7 @@ public class Drink implements Parcelable {
         dest.writeMap(mImages);
         dest.writeTypedList(mVolumes);
         dest.writeMap(mTags);
-        dest.writeInt(mUserRating);        
+        dest.writeFloat(mUserRating);        
     }
 
     public static final Creator<Drink> CREATOR = new Creator<Drink>() {
@@ -300,15 +300,15 @@ public class Drink implements Parcelable {
         this.mRating = rating;
     }
 
-    public int getUserRating() {
+    public float getUserRating() {
         return mUserRating;
     }
 
     public Boolean hasUserRating() {
-    	return mUserRating > 0;
+    	return mUserRating != 0.0;
     }
     
-    public void setUserRating(int userRating) {
+    public void setUserRating(float userRating) {
         this.mUserRating = userRating;
     }
 
