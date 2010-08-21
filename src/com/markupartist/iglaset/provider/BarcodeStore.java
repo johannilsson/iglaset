@@ -68,23 +68,5 @@ public class BarcodeStore {
         drinksParser.parseDrinks(entity.getContent(), drinks);
 
         return drinks;
-    }
-
-    /**
-     * Builds a the uri for search from a SearchCriteria
-     * @param searchCriteria the search criteria
-     * @return the search uri
-     */
-    private String buildSearchUri(SearchCriteria searchCriteria) {
-        Log.d(TAG, "building search uri from " + searchCriteria);
-        String searchUri = BARCODES_BASE_URI + "?";
-        if (!TextUtils.isEmpty(searchCriteria.getQuery()))
-            searchUri += "&search=" + URLEncoder.encode(searchCriteria.getQuery());
-        if (!TextUtils.isEmpty(searchCriteria.getToken()))
-            searchUri += "&token=" + searchCriteria.getToken();
-        if (searchCriteria.getCategory() > 0)
-            searchUri += "&category=" + searchCriteria.getCategory();
-        searchUri += "&page=" + searchCriteria.getPage();
-        return searchUri;
-    }    
+    }  
 }
