@@ -27,7 +27,6 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkCompletedListener;
@@ -395,7 +394,6 @@ public class SearchResultActivity extends ListActivity implements
         public View getView(int position, View convertView, ViewGroup parent) {
             DrinkViewHolder dvh = null;
             if (shouldAppend(position)) {
-                //Toast.makeText(SearchResultActivity.this, getText(R.string.loading_articles), Toast.LENGTH_LONG).show();
                 getListView().addFooterView(mFooterProgressView);
                 sSearchCriteria.setPage(mPage.addAndGet(1));
                 mSearchDrinksTask = new SearchDrinksTask();
