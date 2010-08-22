@@ -233,7 +233,8 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 	private void populateList(TreeMap<String, ArrayList<Tag>> tagMap) {
 		int sectionId = 1;
 		for(Map.Entry<String, ArrayList<Tag>> entry : tagMap.entrySet()) {
-			ArrayAdapter<Tag> adapter = new ArrayAdapter<Tag>(this, android.R.layout.simple_list_item_multiple_choice, entry.getValue()) {
+			ArrayAdapter<Tag> adapter =
+				new ArrayAdapter<Tag>(this, android.R.layout.simple_list_item_multiple_choice, entry.getValue()) {
 				@Override
 				public long getItemId(int position) {
 					return getItem(position).getId();
