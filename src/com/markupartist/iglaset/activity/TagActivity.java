@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -222,8 +223,8 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
         progressBar.setVisibility(View.GONE);
         
 		this.tagMap = tagMap;
-		if(tagMap.size() <= 1) {
-			// Instantly search if we have no or only one tag
+		if(tagMap.size() == 0) {
+			// Instantly search if we have no tag categories
 			doSearch();
 			finish();
 		} else {
