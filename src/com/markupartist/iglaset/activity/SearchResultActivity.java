@@ -27,7 +27,6 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkCompletedListener;
@@ -92,7 +91,12 @@ public class SearchResultActivity extends ListActivity implements
 	 * Task object to be executed when searching.
 	 */
 	private SearchDrinksTask mSearchDrinksTask;
-    
+
+	/**
+	 * Footer progress.
+	 */
+	private View mFooterProgressView;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -256,8 +260,10 @@ public class SearchResultActivity extends ListActivity implements
         LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);
         progressBar.setVisibility(View.GONE);
 
-        mListAdapter = new DrinkAdapter(this, drinks);
+        mFooterProgressView = getLayoutInflater().inflate(R.layout.loading_row, null);
+        getListView().addFooterView(mFooterProgressView);
 
+        mListAdapter = new DrinkAdapter(this, drinks);        
         setListAdapter(mListAdapter);
     }
 
@@ -388,13 +394,17 @@ public class SearchResultActivity extends ListActivity implements
         public View getView(int position, View convertView, ViewGroup parent) {
             DrinkViewHolder dvh = null;
             if (shouldAppend(position)) {
-                Toast.makeText(SearchResultActivity.this, getText(R.string.loading_articles), Toast.LENGTH_LONG).show();
+                getListView().addFooterView(mFooterProgressView);
                 sSearchCriteria.setPage(mPage.addAndGet(1));
                 mSearchDrinksTask = new SearchDrinksTask();
                 mSearchDrinksTask.setSearchDrinkCompletedListener(this);
                 mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
                 mSearchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
                 mSearchDrinksTask.execute(sSearchCriteria);
+            } else {
+                if (mFooterProgressView != null) {
+                    getListView().removeFooterView(mFooterProgressView);
+                }
             }
 
             if (convertView == null) {
@@ -445,8 +455,6 @@ public class SearchResultActivity extends ListActivity implements
         protected boolean append(ArrayList<Drink> drinks) {
             if (drinks.isEmpty()) {
                 mShouldAppend.set(false);
-                Toast.makeText(SearchResultActivity.this, 
-                        getText(R.string.no_more_articles), Toast.LENGTH_SHORT).show();
                 return mShouldAppend.get();
             }
 
