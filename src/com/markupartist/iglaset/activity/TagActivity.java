@@ -225,6 +225,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 		if(tagMap.size() <= 1) {
 			// Instantly search if we have no or only one tag
 			doSearch();
+			finish();
 		} else {
 			populateList(this.tagMap);
 		}
