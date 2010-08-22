@@ -205,8 +205,9 @@ public class DrinksStore {
         	builder.append("&category=").append(searchCriteria.getCategory());
         if (!TextUtils.isEmpty(searchCriteria.getToken()))
         	builder.append("&user_credentials=").append(searchCriteria.getToken());
-        
+
         if (null != searchCriteria.getTags()) {
+            builder.append("&tag_filter=or");
         	ArrayList<Integer> tags = searchCriteria.getTags();
         	if(tags.size() > 0) {
         		builder.append("&tags[]=");

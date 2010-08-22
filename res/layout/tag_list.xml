@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_alignParentRight="true"
-            android:src="@android:drawable/ic_search_category_default"
+            android:src="@drawable/ic_btn_search"
             android:paddingRight="7dip"
             android:id="@+id/tagSearchIcon" />
         

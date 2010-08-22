@@ -512,7 +512,7 @@ public class DrinkDetailActivity extends ListActivity {
                 ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
                     public void onRatingChanged(RatingBar ratingBar, float rating,
                             boolean fromUser) {
-                        ratingValue.setText("Ditt betyg " + (int)rating * 2);
+                        ratingValue.setText("Ditt betyg " + rating * 2);
                     }
                 });
 
@@ -521,7 +521,7 @@ public class DrinkDetailActivity extends ListActivity {
                     .setView(layout)
                     .setPositiveButton(android.R.string.ok, new OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            new SetUserRatingTask().execute((int)(ratingBar.getRating()) * 2);
+                            new SetUserRatingTask().execute(ratingBar.getRating() * 2);
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, new OnClickListener() {
@@ -725,10 +725,10 @@ public class DrinkDetailActivity extends ListActivity {
     /**
      * Background task for setting a user rating.
      */
-    private class SetUserRatingTask extends AsyncTask<Integer, Void, Integer> {
+    private class SetUserRatingTask extends AsyncTask<Float, Void, Float> {
 
         @Override
-        protected Integer doInBackground(Integer... params) {
+        protected Float doInBackground(Float... params) {
             publishProgress();
             DrinksStore.getInstance().rateDrink(sDrink, params[0], mToken);
             return params[0];
@@ -740,7 +740,7 @@ public class DrinkDetailActivity extends ListActivity {
         }
 
         @Override
-        protected void onPostExecute(Integer rating) {
+        protected void onPostExecute(Float rating) {
             Toast.makeText(DrinkDetailActivity.this, getText(R.string.rating_added), Toast.LENGTH_SHORT).show();
             updateUserRatingInUi(rating);
             
