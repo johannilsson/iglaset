@@ -263,20 +263,20 @@ public class SearchResultActivity extends ListActivity implements
         mFooterProgressView = getLayoutInflater().inflate(R.layout.loading_row, null);
         getListView().addFooterView(mFooterProgressView);
 
-        mListAdapter = new DrinkAdapter(this, drinks);        
+        mListAdapter = new DrinkAdapter(this, drinks);
         setListAdapter(mListAdapter);
     }
 
+    private void displayDrinkDetails(Drink drink) {
+        Intent i = new Intent(this, DrinkDetailActivity.class);
+        i.putExtra("com.markupartist.iglaset.Drink", drink);
+        startActivity(i);
+    }
+    
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-
-        Drink drink = mDrinks.get(position);
-
-        Intent i = new Intent(this, DrinkDetailActivity.class);
-        i.putExtra("com.markupartist.iglaset.Drink", drink);
-
-        startActivity(i);
+        displayDrinkDetails(mDrinks.get(position));
     }
 
     @Override
@@ -311,11 +311,9 @@ public class SearchResultActivity extends ListActivity implements
     }
     
     private void onDrinkData(ArrayList<Drink> drinks) {
-    	if(drinks.size() == 1) {
+    	if(drinks.size() == 1) {    		
     		// Open the drink details and close the activity
-            Intent i = new Intent(this, DrinkDetailActivity.class);
-            i.putExtra("com.markupartist.iglaset.Drink", drinks.get(0));
-            startActivity(i);
+    		displayDrinkDetails(drinks.get(0));
             finish();
         } else {
         	initList(drinks);
@@ -393,6 +391,7 @@ public class SearchResultActivity extends ListActivity implements
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             DrinkViewHolder dvh = null;
+            
             if (shouldAppend(position)) {
                 getListView().addFooterView(mFooterProgressView);
                 sSearchCriteria.setPage(mPage.addAndGet(1));
