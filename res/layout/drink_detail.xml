@@ -35,29 +35,43 @@
         android:scrollHorizontally="true"
         android:ellipsize="end"
         android:layout_toRightOf="@id/drink_image_layout"/>
-        
-    <TextView
+
+    <LinearLayout
         android:layout_below="@+id/drink_name"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/drink_origin_country"
-        android:text="Country"
-        android:textColor="?android:attr/textColorSecondary"
-        android:textStyle="normal"
-        android:paddingRight="4dip"
-        android:layout_alignLeft="@id/drink_name"/>
+        android:layout_width="wrap_content"
+        android:id="@+id/drink_origin_layout"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/drink_image_layout">
         
-    <TextView
-        android:layout_below="@id/drink_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/drink_origin_country"
-        android:id="@+id/drink_alcohol_percent"
-        android:text="12%"
-        android:textColor="?android:attr/textColorSecondary"/>
+        <TextView
+            android:layout_below="@+id/drink_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/drink_origin_country"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textStyle="normal"
+            android:paddingRight="4dip"
+            android:layout_alignLeft="@id/drink_name"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:text="Country"/>
+            
+        <TextView
+            android:layout_below="@id/drink_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/drink_origin_country"
+            android:id="@+id/drink_alcohol_percent"
+            android:text="12%"
+            android:textColor="?android:attr/textColorSecondary"
+            android:maxLines="1"
+            android:minLines="1"/>
+        
+    </LinearLayout>
 
     <RatingBar
-        android:layout_below="@id/drink_origin_country"
         android:layout_width="wrap_content"
         android:id="@+id/drink_rating"
         android:numStars="10"
@@ -66,9 +80,8 @@
         style="?android:attr/ratingBarStyleSmall"
         android:paddingTop="2dip"
         android:paddingBottom="2dip"
-        android:layout_toRightOf="@id/drink_image_layout"/>
-
-    
+        android:layout_toRightOf="@id/drink_image_layout"
+        android:layout_below="@id/drink_origin_layout"/>
     
     <TextView android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -91,5 +104,6 @@
         android:drawableRight="@drawable/rating_count_star"
         android:layout_alignBaseline="@id/drink_comment_count"
         android:layout_toLeftOf="@id/drink_comment_count"/>
+
 
 </RelativeLayout>
