@@ -64,10 +64,9 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/drink_origin_country"
             android:id="@+id/drink_alcohol_percent"
-            android:text="12%"
+            android:text="12,5%"
             android:textColor="?android:attr/textColorSecondary"
-            android:maxLines="1"
-            android:minLines="1"/>
+            android:maxLines="1"/>
         
     </LinearLayout>
 
