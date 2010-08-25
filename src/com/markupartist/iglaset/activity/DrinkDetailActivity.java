@@ -64,6 +64,10 @@ public class DrinkDetailActivity extends ListActivity {
      */
     private static final String EXTRA_BARCODE = "com.markupartist.iglaset.article.barcode";
     /**
+     * Key to identify a suggested barcode
+     */
+    private static final String EXTRA_SUGGESTED_BARCODE = "com.markupartist.iglaset.article.suggested_barcode";
+    /**
      * Key to identify which drink to display
      */
     public static final String EXTRA_DRINK = "com.markupartist.iglaset.Drink";

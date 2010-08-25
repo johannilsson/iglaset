@@ -44,8 +44,12 @@ import com.markupartist.iglaset.util.ImageLoader;
 
 public class SearchResultActivity extends ListActivity implements
         SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener, SearchDrinkErrorListener {
-    //static final String ACTION_CATEGORY_SEARCH = "com.markupartist.iglaset.action.CATEGORY";
-    //static final String ACTION_BARCODE_SEARCH = "com.markupartist.iglaset.action.BARCODE";
+
+	/**
+	 * Log tag.
+	 */
+	static final String TAG = SearchResultActivity.class.getSimpleName();
+	
     /**
      * Action for triggering a search for user recommendations.
      */
@@ -59,6 +63,8 @@ public class SearchResultActivity extends ListActivity implements
 
     static final String EXTRA_SEARCH_BARCODE =
         "com.markupartist.iglaset.search.barcode";
+    static final String EXTRA_ORPHAN_BARCODE =
+        "com.markupartist.iglaset.orphan.barcode";
     static final String EXTRA_SEARCH_CATEGORY_ID =
         "com.markupartist.iglaset.search.categoryId";
     static final String EXTRA_SEARCH_TAGS =
@@ -67,11 +73,11 @@ public class SearchResultActivity extends ListActivity implements
         "com.markupartist.iglaset.search.clickedDrink";
 
     static final int DIALOG_SEARCH_NETWORK_PROBLEM = 0;
-    static final int DIALOG_DRINK_IMAGE = 1;
-    static final String TAG = "SearchResultActivity";
+    static final int DIALOG_DRINK_IMAGE = 1;    
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
     private String mToken;
+    private String mOrphanBarcode;
     private static SearchCriteria sSearchCriteria;
     
     /**
@@ -133,7 +139,6 @@ public class SearchResultActivity extends ListActivity implements
         if (data == null) {
             final Intent queryIntent = getIntent();
             final String queryAction = queryIntent.getAction();
-            final TextView searchText = (TextView) findViewById(R.id.search_progress_text);
 
             mSearchDrinksTask = new SearchDrinksTask();
             mSearchDrinksTask.setSearchDrinkCompletedListener(this);
@@ -150,6 +155,7 @@ public class SearchResultActivity extends ListActivity implements
                         SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
                 suggestions.saveRecentQuery(queryString, null);
 
+                final TextView searchText = (TextView) findViewById(R.id.search_progress_text);
                 String searchingText = searchText.getText() + " \"" + queryString + "\"";
                 mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchText.setText(searchingText);
@@ -157,6 +163,13 @@ public class SearchResultActivity extends ListActivity implements
 
                 sSearchCriteria = new SearchCriteria();
                 sSearchCriteria.setQuery(queryString);
+                
+                // Store orphan barcode if available
+                final Bundle appData = queryIntent.getBundleExtra(SearchManager.APP_DATA);
+                if(null != appData) {
+                	mOrphanBarcode = appData.getString(EXTRA_ORPHAN_BARCODE);
+                }
+                
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
                 setTitle(R.string.recommendations_label);
 
@@ -264,6 +277,10 @@ public class SearchResultActivity extends ListActivity implements
             	TextView emptyResult = (TextView) findViewById(R.id.search_empty);
             	emptyResult.setText(R.string.no_recommendations_result);
             }
+            
+            if(sSearchCriteria.hasBarcode()) {
+            	mOrphanBarcode = sSearchCriteria.getBarcode();
+            }
 
             Button searchButton = (Button) findViewById(R.id.btn_search);
             searchButton.setOnClickListener(new View.OnClickListener() {
@@ -299,7 +316,13 @@ public class SearchResultActivity extends ListActivity implements
 
     @Override
     public boolean onSearchRequested() {
-        startSearch(null, false, null, false);
+    	Bundle bundle = null;
+    	if(!TextUtils.isEmpty(mOrphanBarcode)) {
+    		bundle = new Bundle();
+    		bundle.putString(EXTRA_ORPHAN_BARCODE, mOrphanBarcode);
+    	}
+    	
+        startSearch(null, false, bundle, false);
         return true;
     }
 
