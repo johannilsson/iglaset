@@ -8,17 +8,31 @@
     <ListView 
         android:id="@+id/android:list"
         android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1.0"
         android:dividerHeight="0.1dip"
-        android:layout_height="fill_parent"
-        android:layout_weight="1.0"/>
-    <TextView
-        android:id="@+id/search_empty"
-        android:gravity="center_horizontal|center_vertical"
-        android:textColor="?android:attr/textColorPrimary"
-        android:padding="5dip"
-        android:visibility="gone"
-        android:text="@string/no_search_result"
-        android:layout_height="fill_parent"
+    />
+    <LinearLayout
+        android:id="@+id/search_empty_layout"
+        android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_gravity="center_horizontal|center_vertical"/>
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal|center_vertical"
+        android:visibility="gone"
+        >
+        <TextView android:id="@+id/search_empty"
+            android:gravity="center_horizontal|center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?android:attr/textColorPrimary"
+            android:padding="5dip"
+            android:text="@string/no_search_result"
+        />
+        <Button
+            android:id="@+id/btn_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sök"
+        />
+    </LinearLayout>
 </LinearLayout>

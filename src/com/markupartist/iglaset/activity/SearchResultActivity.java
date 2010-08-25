@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -247,15 +248,32 @@ public class SearchResultActivity extends ListActivity implements
     private void initList(ArrayList<Drink> drinks) {
         mDrinks = drinks;
 
+        mFooterProgressView = getLayoutInflater().inflate(R.layout.loading_row, null);
+        getListView().addFooterView(mFooterProgressView);
+
+        mListAdapter = new DrinkAdapter(this, drinks);
+        setListAdapter(mListAdapter);
+
         if (drinks.isEmpty()) {
-            TextView emptyResult = (TextView) findViewById(R.id.search_empty);
-            emptyResult.setVisibility(View.VISIBLE);
+        	LinearLayout emptyResultLayout = (LinearLayout) findViewById(R.id.search_empty_layout);
+        	emptyResultLayout.setVisibility(View.VISIBLE);
             
             // Show a more verbose message if the user was browsing
             // the recommendations
             if(sSearchCriteria instanceof RecommendationSearchCriteria) {
+            	TextView emptyResult = (TextView) findViewById(R.id.search_empty);
             	emptyResult.setText(R.string.no_recommendations_result);
             }
+
+            Button searchButton = (Button) findViewById(R.id.btn_search);
+            searchButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSearchRequested();
+                }
+            });
+
+            getListView().removeFooterView(mFooterProgressView);
         }
 
         if (!TextUtils.isEmpty(sSearchCriteria.getQuery())) {
@@ -265,12 +283,6 @@ public class SearchResultActivity extends ListActivity implements
 
         LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);
         progressBar.setVisibility(View.GONE);
-
-        mFooterProgressView = getLayoutInflater().inflate(R.layout.loading_row, null);
-        getListView().addFooterView(mFooterProgressView);
-
-        mListAdapter = new DrinkAdapter(this, drinks);
-        setListAdapter(mListAdapter);
     }
 
     private void displayDrinkDetails(Drink drink) {
@@ -313,11 +325,14 @@ public class SearchResultActivity extends ListActivity implements
 
     public void onSearchDrinkComplete(ArrayList<Drink> result) {
         setProgressBarIndeterminateVisibility(false);
+        if (mFooterProgressView != null) {
+            getListView().removeFooterView(mFooterProgressView);
+        }
         onDrinkData(result);
     }
     
     private void onDrinkData(ArrayList<Drink> drinks) {
-    	if(drinks.size() == 1) {    		
+        if(drinks.size() == 1) {
     		// Open the drink details and close the activity
     		displayDrinkDetails(drinks.get(0));
             finish();
@@ -473,6 +488,9 @@ public class SearchResultActivity extends ListActivity implements
         public void onSearchDrinkComplete(ArrayList<Drink> result) {
             append(result);
             setProgressBarIndeterminateVisibility(false);
+            if (mFooterProgressView != null) {
+                getListView().removeFooterView(mFooterProgressView);
+            }
         }
 
         public void onItemClick() {
