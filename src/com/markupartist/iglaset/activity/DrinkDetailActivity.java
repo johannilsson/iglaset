@@ -64,6 +64,10 @@ public class DrinkDetailActivity extends ListActivity {
      */
     private static final String EXTRA_BARCODE = "com.markupartist.iglaset.article.barcode";
     /**
+     * Key to identify which drink to display
+     */
+    public static final String EXTRA_DRINK = "com.markupartist.iglaset.Drink";
+    /**
      * The id for the rating dialog
      */
     private static final int DIALOG_RATE = 0;
@@ -126,7 +130,7 @@ public class DrinkDetailActivity extends ListActivity {
         mToken = AuthStore.getInstance().getStoredToken(this);
         
         Bundle extras = getIntent().getExtras();
-        final Drink drink = extras.getParcelable("com.markupartist.iglaset.Drink");
+        final Drink drink = extras.getParcelable(EXTRA_DRINK);
 
         mUserRatingAdapter = new UserRatingAdapter(this, 0);
         mSectionedAdapter.addSectionFirst(0, getText(R.string.my_rating), mUserRatingAdapter);

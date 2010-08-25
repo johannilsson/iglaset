@@ -275,7 +275,7 @@ public class SearchResultActivity extends ListActivity implements
 
     private void displayDrinkDetails(Drink drink) {
         Intent i = new Intent(this, DrinkDetailActivity.class);
-        i.putExtra("com.markupartist.iglaset.Drink", drink);
+        i.putExtra(DrinkDetailActivity.EXTRA_DRINK, drink);
         startActivity(i);
     }
     
