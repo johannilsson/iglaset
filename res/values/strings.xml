@@ -13,6 +13,7 @@
     <string name="search_invoke">Starta sökning</string><!-- TODO: How is this used? -->
     <string name="search_results">Sökresultat</string>
     <string name="no_search_result">Sökningen gav inga träffar</string>
+    <string name="no_recommendations_result">Inga rekommendationer än. Ju fler betyg du sätter desto fler och bättre blir dina rekommendationer.</string>
     <string name="packings">Förpackningar</string>
     <string name="loading_comments">Hämtar kommentarer...</string>
     <string name="no_comments">Inga kommentarer än</string>

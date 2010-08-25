@@ -250,6 +250,12 @@ public class SearchResultActivity extends ListActivity implements
         if (drinks.isEmpty()) {
             TextView emptyResult = (TextView) findViewById(R.id.search_empty);
             emptyResult.setVisibility(View.VISIBLE);
+            
+            // Show a more verbose message if the user was browsing
+            // the recommendations
+            if(sSearchCriteria instanceof RecommendationSearchCriteria) {
+            	emptyResult.setText(R.string.no_recommendations_result);
+            }
         }
 
         if (!TextUtils.isEmpty(sSearchCriteria.getQuery())) {
