@@ -249,19 +249,18 @@ public class SearchResultActivity extends ListActivity implements
         mDrinks = drinks;
 
         mFooterProgressView = getLayoutInflater().inflate(R.layout.loading_row, null);
-        getListView().addFooterView(mFooterProgressView);
+        getListView().addFooterView(mFooterProgressView, null, false);
 
         mListAdapter = new DrinkAdapter(this, drinks);
         setListAdapter(mListAdapter);
 
         if (drinks.isEmpty()) {
-        	LinearLayout emptyResultLayout = (LinearLayout) findViewById(R.id.search_empty_layout);
-        	emptyResultLayout.setVisibility(View.VISIBLE);
+        	TextView emptyResult = (TextView) findViewById(R.id.search_empty);
+            emptyResult.setVisibility(View.VISIBLE);
             
             // Show a more verbose message if the user was browsing
             // the recommendations
             if(sSearchCriteria instanceof RecommendationSearchCriteria) {
-            	TextView emptyResult = (TextView) findViewById(R.id.search_empty);
             	emptyResult.setText(R.string.no_recommendations_result);
             }
 
@@ -421,10 +420,6 @@ public class SearchResultActivity extends ListActivity implements
                 mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
                 mSearchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
                 mSearchDrinksTask.execute(sSearchCriteria);
-            } else {
-                if (mFooterProgressView != null) {
-                    getListView().removeFooterView(mFooterProgressView);
-                }
             }
 
             if (convertView == null) {
