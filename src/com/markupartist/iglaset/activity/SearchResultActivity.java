@@ -265,14 +265,13 @@ public class SearchResultActivity extends ListActivity implements
             }
 
             Button searchButton = (Button) findViewById(R.id.btn_search);
+            searchButton.setVisibility(View.VISIBLE);
             searchButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onSearchRequested();
                 }
             });
-
-            getListView().removeFooterView(mFooterProgressView);
         }
 
         if (!TextUtils.isEmpty(sSearchCriteria.getQuery())) {
@@ -282,6 +281,7 @@ public class SearchResultActivity extends ListActivity implements
 
         LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);
         progressBar.setVisibility(View.GONE);
+        getListView().removeFooterView(mFooterProgressView);
     }
 
     private void displayDrinkDetails(Drink drink) {
