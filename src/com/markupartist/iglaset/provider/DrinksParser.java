@@ -26,11 +26,18 @@ class DrinksParser extends DefaultHandler {
     private Volume mCurrentVolume = null;
     private String mCurrentTagType;
     private StringBuilder mTextBuffer = null;
+    private int mArticleCount;
+    public static int COUNT_UNDEFINED = -1;
 
     @Override
     public void startDocument() throws SAXException {
         super.startDocument();
+        mArticleCount = COUNT_UNDEFINED;
         mTextBuffer = new StringBuilder();
+    }
+    
+    public int getArticleCount() {
+    	return mArticleCount;
     }
     
     public ArrayList<Drink> parseDrinks(InputStream in, ArrayList<Drink> drinks) {
@@ -56,7 +63,12 @@ class DrinksParser extends DefaultHandler {
     }
 
     public void startElement(String uri, String name, String qName, Attributes atts) {
-        if (name.equals("article")) {
+    	if (name.equals("articles")) {
+    		String articleCount = atts.getValue("total_articles");
+    		if(!TextUtils.isEmpty(articleCount)) {
+    			mArticleCount = Integer.parseInt(articleCount);
+    		}   		
+    	} else if (name.equals("article")) {
             mCurrentDrink = new Drink(Integer.parseInt(atts.getValue("id").trim()));
         } else if (name.equals("supplier") && !TextUtils.isEmpty(atts.getValue("url").trim())) {
             mCurrentDrink.setSupplierUrl(atts.getValue("url").trim());
@@ -77,6 +89,7 @@ class DrinksParser extends DefaultHandler {
     public void endElement(String uri, String name, String qName)
                 throws SAXException {
     	
+    	Log.d(TAG, name);
     	final String result = mTextBuffer.toString().replace("\n", "").trim();
     	
         if (mCurrentDrink != null) {
@@ -92,7 +105,7 @@ class DrinksParser extends DefaultHandler {
                 mCurrentDrink.setOriginCountry(result);
             } else if (name.equals("alc_percent")) {
                 mCurrentDrink.setAlcoholPercent(result);
-            } else if (name.equals("year")) {
+            } else if (name.equals("year") && !TextUtils.isEmpty(result)) {
                 mCurrentDrink.setYear(Integer.parseInt(result));
             } else if (name.equals("volume")) {
                 mCurrentVolume.setVolume(Integer.parseInt(result));
