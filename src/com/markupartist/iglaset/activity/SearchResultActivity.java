@@ -12,8 +12,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
 import android.util.Log;
@@ -63,8 +65,6 @@ public class SearchResultActivity extends ListActivity implements
 
     static final String EXTRA_SEARCH_BARCODE =
         "com.markupartist.iglaset.search.barcode";
-    static final String EXTRA_ORPHAN_BARCODE =
-        "com.markupartist.iglaset.orphan.barcode";
     static final String EXTRA_SEARCH_CATEGORY_ID =
         "com.markupartist.iglaset.search.categoryId";
     static final String EXTRA_SEARCH_TAGS =
@@ -77,7 +77,6 @@ public class SearchResultActivity extends ListActivity implements
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
     private String mToken;
-    private String mOrphanBarcode;
     private static SearchCriteria sSearchCriteria;
     
     /**
@@ -164,12 +163,6 @@ public class SearchResultActivity extends ListActivity implements
                 sSearchCriteria = new SearchCriteria();
                 sSearchCriteria.setQuery(queryString);
                 
-                // Store orphan barcode if available
-                final Bundle appData = queryIntent.getBundleExtra(SearchManager.APP_DATA);
-                if(null != appData) {
-                	mOrphanBarcode = appData.getString(EXTRA_ORPHAN_BARCODE);
-                }
-                
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
                 setTitle(R.string.recommendations_label);
 
@@ -240,6 +233,12 @@ public class SearchResultActivity extends ListActivity implements
     		mSearchDrinksTask.cancel(true);
     	}
     	
+    	// Remove the stored orphan barcode if the user exits.
+    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    	SharedPreferences.Editor editor = preferences.edit();
+    	editor.remove("orphan_barcode");
+    	editor.commit();
+    	
         super.onDestroy();
     }
 
@@ -279,7 +278,11 @@ public class SearchResultActivity extends ListActivity implements
             }
             
             if(sSearchCriteria.hasBarcode()) {
-            	mOrphanBarcode = sSearchCriteria.getBarcode();
+            	// Store the current orphan barcode so others can use it if necessary.
+            	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            	SharedPreferences.Editor editor = preferences.edit();
+            	editor.putString("orphan_barcode", sSearchCriteria.getBarcode());
+            	editor.commit();
             }
 
             Button searchButton = (Button) findViewById(R.id.btn_search);
@@ -302,7 +305,7 @@ public class SearchResultActivity extends ListActivity implements
         progressBar.setVisibility(View.GONE);
     }
 
-    private void displayDrinkDetails(Drink drink) {
+    private void displayDrinkDetails(Drink drink) {        
         Intent i = new Intent(this, DrinkDetailActivity.class);
         i.putExtra(DrinkDetailActivity.EXTRA_DRINK, drink);
         startActivity(i);
@@ -316,13 +319,7 @@ public class SearchResultActivity extends ListActivity implements
 
     @Override
     public boolean onSearchRequested() {
-    	Bundle bundle = null;
-    	if(!TextUtils.isEmpty(mOrphanBarcode)) {
-    		bundle = new Bundle();
-    		bundle.putString(EXTRA_ORPHAN_BARCODE, mOrphanBarcode);
-    	}
-    	
-        startSearch(null, false, bundle, false);
+        startSearch(null, false, null, false);
         return true;
     }
 

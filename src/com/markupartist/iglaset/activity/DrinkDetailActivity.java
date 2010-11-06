@@ -23,6 +23,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.Time;
 import android.util.Log;
@@ -64,10 +65,6 @@ public class DrinkDetailActivity extends ListActivity {
      */
     private static final String EXTRA_BARCODE = "com.markupartist.iglaset.article.barcode";
     /**
-     * Key to identify a suggested barcode
-     */
-    private static final String EXTRA_SUGGESTED_BARCODE = "com.markupartist.iglaset.article.suggested_barcode";
-    /**
      * Key to identify which drink to display
      */
     public static final String EXTRA_DRINK = "com.markupartist.iglaset.Drink";
@@ -104,6 +101,11 @@ public class DrinkDetailActivity extends ListActivity {
      */
     private static final int DIALOG_SEARCH_NETWORK_PROBLEM = 7;
     /**
+     * The id for showing a dialog asking the user whether to add a previously scanned
+     * orphan barcode or not.
+     */
+    public static final int DIALOG_ADD_SUGGESTED_BARCODE = 8;
+    /**
      * The request code for indicating that settings has been changed
      */
     protected static final int REQUEST_CODE_SETTINGS_CHANGED = 0;
@@ -120,6 +122,7 @@ public class DrinkDetailActivity extends ListActivity {
     private String mToken;
     private GetDrinkTask mGetDrinkTask;
     private GetCommentsTask mGetCommentsTask;
+    private String mSuggestedBarcode;
 
     /** Called when the activity is first created. */
     @Override
@@ -216,6 +219,17 @@ public class DrinkDetailActivity extends ListActivity {
 
         setListAdapter(mSectionedAdapter);
         sDrink = drink;
+        
+        // See if there is an orphan barcode in the system. If there is then offer to add it.
+    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		mSuggestedBarcode = preferences.getString("orphan_barcode", "");
+    	if(!TextUtils.isEmpty(mSuggestedBarcode) && isLoggedIn()) {
+        	showDialog(DIALOG_ADD_SUGGESTED_BARCODE);
+    	}
+    }
+    
+    private boolean isLoggedIn() {
+    	return mToken != null;
     }
 
     @Override
@@ -484,7 +498,7 @@ public class DrinkDetailActivity extends ListActivity {
      * @param dialog
      */
     private void tryShowAuthenticatedDialog(int dialog) {
-    	if(null != mToken) {
+    	if(isLoggedIn()) {
     		showDialog(dialog);
     	} else {
     		showDialog(DIALOG_NOT_AUTHENTICATED);
@@ -579,7 +593,7 @@ public class DrinkDetailActivity extends ListActivity {
                         (EditText) addBarcodeLayout.findViewById(R.id.add_barcode);
                 addBarcodeEditText.setSelected(true);
                 return new AlertDialog.Builder(this)
-                    .setTitle("Lägg in streckkod")
+                    .setTitle(getText(R.string.add_barcode))
                     .setView(addBarcodeLayout)
                     .setPositiveButton("Spara", new OnClickListener() {
                         @Override
@@ -644,6 +658,35 @@ public class DrinkDetailActivity extends ListActivity {
     		                	}
     		                }
     		             });
+            case DIALOG_ADD_SUGGESTED_BARCODE:
+            	String text = String.format(getString(R.string.add_suggested_barcode), mSuggestedBarcode);
+                return new AlertDialog.Builder(this)
+                .setTitle(R.string.add_barcode)
+                .setMessage(text)
+                .setPositiveButton("Lägg in", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new SuggestBarcodeTask().execute(mSuggestedBarcode, sDrink.getId(), mToken);
+                        
+                        // Remove barcode to prevent this dialog for showing again.
+                    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    	SharedPreferences.Editor editor = preferences.edit();
+                    	editor.remove("orphan_barcode");
+                    	editor.commit();
+                	}
+                })
+                .setNeutralButton(R.string.forget_barcode, new OnClickListener() {
+                	@Override
+                	public void onClick(DialogInterface dialog, int which) {
+                        // Remove barcode to prevent this dialog for showing again.
+                    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    	SharedPreferences.Editor editor = preferences.edit();
+                    	editor.remove("orphan_barcode");
+                    	editor.commit();
+                	}
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create();
         }
         return null;
     }
