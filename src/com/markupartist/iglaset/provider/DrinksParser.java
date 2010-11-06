@@ -92,7 +92,7 @@ class DrinksParser extends DefaultHandler {
                 mCurrentDrink.setOriginCountry(result);
             } else if (name.equals("alc_percent")) {
                 mCurrentDrink.setAlcoholPercent(result);
-            } else if (name.equals("year")) {
+            } else if (name.equals("year") && !TextUtils.isEmpty(result)) {
                 mCurrentDrink.setYear(Integer.parseInt(result));
             } else if (name.equals("volume")) {
                 mCurrentVolume.setVolume(Integer.parseInt(result));
