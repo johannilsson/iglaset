@@ -118,8 +118,8 @@ public class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<
      */
     public interface SearchDrinkErrorListener {
         /**
-         * Called when search is completed.
-         * @param result the search result
+         * Called when a search error has occurred.
+         * @param exception exception caught
          */
         public void onSearchDrinkError(Exception exception);
     }
