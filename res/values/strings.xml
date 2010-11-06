@@ -69,4 +69,8 @@
     <string name="no_selected_tags">0 markerade taggar (sök allt)</string>
     <string name="tag">tagg</string>
     <string name="tags">taggar</string>
+    <string name="add_barcode">Lägg in streckkod</string>
+    <string name="add_suggested_barcode">Den senast scannade streckkoden (%s) fanns inte i systemet. Vill du lägga till den nu?</string>
+    <string name="add">Lägg in</string>
+    <string name="forget_barcode">Glöm kod</string>
 </resources>
