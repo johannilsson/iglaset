@@ -1,7 +1,6 @@
 package com.markupartist.iglaset.provider;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
@@ -68,5 +67,5 @@ public class BarcodeStore {
         drinksParser.parseDrinks(entity.getContent(), drinks);
 
         return drinks;
-    }  
+    }
 }
