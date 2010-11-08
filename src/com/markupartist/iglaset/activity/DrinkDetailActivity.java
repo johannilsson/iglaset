@@ -796,7 +796,7 @@ public class DrinkDetailActivity extends ListActivity {
         @Override
         protected Float doInBackground(Float... params) {
             publishProgress();
-            DrinksStore.getInstance().rateDrink(sDrink, params[0], mAuthentication.v1.token);
+            DrinksStore.getInstance().rateDrink(sDrink, params[0], mAuthentication);
             return params[0];
         }
 
@@ -824,7 +824,7 @@ public class DrinkDetailActivity extends ListActivity {
 		@Override
 		protected Boolean doInBackground(Object... params) {
 			try {
-				return DrinksStore.getInstance().commentDrink(sDrink, (String) params[0], mAuthentication.v1.token);
+				return DrinksStore.getInstance().commentDrink(sDrink, (String) params[0], mAuthentication);
 			} catch(IOException e) {
 				return false;
 			}

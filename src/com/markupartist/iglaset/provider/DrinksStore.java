@@ -141,9 +141,9 @@ public class DrinksStore {
         return drink;
     }
 
-    public void rateDrink(Drink drink, float grade, String token) {
+    public void rateDrink(Drink drink, float grade, AuthStore.Authentication authentication) {
         final HttpGet get = new HttpGet(RATE_BASE_URI + drink.getId() 
-                + "/" + (int)grade + "/" + token);
+                + "/" + (int)grade + "/" + authentication.v1.token);
         HttpEntity entity = null;
 
         try {
@@ -160,12 +160,12 @@ public class DrinksStore {
      * an additional comment. It will not overwrite the user's previous one.
      * @param drink Drink to comment.
      * @param comment Comment to add.
-     * @param token Authorization token.
+     * @param authentication Authentication data.
      * @return Returns true if successful, false otherwise.
      * @throws IOException on connection problem.
      */
-    public Boolean commentDrink(Drink drink, String comment, String token) throws IOException {
-    	final HttpPost post = new HttpPost(COMMENT_BASE_URI + drink.getId() + "/" + token);
+    public Boolean commentDrink(Drink drink, String comment, AuthStore.Authentication authentication) throws IOException {
+    	final HttpPost post = new HttpPost(COMMENT_BASE_URI + drink.getId() + "/" + authentication.v1.token);
     	
         ArrayList<NameValuePair> payload = new ArrayList<NameValuePair>(1);
         payload.add(new BasicNameValuePair("comment", comment));
