@@ -2,6 +2,7 @@ package com.markupartist.iglaset.provider;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
@@ -27,6 +28,7 @@ import com.markupartist.iglaset.util.HttpManager;
 public class AuthStore {
     private static final String TAG = "AuthStore";
     private static final String AUTH_BASE_URI = "http://api.iglaset.se/api/authenticate/";
+    private static final String AUTH_BASE_URI_V2 = "http://www.iglaset.se/user_session.xml";
     private static AuthStore sInstance;
     //private ExpiringToken mExpiringToken;
 
@@ -66,43 +68,54 @@ public class AuthStore {
     private Authentication authenticateUser(String username, String password) 
             throws AuthenticationException, IOException {
         Log.d(TAG, "authenticate user...");
-        final HttpPost post = new HttpPost(AUTH_BASE_URI);
+
+        Authentication.AuthenticationData v1 = authenticateUserv1(username, password);
+        Authentication.AuthenticationData v2 = authenticateUserv2(username, password);
+        Authentication authResponse = new Authentication(v1, v2);
+
+        Log.d(TAG, "Got response " + authResponse.v1.userId);
+        return authResponse;
+    }
+    
+    private Authentication.AuthenticationData authenticateUserv1(String username, String password)
+    		throws AuthenticationException, IOException {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("username", username));
         nameValuePairs.add(new BasicNameValuePair("password", password)); 
+
+        return doAuthentication(AUTH_BASE_URI, nameValuePairs);
+    }
+    
+    private Authentication.AuthenticationData authenticateUserv2(String username, String password)
+    	throws AuthenticationException, IOException {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+        nameValuePairs.add(new BasicNameValuePair("user_session[username]", username));
+        nameValuePairs.add(new BasicNameValuePair("user_session[password]", password));
+
+        return doAuthentication(AUTH_BASE_URI_V2, nameValuePairs);
+    }
+    
+    private Authentication.AuthenticationData doAuthentication(final String url, final ArrayList<NameValuePair> data)
+    	throws AuthenticationException, IOException {
+        final HttpPost post = new HttpPost(url);
+        post.setEntity(new UrlEncodedFormEntity(data));
         HttpEntity entity = null;
 
-        post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
         final HttpResponse response = HttpManager.execute(post);
-        Authentication authResponse;
+        Authentication.AuthenticationData authResponse;
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             entity = response.getEntity();
             authResponse = parseResponse(entity.getContent());
             if (!authResponse.looksValid()) {
-                Log.i(TAG, "Failed to authenticate user " + username);
-                throw new AuthenticationException("Failed to authenticate user " 
-                        + username);
+                Log.i(TAG, "Failed to authenticate user");
+                throw new AuthenticationException("Failed to authenticate user");
             }
         } else {
             Log.w(TAG, "Request failed, http status code was not OK.");
             throw new IOException();
         }
-
-        Log.d(TAG, "Got response " + authResponse.userId);
+        
         return authResponse;
-    }
-
-    /**
-     * Gets a stored token.
-     * @param context the context
-     * @return the token
-     */
-    @Deprecated
-    public String getStoredToken(Context context) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        return sharedPreferences.getString("preference_token", null);
     }
 
     public boolean hasAuthentication(Context context) {
@@ -126,9 +139,13 @@ public class AuthStore {
             throw new AuthenticationException("User not authenticated");
         }
 
-        Authentication response = new Authentication();
-        response.token = sharedPreferences.getString("preference_token", null);
-        response.userId = sharedPreferences.getInt("preference_user_id", 0);
+        Authentication.AuthenticationData v1 = new Authentication.AuthenticationData(
+        		sharedPreferences.getString("preference_token", null),
+                sharedPreferences.getInt("preference_user_id", 0));
+        Authentication.AuthenticationData v2 = new Authentication.AuthenticationData(
+        		sharedPreferences.getString("preference_token_v2", null),
+                sharedPreferences.getInt("preference_user_id_v2", 0));
+        Authentication response = new Authentication(v1, v2);
 
         return response;
     }
@@ -139,8 +156,10 @@ public class AuthStore {
 
         Editor editor = sharedPreferences.edit();
         editor.remove("preference_token");
+        editor.remove("preference_token_v2");
         editor.remove("preference_user_id");
-
+        editor.remove("preference_user_id_v2");
+        
         return editor.commit();
     }
 
@@ -150,15 +169,17 @@ public class AuthStore {
             .getDefaultSharedPreferences(context);
 
         Editor editor = sharedPreferences.edit();
-        editor.putString("preference_token", token.token);
-        editor.putInt("preference_user_id", token.userId);
+        editor.putString("preference_token", token.v1.token);
+        editor.putString("preference_token_v2", token.v2.token);
+        editor.putInt("preference_user_id", token.v1.userId);
+        editor.putInt("preference_user_id_v2", token.v2.userId);
 
         return editor.commit();
     }
 
-    private Authentication parseResponse(InputStream inputStream)
+    private Authentication.AuthenticationData parseResponse(InputStream inputStream)
             throws IOException {
-        Authentication response = new Authentication();
+        Authentication.AuthenticationData response = new Authentication.AuthenticationData();
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -199,13 +220,35 @@ public class AuthStore {
 
         return response;
     }
-
+    
     public static class Authentication {
-        public String token;
-        public int userId;
+        public static class AuthenticationData {
+        	public String token;
+        	public int userId;
+        	
+        	public AuthenticationData() {
+        	}
+        	
+        	public AuthenticationData(String token, int userId) {
+        		this.token = token;
+        		this.userId = userId;
+        	}
+        	
+        	public boolean looksValid() {
+        		return !TextUtils.isEmpty(token) && userId > 0;
+        	}
+        }
+        
+        public AuthenticationData v1;
+        public AuthenticationData v2;
+        
+        public Authentication(AuthenticationData v1, AuthenticationData v2) {
+        	this.v1 = v1;
+        	this.v2 = v2;
+        }
 
         public boolean looksValid() {
-            return !TextUtils.isEmpty(token) && userId > 0;
+            return v1.looksValid() && v2.looksValid();
         }
     }
 }

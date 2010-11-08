@@ -2,6 +2,8 @@ package com.markupartist.iglaset.provider;
 
 import java.util.ArrayList;
 
+import com.markupartist.iglaset.provider.AuthStore.Authentication;
+
 import android.text.TextUtils;
 
 /**
@@ -11,11 +13,19 @@ public class SearchCriteria {
     private String mQuery;
     private int mCategory;
     private int mPage = 1;
-    private String mToken;
     private String mBarcode;
     private ArrayList<Integer> mTags;
+    private AuthStore.Authentication mAuthentication;
 
-    public String getQuery() {
+    public AuthStore.Authentication getAuthentication() {
+		return mAuthentication;
+	}
+
+	public void setAuthentication(AuthStore.Authentication authentication) {
+		this.mAuthentication = authentication;
+	}
+
+	public String getQuery() {
         return mQuery;
     }
 
@@ -39,15 +49,6 @@ public class SearchCriteria {
 
     public SearchCriteria setPage(int page) {
         this.mPage = page;
-        return this;
-    }
-
-    public String getToken() {
-        return mToken;
-    }
-
-    public SearchCriteria setToken(String token) {
-        this.mToken = token;
         return this;
     }
 

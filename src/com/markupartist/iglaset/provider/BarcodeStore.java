@@ -55,8 +55,8 @@ public class BarcodeStore {
         String searchUri = String.format("%s/xml/%s/?page=%s",
                 BARCODES_BASE_URI, searchCriteria.getBarcode(),
                 searchCriteria.getPage());
-        if (!TextUtils.isEmpty(searchCriteria.getToken()))
-            searchUri += "&token=" + searchCriteria.getToken();
+        if (!TextUtils.isEmpty(searchCriteria.getAuthentication().v1.token))
+            searchUri += "&token=" + searchCriteria.getAuthentication().v1.token;
 
         final HttpGet get = new HttpGet(searchUri);
         HttpEntity entity = null;

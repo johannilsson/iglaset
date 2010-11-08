@@ -37,7 +37,9 @@ public class DrinksStore {
     private static String USER_RECOMMENDATIONS_URI =
         "http://api.iglaset.se/api/user_recommendations/xml/";
     private static String USER_RATINGS_URI =
-        "http://api.iglaset.se/api/user_ratings/xml/";
+    	"http://www.iglaset.se/users/%d.xml?show=ratings";
+        //"http://api.iglaset.se/api/user_ratings/xml/";
+    // User ratings v2 http://www.iglaset.se/users/42.xml?show=ratings
 
     private DrinksStore() {
     }
@@ -97,10 +99,10 @@ public class DrinksStore {
             throws IOException {
         final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
-        final HttpGet get = new HttpGet(USER_RATINGS_URI
-                + searchCriteria.getUserId() + "/"
-                + "?page=" + searchCriteria.getPage()
-                + "&token=" + searchCriteria.getToken());
+        final HttpGet get = new HttpGet(
+        		String.format(USER_RATINGS_URI, searchCriteria.getUserId())
+                + "&page=" + searchCriteria.getPage()
+                + "&user_credentials=" + searchCriteria.getAuthentication().v2.token);
         HttpEntity entity = null;
 
         final HttpResponse response = HttpManager.execute(get);
@@ -203,8 +205,8 @@ public class DrinksStore {
         	builder.append("&str=").append(URLEncoder.encode(searchCriteria.getQuery()));
         if (searchCriteria.getCategory() > 0)
         	builder.append("&category=").append(searchCriteria.getCategory());
-        if (!TextUtils.isEmpty(searchCriteria.getToken()))
-        	builder.append("&user_credentials=").append(searchCriteria.getToken());
+        if (!TextUtils.isEmpty(searchCriteria.getAuthentication().v2.token))
+        	builder.append("&user_credentials=").append(searchCriteria.getAuthentication().v2.token);
 
         if (null != searchCriteria.getTags()) {
             builder.append("&tag_filter=or");

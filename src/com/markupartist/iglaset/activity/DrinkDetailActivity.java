@@ -48,6 +48,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
+import com.markupartist.iglaset.provider.AuthenticationException;
 import com.markupartist.iglaset.provider.BarcodeStore;
 import com.markupartist.iglaset.provider.Comment;
 import com.markupartist.iglaset.provider.CommentsStore;
@@ -119,7 +120,7 @@ public class DrinkDetailActivity extends ListActivity {
     private ArrayList<Comment> mComments;
     private static Drink sDrink;
     private UserRatingAdapter mUserRatingAdapter;
-    private String mToken;
+    private AuthStore.Authentication mAuthentication;
     private GetDrinkTask mGetDrinkTask;
     private GetCommentsTask mGetCommentsTask;
     private String mSuggestedBarcode;
@@ -134,7 +135,7 @@ public class DrinkDetailActivity extends ListActivity {
 
         setContentView(R.layout.drink_details);
 
-        mToken = AuthStore.getInstance().getStoredToken(this);
+        mAuthentication = getAuthentication();
         
         Bundle extras = getIntent().getExtras();
         final Drink drink = extras.getParcelable(EXTRA_DRINK);
@@ -142,7 +143,7 @@ public class DrinkDetailActivity extends ListActivity {
         mUserRatingAdapter = new UserRatingAdapter(this, 0);
         mSectionedAdapter.addSectionFirst(0, getText(R.string.my_rating), mUserRatingAdapter);
 
-        if (mToken != null) {
+        if (mAuthentication.looksValid()) {
         	launchGetDrinkTask(drink);
         }
 
@@ -228,14 +229,22 @@ public class DrinkDetailActivity extends ListActivity {
     	}
     }
     
+    private AuthStore.Authentication getAuthentication() {
+        try {
+			return AuthStore.getInstance().getAuthentication(this);
+		} catch (AuthenticationException e) {
+			return null;
+		}
+    }
+    
     private boolean isLoggedIn() {
-    	return mToken != null;
+    	return mAuthentication != null && mAuthentication.looksValid();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mToken = AuthStore.getInstance().getStoredToken(this);
+        mAuthentication = getAuthentication();
     }
 
     @Override
@@ -517,7 +526,7 @@ public class DrinkDetailActivity extends ListActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         new SuggestBarcodeTask().execute(
-                                mBarcode, sDrink.getId(), mToken);                        
+                                mBarcode, sDrink.getId(), mAuthentication.v1.token);                        
                     }
                 })
                 .setNegativeButton(getText(android.R.string.cancel), null)
@@ -600,7 +609,7 @@ public class DrinkDetailActivity extends ListActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             mBarcode = addBarcodeEditText.getText().toString();
                             new SuggestBarcodeTask().execute(
-                                    mBarcode, sDrink.getId(), mToken);
+                                    mBarcode, sDrink.getId(), mAuthentication.v1.token);
                         }
                     })
                     .setNegativeButton("Cancel", null)
@@ -618,7 +627,10 @@ public class DrinkDetailActivity extends ListActivity {
             		.setPositiveButton(android.R.string.ok, new OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							new AddCommentTask().execute(commentText.getText().toString(), sDrink.getId(), mToken);
+							new AddCommentTask().execute(
+									commentText.getText().toString(),
+									sDrink.getId(),
+									mAuthentication.v1.token);
 						}
             			
             		})
@@ -666,7 +678,10 @@ public class DrinkDetailActivity extends ListActivity {
                 .setPositiveButton("Lägg in", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new SuggestBarcodeTask().execute(mSuggestedBarcode, sDrink.getId(), mToken);
+                        new SuggestBarcodeTask().execute(
+                        		mSuggestedBarcode,
+                        		sDrink.getId(),
+                        		mAuthentication.v1.token);
                         
                         // Remove barcode to prevent this dialog for showing again.
                     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -722,7 +737,7 @@ public class DrinkDetailActivity extends ListActivity {
                         Log.d(TAG, "formatName: " + scanResult.getFormatName());
                         mBarcode = scanResult.getContents();
                         new SuggestBarcodeTask().execute(
-                                scanResult.getContents(), sDrink.getId(), mToken);
+                                scanResult.getContents(), sDrink.getId(), mAuthentication.v1.token);
                     } else {
                         Log.d(TAG, "NO SCAN RESULT");
                     }   
@@ -781,7 +796,7 @@ public class DrinkDetailActivity extends ListActivity {
         @Override
         protected Float doInBackground(Float... params) {
             publishProgress();
-            DrinksStore.getInstance().rateDrink(sDrink, params[0], mToken);
+            DrinksStore.getInstance().rateDrink(sDrink, params[0], mAuthentication.v1.token);
             return params[0];
         }
 
@@ -809,7 +824,7 @@ public class DrinkDetailActivity extends ListActivity {
 		@Override
 		protected Boolean doInBackground(Object... params) {
 			try {
-				return DrinksStore.getInstance().commentDrink(sDrink, (String) params[0], mToken);
+				return DrinksStore.getInstance().commentDrink(sDrink, (String) params[0], mAuthentication.v1.token);
 			} catch(IOException e) {
 				return false;
 			}
@@ -907,7 +922,7 @@ public class DrinkDetailActivity extends ListActivity {
         @Override
         protected Drink doInBackground(Integer... params) {
             publishProgress();
-            return DrinksStore.getInstance().getDrink(params[0], mToken);
+            return DrinksStore.getInstance().getDrink(params[0], mAuthentication.v1.token);
         }
 
         @Override

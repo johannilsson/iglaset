@@ -76,7 +76,7 @@ public class SearchResultActivity extends ListActivity implements
     static final int DIALOG_DRINK_IMAGE = 1;    
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
-    private String mToken;
+    private AuthStore.Authentication mAuthentication;
     private static SearchCriteria sSearchCriteria;
     
     /**
@@ -112,15 +112,12 @@ public class SearchResultActivity extends ListActivity implements
 
         setContentView(R.layout.search_result);
 
-        Authentication auth = null;
         try {
-            auth = AuthStore.getInstance().getAuthentication(this);
-            mToken = auth.token;
+            mAuthentication = AuthStore.getInstance().getAuthentication(this);
         } catch (AuthenticationException e) {
             Log.e(TAG, "User not authenticated...");
+            mAuthentication = null;
         }
-
-        //mToken = AuthStore.getInstance().getStoredToken(this);
 
         mImageClickListener = new View.OnClickListener() {
     		
@@ -168,13 +165,13 @@ public class SearchResultActivity extends ListActivity implements
 
                 sSearchCriteria = new RecommendationSearchCriteria();
                 ((RecommendationSearchCriteria) sSearchCriteria).setUserId(
-                        auth.userId);
+                        mAuthentication.v1.userId);
             } else if (ACTION_USER_RATINGS.equals(queryAction)) {
                 setTitle(R.string.rated_articles_label);
 
                 sSearchCriteria = new RatingSearchCriteria();
                 ((RatingSearchCriteria) sSearchCriteria).setUserId(
-                        auth.userId);
+                		mAuthentication.v1.userId);
             } else {
             	sSearchCriteria = new SearchCriteria();
             }
@@ -201,7 +198,7 @@ public class SearchResultActivity extends ListActivity implements
                 sSearchCriteria.setTags(tags);
             }
             
-            sSearchCriteria.setToken(mToken);
+            sSearchCriteria.setAuthentication(mAuthentication);
             mSearchDrinksTask.execute(sSearchCriteria);	
 
         } else {
