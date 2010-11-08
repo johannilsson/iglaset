@@ -206,13 +206,10 @@ public class DrinksStore {
         if (!TextUtils.isEmpty(searchCriteria.getAuthentication().v2.token))
         	builder.append("&user_credentials=").append(searchCriteria.getAuthentication().v2.token);
 
-        if (null != searchCriteria.getTags()) {
-            builder.append("&tag_filter=or");
-        	ArrayList<Integer> tags = searchCriteria.getTags();
-        	if(tags.size() > 0) {
-        		builder.append("&tags[]=");
-        		builder.append(StringUtils.join(tags.toArray(), "&tags[]="));
-        	}
+        ArrayList<Integer> tags = searchCriteria.getTags();
+        if (null != tags && tags.size() > 0) {
+            builder.append("&tag_filter=or&tags[]=");
+            builder.append(StringUtils.join(tags.toArray(), "&tags[]="));
         }
         
         return builder.toString();
