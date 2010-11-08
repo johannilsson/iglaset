@@ -115,10 +115,10 @@ public class DrinksStore {
         return getDrink(id, null);
     }
 
-    public Drink getDrink(int id, String token) {
+    public Drink getDrink(int id, AuthStore.Authentication authentication) {
         String searchUri = String.format(ARTICLE_DETAILS_URI, id);
-        if (!TextUtils.isEmpty(token)) {
-            searchUri += "?user_credentials=" + token;
+        if (authentication != null && !TextUtils.isEmpty(authentication.v2.token)) {
+            searchUri += "?user_credentials=" + authentication.v2.token;
         }
 
         final HttpGet get = new HttpGet(searchUri);

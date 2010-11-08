@@ -922,7 +922,7 @@ public class DrinkDetailActivity extends ListActivity {
         @Override
         protected Drink doInBackground(Integer... params) {
             publishProgress();
-            return DrinksStore.getInstance().getDrink(params[0], mAuthentication.v2.token);
+            return DrinksStore.getInstance().getDrink(params[0], mAuthentication);
         }
 
         @Override
