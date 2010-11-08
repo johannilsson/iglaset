@@ -106,7 +106,7 @@ public class DrinkDetailActivity extends ListActivity {
      * The id for showing a dialog asking the user whether to add a previously scanned
      * orphan barcode or not.
      */
-    public static final int DIALOG_ADD_SUGGESTED_BARCODE = 8;
+    public static final int DIALOG_ADD_ORPHAN_BARCODE = 8;
     /**
      * The request code for indicating that settings has been changed
      */
@@ -124,7 +124,7 @@ public class DrinkDetailActivity extends ListActivity {
     private AuthStore.Authentication mAuthentication;
     private GetDrinkTask mGetDrinkTask;
     private GetCommentsTask mGetCommentsTask;
-    private String mSuggestedBarcode;
+    private String mOrphanBarcode;
 
     /** Called when the activity is first created. */
     @Override
@@ -224,9 +224,9 @@ public class DrinkDetailActivity extends ListActivity {
         
         // See if there is an orphan barcode in the system. If there is then offer to add it.
     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		mSuggestedBarcode = preferences.getString("orphan_barcode", "");
-    	if(!TextUtils.isEmpty(mSuggestedBarcode) && isLoggedIn()) {
-        	showDialog(DIALOG_ADD_SUGGESTED_BARCODE);
+		mOrphanBarcode = preferences.getString("orphan_barcode", "");
+    	if(!TextUtils.isEmpty(mOrphanBarcode) && isLoggedIn()) {
+        	showDialog(DIALOG_ADD_ORPHAN_BARCODE);
     	}
     }
     
@@ -526,7 +526,7 @@ public class DrinkDetailActivity extends ListActivity {
                 .setPositiveButton(R.string.retry, new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new SuggestBarcodeTask().execute(mBarcode, sDrink.getId(), mAuthentication);                        
+                        new SuggestBarcodeTask().execute(mBarcode, sDrink, mAuthentication);                        
                     }
                 })
                 .setNegativeButton(getText(android.R.string.cancel), null)
@@ -608,7 +608,7 @@ public class DrinkDetailActivity extends ListActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mBarcode = addBarcodeEditText.getText().toString();
-                            new SuggestBarcodeTask().execute(mBarcode, sDrink.getId(), mAuthentication);
+                            new SuggestBarcodeTask().execute(mBarcode, sDrink, mAuthentication);
                         }
                     })
                     .setNegativeButton("Cancel", null)
@@ -669,18 +669,15 @@ public class DrinkDetailActivity extends ListActivity {
     		                	}
     		                }
     		             });
-            case DIALOG_ADD_SUGGESTED_BARCODE:
-            	String text = String.format(getString(R.string.add_suggested_barcode), mSuggestedBarcode);
+            case DIALOG_ADD_ORPHAN_BARCODE:
+            	String text = String.format(getString(R.string.add_suggested_barcode), mOrphanBarcode);
                 return new AlertDialog.Builder(this)
                 .setTitle(R.string.add_barcode)
                 .setMessage(text)
                 .setPositiveButton("Lägg in", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new SuggestBarcodeTask().execute(
-                        		mSuggestedBarcode,
-                        		sDrink.getId(),
-                        		mAuthentication.v1.token);
+                        new SuggestBarcodeTask().execute(mOrphanBarcode, sDrink, mAuthentication);
                         
                         // Remove barcode to prevent this dialog for showing again.
                     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -735,8 +732,7 @@ public class DrinkDetailActivity extends ListActivity {
                         Log.d(TAG, "contents: " + scanResult.getContents());
                         Log.d(TAG, "formatName: " + scanResult.getFormatName());
                         mBarcode = scanResult.getContents();
-                        new SuggestBarcodeTask().execute(
-                                scanResult.getContents(), sDrink.getId(), mAuthentication.v1.token);
+                        new SuggestBarcodeTask().execute(scanResult.getContents(), sDrink, mAuthentication);
                     } else {
                         Log.d(TAG, "NO SCAN RESULT");
                     }   
@@ -860,8 +856,10 @@ public class DrinkDetailActivity extends ListActivity {
         @Override
         protected Boolean doInBackground(Object... params) {
             try {
-                return BarcodeStore.getInstance().suggest(
-                        (String)params[0], (Integer)params[1], (AuthStore.Authentication)params[2]);
+            	String barcode = (String) params[0];
+            	Drink drink = (Drink) params[1];
+            	AuthStore.Authentication authentication = (Authentication) params[2];
+                return BarcodeStore.getInstance().suggest(barcode, drink.getId(), authentication);
             } catch (IOException e) {
                 return false;
             }
