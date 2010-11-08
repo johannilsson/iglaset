@@ -48,6 +48,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
+import com.markupartist.iglaset.provider.AuthStore.Authentication;
 import com.markupartist.iglaset.provider.AuthenticationException;
 import com.markupartist.iglaset.provider.BarcodeStore;
 import com.markupartist.iglaset.provider.Comment;
@@ -627,8 +628,8 @@ public class DrinkDetailActivity extends ListActivity {
 						public void onClick(DialogInterface dialog, int which) {
 							new AddCommentTask().execute(
 									commentText.getText().toString(),
-									sDrink.getId(),
-									mAuthentication.v1.token);
+									sDrink,
+									mAuthentication);
 						}
             			
             		})
@@ -822,7 +823,10 @@ public class DrinkDetailActivity extends ListActivity {
 		@Override
 		protected Boolean doInBackground(Object... params) {
 			try {
-				return DrinksStore.getInstance().commentDrink(sDrink, (String) params[0], mAuthentication);
+				String comment = (String) params[0];
+				Drink drink = (Drink) params[1];
+				AuthStore.Authentication authentication = (Authentication) params[2];
+				return DrinksStore.getInstance().commentDrink(drink, comment, authentication);
 			} catch(IOException e) {
 				return false;
 			}
