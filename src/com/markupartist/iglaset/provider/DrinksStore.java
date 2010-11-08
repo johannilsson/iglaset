@@ -26,7 +26,7 @@ public class DrinksStore {
     private static String ARTICLES_BASE_URI =
     	"http://www.iglaset.se/articles.xml";
     private static String ARTICLE_DETAILS_URI =
-    	"http://api.iglaset.se/api/articles/xml/";
+    	"http://www.iglaset.se/articles/%d.xml";
     private static String RATE_BASE_URI =
         "http://api.iglaset.se/api/rate/";
     /**
@@ -116,9 +116,9 @@ public class DrinksStore {
     }
 
     public Drink getDrink(int id, String token) {
-        String searchUri = ARTICLE_DETAILS_URI + id;
+        String searchUri = String.format(ARTICLE_DETAILS_URI, id);
         if (!TextUtils.isEmpty(token)) {
-            searchUri += "/?token=" + token;
+            searchUri += "?user_credentials=" + token;
         }
 
         final HttpGet get = new HttpGet(searchUri);
