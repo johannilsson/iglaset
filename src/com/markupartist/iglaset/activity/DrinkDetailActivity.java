@@ -149,10 +149,8 @@ public class DrinkDetailActivity extends ListActivity {
         }
 
         TextView nameTextView = (TextView) findViewById(R.id.drink_name);
-        updateHasRatedIconInUi(drink.hasUserRating());
-
-        String yearText = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
-        nameTextView.setText(drink.getName() + yearText);
+        nameTextView.setText(drink.getName());
+        updateHasRatedIconInUi(drink.hasUserRating());        
         
         TextView originCountryTextView = (TextView) findViewById(R.id.drink_origin_country);
         originCountryTextView.setText(drink.getConcatenatedOrigin());

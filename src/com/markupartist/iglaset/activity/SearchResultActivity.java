@@ -458,8 +458,7 @@ public class SearchResultActivity extends ListActivity implements
 
             final Drink drink = getItem(position);
             if (drink != null && dvh != null) {
-                String year = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
-                dvh.getNameView().setText(drink.getName() + year);
+                dvh.getNameView().setText(drink.getName());
                 if(drink.hasUserRating()) {
                 	dvh.getRateView().setRating(drink.getUserRating());
                 	dvh.getNameView().setCompoundDrawables(null, null, dvh.getGlassIcon(getContext()), null);
