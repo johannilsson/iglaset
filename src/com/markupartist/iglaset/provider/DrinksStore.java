@@ -28,7 +28,7 @@ public class DrinksStore {
     private static String ARTICLE_DETAILS_URI =
     	"http://www.iglaset.se/articles/%d.xml";
     private static String RATE_URI =
-    	"http://www.iglaset.se/articles/%d/rate.xml?user_credentials=%s&rating=%d";
+    	"http://www.iglaset.se/articles/%d/rate.xml?rating=%d&user_credentials=%s";
     /**
      * Base URI for adding an article comment.
      */
@@ -144,7 +144,7 @@ public class DrinksStore {
 
     public void rateDrink(Drink drink, float grade, AuthStore.Authentication authentication) {
         final HttpGet get = new HttpGet(
-        		String.format(RATE_URI, drink.getId(), authentication.v2.token, (int) grade)); 
+        		String.format(RATE_URI, drink.getId(), (int) grade, authentication.v2.token)); 
         HttpEntity entity = null;
 
         try {
