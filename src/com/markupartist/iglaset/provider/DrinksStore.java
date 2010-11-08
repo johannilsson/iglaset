@@ -35,7 +35,7 @@ public class DrinksStore {
     private static String COMMENT_BASE_URI =
     	"http://api.iglaset.se/api/comment/";
     private static String USER_RECOMMENDATIONS_URI =
-        "http://api.iglaset.se/api/user_recommendations/xml/";
+    	"http://www.iglaset.se/articles.xml?order_by=recommendation&recommendations=1";
     private static String USER_RATINGS_URI =
     	"http://www.iglaset.se/users/%d.xml?show=ratings";
 
@@ -74,9 +74,10 @@ public class DrinksStore {
                 throws IOException {
         final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
-        final HttpGet get = new HttpGet(USER_RECOMMENDATIONS_URI
-                + searchCriteria.getUserId() + "/"
-                + "?page=" + searchCriteria.getPage());
+        final HttpGet get = new HttpGet(
+        		String.format(USER_RECOMMENDATIONS_URI, searchCriteria.getUserId())
+        		+ "&user_credentials=" + searchCriteria.getAuthentication().v2.token
+        		+ "&page=" + searchCriteria.getPage());
         HttpEntity entity = null;
 
         final HttpResponse response = HttpManager.execute(get);
