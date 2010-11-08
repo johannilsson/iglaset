@@ -38,8 +38,6 @@ public class DrinksStore {
         "http://api.iglaset.se/api/user_recommendations/xml/";
     private static String USER_RATINGS_URI =
     	"http://www.iglaset.se/users/%d.xml?show=ratings";
-        //"http://api.iglaset.se/api/user_ratings/xml/";
-    // User ratings v2 http://www.iglaset.se/users/42.xml?show=ratings
 
     private DrinksStore() {
     }
