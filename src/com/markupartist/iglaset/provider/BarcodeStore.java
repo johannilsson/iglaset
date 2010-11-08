@@ -28,12 +28,12 @@ public class BarcodeStore {
         return sInstance;
     }
 
-    public boolean suggest(String barcode, int drinkId, String authToken)
+    public boolean suggest(String barcode, int drinkId, AuthStore.Authentication authentication)
             throws IOException {
         // http://api.iglaset.se/api/barcodes/suggest/[ean]/[article_id]/[auth_token]
         Log.d(TAG, "Suggesting barcode " + barcode);
         String suggestUri = String.format("%s/suggest/%s/%s/%s",
-                BARCODES_BASE_URI, barcode, drinkId, authToken);
+                BARCODES_BASE_URI, barcode, drinkId, authentication.v1.token);
 
         final HttpGet get = new HttpGet(suggestUri);
         final HttpResponse response = HttpManager.execute(get);

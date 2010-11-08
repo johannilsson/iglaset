@@ -525,8 +525,7 @@ public class DrinkDetailActivity extends ListActivity {
                 .setPositiveButton(R.string.retry, new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new SuggestBarcodeTask().execute(
-                                mBarcode, sDrink.getId(), mAuthentication.v1.token);                        
+                        new SuggestBarcodeTask().execute(mBarcode, sDrink.getId(), mAuthentication);                        
                     }
                 })
                 .setNegativeButton(getText(android.R.string.cancel), null)
@@ -608,8 +607,7 @@ public class DrinkDetailActivity extends ListActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mBarcode = addBarcodeEditText.getText().toString();
-                            new SuggestBarcodeTask().execute(
-                                    mBarcode, sDrink.getId(), mAuthentication.v1.token);
+                            new SuggestBarcodeTask().execute(mBarcode, sDrink.getId(), mAuthentication);
                         }
                     })
                     .setNegativeButton("Cancel", null)
@@ -859,7 +857,7 @@ public class DrinkDetailActivity extends ListActivity {
         protected Boolean doInBackground(Object... params) {
             try {
                 return BarcodeStore.getInstance().suggest(
-                        (String)params[0], (Integer)params[1], (String)params[2]);
+                        (String)params[0], (Integer)params[1], (AuthStore.Authentication)params[2]);
             } catch (IOException e) {
                 return false;
             }
