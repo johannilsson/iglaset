@@ -20,9 +20,10 @@ import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
+import com.markupartist.iglaset.provider.AuthUserTask;
 import com.markupartist.iglaset.provider.AuthenticationException;
 
-public class BasicPreferenceActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+public class BasicPreferenceActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener, AuthUserTask.OnAuthorizeListener {
     private static final String TAG = "BasicPreferenceActivity";
     private static final int DIALOG_CLEAR_SEARCH_HISTORY = 0;
     private static final int DIALOG_AUTH_FAILED = 1;
@@ -112,23 +113,6 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
         return null;
     }
 
-    /**
-     * Update the token that is given after authentication.
-     * @param token the token retrieved after authentication
-     */
-    private void userAuthenticated() {        
-        Toast.makeText(BasicPreferenceActivity.this, 
-                R.string.login_success, Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Update the token that is given after authentication.
-     * @param token the token retrieved after authentication
-     */
-    private void userAuthenticationFailed(Exception e) {        
-        showDialog(DIALOG_AUTH_FAILED);
-    }
-
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
             String key) {
@@ -137,7 +121,7 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
         	   sharedPreferences.contains("preference_username")) {
 	            Toast.makeText(BasicPreferenceActivity.this, 
 	                    R.string.logging_in, Toast.LENGTH_SHORT).show();
-	            mAuthUserTask = new AuthUserTask();
+	            mAuthUserTask = new AuthUserTask(this);
 	            mAuthUserTask.execute(this);
         	}
         }
@@ -157,36 +141,16 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
         }
 
         return super.onKeyDown(keyCode, event);
-    }           
-
-    /**
-     * Task that authenticates a user.
-     */
-    private class AuthUserTask extends AsyncTask<Context, Void, Boolean> {
-        private Exception mException;
-
-        @Override
-        protected Boolean doInBackground(Context... params) {
-            publishProgress();
-
-            try {
-                AuthStore.getInstance().authenticateUser(params[0]);
-            } catch (AuthenticationException e) {
-                mException = e;
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                mException = e;
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (mException != null) {
-                userAuthenticationFailed(mException);
-            } else {
-                userAuthenticated();
-            }
-        }
     }
+
+	@Override
+	public void onAuthorizationFailed(Exception exception) {
+		showDialog(DIALOG_AUTH_FAILED);
+	}
+
+	@Override
+	public void onAuthorizationSuccessful() {
+        Toast.makeText(BasicPreferenceActivity.this, 
+                R.string.login_success, Toast.LENGTH_SHORT).show();
+	}
 }
