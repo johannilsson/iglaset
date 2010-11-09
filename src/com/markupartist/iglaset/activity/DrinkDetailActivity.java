@@ -47,6 +47,7 @@ import android.widget.SimpleAdapter.ViewBinder;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.markupartist.iglaset.IglasetApplication;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.AuthStore.Authentication;
@@ -222,11 +223,14 @@ public class DrinkDetailActivity extends ListActivity {
         sDrink = drink;
         
         // See if there is an orphan barcode in the system. If there is then offer to add it.
-    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		mOrphanBarcode = preferences.getString("orphan_barcode", "");
+        mOrphanBarcode = getApp().getOrphanBarcode();
     	if(!TextUtils.isEmpty(mOrphanBarcode) && isLoggedIn()) {
         	showDialog(DIALOG_ADD_ORPHAN_BARCODE);
     	}
+    }
+    
+    private IglasetApplication getApp() {
+    	return (IglasetApplication) getApplication();
     }
     
     private AuthStore.Authentication getAuthentication() {
@@ -679,20 +683,14 @@ public class DrinkDetailActivity extends ListActivity {
                         new SuggestBarcodeTask().execute(mOrphanBarcode, sDrink, mAuthentication);
                         
                         // Remove barcode to prevent this dialog for showing again.
-                    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    	SharedPreferences.Editor editor = preferences.edit();
-                    	editor.remove("orphan_barcode");
-                    	editor.commit();
+                        getApp().clearOrphanBarcode();
                 	}
                 })
                 .setNeutralButton(R.string.forget_barcode, new OnClickListener() {
                 	@Override
                 	public void onClick(DialogInterface dialog, int which) {
                         // Remove barcode to prevent this dialog for showing again.
-                    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    	SharedPreferences.Editor editor = preferences.edit();
-                    	editor.remove("orphan_barcode");
-                    	editor.commit();
+                		getApp().clearOrphanBarcode();
                 	}
                 })
                 .setNegativeButton(R.string.cancel, null)

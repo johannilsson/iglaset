@@ -42,6 +42,7 @@ import com.markupartist.iglaset.provider.RatingSearchCriteria;
 import com.markupartist.iglaset.provider.RecommendationSearchCriteria;
 import com.markupartist.iglaset.provider.SearchCriteria;
 import com.markupartist.iglaset.util.ImageLoader;
+import com.markupartist.iglaset.IglasetApplication;
 
 public class SearchResultActivity extends ListActivity implements
         SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener, SearchDrinkErrorListener {
@@ -228,12 +229,9 @@ public class SearchResultActivity extends ListActivity implements
     	if(null != mSearchDrinksTask && mSearchDrinksTask.getStatus() == AsyncTask.Status.RUNNING) {
     		mSearchDrinksTask.cancel(true);
     	}
-    	
+
     	// Remove the stored orphan barcode if the user exits.
-    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-    	SharedPreferences.Editor editor = preferences.edit();
-    	editor.remove("orphan_barcode");
-    	editor.commit();
+    	((IglasetApplication) getApplication()).clearOrphanBarcode();
     	
         super.onDestroy();
     }
@@ -275,10 +273,7 @@ public class SearchResultActivity extends ListActivity implements
             
             if(sSearchCriteria.hasBarcode()) {
             	// Store the current orphan barcode so others can use it if necessary.
-            	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            	SharedPreferences.Editor editor = preferences.edit();
-            	editor.putString("orphan_barcode", sSearchCriteria.getBarcode());
-            	editor.commit();
+            	((IglasetApplication) getApplication()).storeOrphanBarcode(sSearchCriteria.getBarcode());
             }
 
             Button searchButton = (Button) findViewById(R.id.btn_search);
