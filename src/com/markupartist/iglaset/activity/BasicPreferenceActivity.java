@@ -1,10 +1,7 @@
 package com.markupartist.iglaset.activity;
 
-import java.io.IOException;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
@@ -19,9 +16,7 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
-import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.provider.AuthUserTask;
-import com.markupartist.iglaset.provider.AuthenticationException;
 
 public class BasicPreferenceActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener, AuthUserTask.OnAuthorizeListener {
     private static final String TAG = "BasicPreferenceActivity";
@@ -64,14 +59,16 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
 
     @Override
     protected void onDestroy() {
+    	cancelAuthUserTask();
         super.onDestroy();
-        if (mAuthUserTask != null) {
-            mAuthUserTask.cancel(true);
-        }
-
-        //Tracker.getInstance().stop();
     }
 
+    private void cancelAuthUserTask() {
+    	if(null != mAuthUserTask && mAuthUserTask.getStatus() == AsyncTask.Status.RUNNING) {
+    		mAuthUserTask.cancel(true);
+    	}
+    }
+    
     @Override
     protected Dialog onCreateDialog(int id) {
         switch(id) {
@@ -121,6 +118,7 @@ public class BasicPreferenceActivity extends PreferenceActivity implements OnSha
         	   sharedPreferences.contains("preference_username")) {
 	            Toast.makeText(BasicPreferenceActivity.this, 
 	                    R.string.logging_in, Toast.LENGTH_SHORT).show();
+	            cancelAuthUserTask();
 	            mAuthUserTask = new AuthUserTask(this);
 	            mAuthUserTask.execute(this);
         	}
