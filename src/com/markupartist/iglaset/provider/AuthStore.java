@@ -26,13 +26,10 @@ import com.markupartist.iglaset.util.HttpManager;
 
 public class AuthStore {
     private static final String TAG = "AuthStore";
-    private static final String AUTH_BASE_URI = "http://api.iglaset.se/api/authenticate/";
     private static final String AUTH_BASE_URI_V2 = "http://www.iglaset.se/user_session.xml";
     private static AuthStore sInstance;
-    //private ExpiringToken mExpiringToken;
 
     private AuthStore() {
-        
     }
 
     public static AuthStore getInstance() {
@@ -68,21 +65,11 @@ public class AuthStore {
             throws AuthenticationException, IOException {
         Log.d(TAG, "authenticate user...");
 
-        Authentication.AuthenticationData v1 = authenticateUserv1(username, password);
         Authentication.AuthenticationData v2 = authenticateUserv2(username, password);
-        Authentication authResponse = new Authentication(v1, v2);
+        Authentication authResponse = new Authentication(v2);
 
-        Log.d(TAG, "Got response " + authResponse.v1.userId);
+        Log.d(TAG, "Got response " + authResponse.v2.userId);
         return authResponse;
-    }
-    
-    private Authentication.AuthenticationData authenticateUserv1(String username, String password)
-    		throws AuthenticationException, IOException {
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-        nameValuePairs.add(new BasicNameValuePair("username", username));
-        nameValuePairs.add(new BasicNameValuePair("password", password)); 
-
-        return doAuthentication(AUTH_BASE_URI, nameValuePairs);
     }
     
     private Authentication.AuthenticationData authenticateUserv2(String username, String password)
@@ -138,13 +125,10 @@ public class AuthStore {
             throw new AuthenticationException("User not authenticated");
         }
 
-        Authentication.AuthenticationData v1 = new Authentication.AuthenticationData(
-        		sharedPreferences.getString("preference_token", null),
-                sharedPreferences.getInt("preference_user_id", 0));
         Authentication.AuthenticationData v2 = new Authentication.AuthenticationData(
         		sharedPreferences.getString("preference_token_v2", null),
                 sharedPreferences.getInt("preference_user_id_v2", 0));
-        Authentication response = new Authentication(v1, v2);
+        Authentication response = new Authentication(v2);
 
         return response;
     }
@@ -154,9 +138,7 @@ public class AuthStore {
             PreferenceManager.getDefaultSharedPreferences(context);
 
         Editor editor = sharedPreferences.edit();
-        editor.remove("preference_token");
         editor.remove("preference_token_v2");
-        editor.remove("preference_user_id");
         editor.remove("preference_user_id_v2");
         
         return editor.commit();
@@ -168,9 +150,7 @@ public class AuthStore {
             .getDefaultSharedPreferences(context);
 
         Editor editor = sharedPreferences.edit();
-        editor.putString("preference_token", token.v1.token);
         editor.putString("preference_token_v2", token.v2.token);
-        editor.putInt("preference_user_id", token.v1.userId);
         editor.putInt("preference_user_id_v2", token.v2.userId);
 
         return editor.commit();
@@ -220,6 +200,7 @@ public class AuthStore {
         return response;
     }
     
+    // TODO: Handling of API versions should be dealt with in a cleaner way.
     public static class Authentication {
         public static class AuthenticationData {
         	public String token;
@@ -238,16 +219,14 @@ public class AuthStore {
         	}
         }
         
-        public AuthenticationData v1;
         public AuthenticationData v2;
         
-        public Authentication(AuthenticationData v1, AuthenticationData v2) {
-        	this.v1 = v1;
+        public Authentication(AuthenticationData v2) {
         	this.v2 = v2;
         }
 
         public boolean looksValid() {
-            return v1.looksValid() && v2.looksValid();
+            return v2.looksValid();
         }
     }
 }

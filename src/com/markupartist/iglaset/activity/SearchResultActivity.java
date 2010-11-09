@@ -165,13 +165,13 @@ public class SearchResultActivity extends ListActivity implements
 
                 sSearchCriteria = new RecommendationSearchCriteria();
                 ((RecommendationSearchCriteria) sSearchCriteria).setUserId(
-                        mAuthentication.v1.userId);
+                        mAuthentication.v2.userId);
             } else if (ACTION_USER_RATINGS.equals(queryAction)) {
                 setTitle(R.string.rated_articles_label);
 
                 sSearchCriteria = new RatingSearchCriteria();
                 ((RatingSearchCriteria) sSearchCriteria).setUserId(
-                		mAuthentication.v1.userId);
+                		mAuthentication.v2.userId);
             } else {
             	sSearchCriteria = new SearchCriteria();
             }
