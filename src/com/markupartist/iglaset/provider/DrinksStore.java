@@ -32,8 +32,8 @@ public class DrinksStore {
     /**
      * Base URI for adding an article comment.
      */
-    private static String COMMENT_BASE_URI =
-    	"http://api.iglaset.se/api/comment/";
+    private static String COMMENT_URI =
+    	"http://www.iglaset.se/comments.xml?user_credentials=%s";
     private static String USER_RECOMMENDATIONS_URI =
     	"http://www.iglaset.se/articles.xml?order_by=recommendation&recommendations=1";
     private static String USER_RATINGS_URI =
@@ -166,10 +166,12 @@ public class DrinksStore {
      * @throws IOException on connection problem.
      */
     public Boolean commentDrink(Drink drink, String comment, AuthStore.Authentication authentication) throws IOException {
-    	final HttpPost post = new HttpPost(COMMENT_BASE_URI + drink.getId() + "/" + authentication.v1.token);
+    	final HttpPost post = new HttpPost(
+    			String.format(COMMENT_URI, authentication.v2.token));
     	
         ArrayList<NameValuePair> payload = new ArrayList<NameValuePair>(1);
-        payload.add(new BasicNameValuePair("comment", comment));
+        payload.add(new BasicNameValuePair("comment[article_id]", String.valueOf(drink.getId())));
+        payload.add(new BasicNameValuePair("comment[text]", comment));
         
         try {
 			post.setEntity(new UrlEncodedFormEntity(payload, "utf-8"));
