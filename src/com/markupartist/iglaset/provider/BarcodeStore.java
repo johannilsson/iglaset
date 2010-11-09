@@ -6,7 +6,11 @@ import java.util.ArrayList;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,7 +19,8 @@ import com.markupartist.iglaset.util.HttpManager;
 
 public class BarcodeStore {
     private static final String TAG = "BarcodeStore";
-    private static final String BARCODES_BASE_URI = "http://api.iglaset.se/api/barcodes";
+    private static final String BARCODE_SUGGEST_URI = "http://www.iglaset.se/barcodes/suggest_ean.xml?user_credentials=%s";
+    private static final String BARCODE_SEARCH_URI = "http://www.iglaset.se/barcodes/show_by_ean/%s.xml?page=%d";
     private static BarcodeStore sInstance;
 
     private BarcodeStore() {
@@ -30,13 +35,16 @@ public class BarcodeStore {
 
     public boolean suggest(String barcode, int drinkId, AuthStore.Authentication authentication)
             throws IOException {
-        // http://api.iglaset.se/api/barcodes/suggest/[ean]/[article_id]/[auth_token]
         Log.d(TAG, "Suggesting barcode " + barcode);
-        String suggestUri = String.format("%s/suggest/%s/%s/%s",
-                BARCODES_BASE_URI, barcode, drinkId, authentication.v1.token);
 
-        final HttpGet get = new HttpGet(suggestUri);
-        final HttpResponse response = HttpManager.execute(get);
+        final HttpPost post = new HttpPost(String.format(BARCODE_SUGGEST_URI, authentication.v2.token));
+        
+        ArrayList<NameValuePair> payload = new ArrayList<NameValuePair>(1);
+        payload.add(new BasicNameValuePair("article_id", String.valueOf(drinkId)));
+        payload.add(new BasicNameValuePair("ean", barcode));
+        
+        post.setEntity(new UrlEncodedFormEntity(payload, "utf-8"));
+        final HttpResponse response = HttpManager.execute(post);
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             Log.d(TAG, "added");
             return true;
@@ -51,12 +59,9 @@ public class BarcodeStore {
             throws IOException {
         final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
-        // http://api.iglaset.se/api/barcodes/xml/[ean]/?page=[page]
-        String searchUri = String.format("%s/xml/%s/?page=%s",
-                BARCODES_BASE_URI, searchCriteria.getBarcode(),
-                searchCriteria.getPage());
-        if (!TextUtils.isEmpty(searchCriteria.getAuthentication().v1.token))
-            searchUri += "&token=" + searchCriteria.getAuthentication().v1.token;
+        String searchUri = String.format(BARCODE_SEARCH_URI, searchCriteria.getBarcode(), searchCriteria.getPage());
+        if (!TextUtils.isEmpty(searchCriteria.getAuthentication().v2.token))
+            searchUri += "&user_credentials=" + searchCriteria.getAuthentication().v2.token;
 
         final HttpGet get = new HttpGet(searchUri);
         HttpEntity entity = null;
