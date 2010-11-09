@@ -166,8 +166,7 @@ public class DrinksStore {
      * @throws IOException on connection problem.
      */
     public Boolean commentDrink(Drink drink, String comment, AuthStore.Authentication authentication) throws IOException {
-    	final HttpPost post = new HttpPost(
-    			String.format(COMMENT_URI, authentication.v2.token));
+    	final HttpPost post = new HttpPost(String.format(COMMENT_URI, authentication.v2.token));
     	
         ArrayList<NameValuePair> payload = new ArrayList<NameValuePair>(1);
         payload.add(new BasicNameValuePair("comment[article_id]", String.valueOf(drink.getId())));
