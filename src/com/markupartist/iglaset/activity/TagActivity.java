@@ -3,7 +3,6 @@ package com.markupartist.iglaset.activity;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import com.markupartist.iglaset.R;
@@ -19,7 +18,6 @@ import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
