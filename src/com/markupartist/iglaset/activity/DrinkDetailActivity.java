@@ -3,6 +3,7 @@ package com.markupartist.iglaset.activity;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
@@ -399,7 +401,7 @@ public class DrinkDetailActivity extends ListActivity {
                         return true;
                     case R.id.comment_created:
                         TextView createdView = (TextView) view;
-                        createdView.setText(((Time) data).format("%Y-%m-%d"));
+                        createdView.setText(DateFormat.format("yyyy-MM-dd", (Date) data));
                         return true;
                     case R.id.comment_comment:
                         TextView commentView = (TextView) view;
