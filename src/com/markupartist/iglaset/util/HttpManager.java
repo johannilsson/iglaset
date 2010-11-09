@@ -43,7 +43,7 @@ public class HttpManager {
         final HttpParams params = new BasicHttpParams();
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         HttpProtocolParams.setContentCharset(params, "UTF-8");
-
+        
         HttpConnectionParams.setStaleCheckingEnabled(params, false);
         HttpConnectionParams.setConnectionTimeout(params, 20 * 1000);
         HttpConnectionParams.setSoTimeout(params, 20 * 1000);
@@ -59,6 +59,7 @@ public class HttpManager {
 
         ClientConnectionManager manager = new ThreadSafeClientConnManager(params, schemeRegistry);
         sClient = new DefaultHttpClient(manager, params);
+        sClient.setCookieStore(new DummyCookieStore());
     }
 
     private HttpManager() {
