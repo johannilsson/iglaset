@@ -1,9 +1,6 @@
 package com.markupartist.iglaset.provider;
 
 import java.util.ArrayList;
-
-import com.markupartist.iglaset.provider.AuthStore.Authentication;
-
 import android.text.TextUtils;
 
 /**
