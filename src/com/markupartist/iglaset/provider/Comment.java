@@ -1,12 +1,11 @@
 package com.markupartist.iglaset.provider;
 
-import android.text.format.Time;
-
+import java.util.Date;
 
 public class Comment {
     private int mDrinkId;
     private int mUserId;
-    private Time mCreated = new Time();
+    private Date mCreated;
     private String mComment;
     private String mNickname;
     private int mRating = 0;
@@ -26,12 +25,16 @@ public class Comment {
     public void setUserId(int userId) {
         this.mUserId = userId;
     }
-    public Time getCreated() {
+    public Date getCreated() {
         return mCreated;
     }
-    public void setCreated(Time created) {
-        this.mCreated.set(created);
+    public void setCreated(Date date) {
+        this.mCreated = date;
     }
+    /**
+     * Get comment date.
+     * @return Comment's date. Note that this may be null.
+     */
     public String getComment() {
         return mComment;
     }

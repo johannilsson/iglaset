@@ -3,6 +3,7 @@ package com.markupartist.iglaset.activity;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +24,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.format.Time;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,8 +47,11 @@ import android.widget.SimpleAdapter.ViewBinder;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.markupartist.iglaset.IglasetApplication;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
+import com.markupartist.iglaset.provider.AuthStore.Authentication;
+import com.markupartist.iglaset.provider.AuthenticationException;
 import com.markupartist.iglaset.provider.BarcodeStore;
 import com.markupartist.iglaset.provider.Comment;
 import com.markupartist.iglaset.provider.CommentsStore;
@@ -100,6 +105,11 @@ public class DrinkDetailActivity extends ListActivity {
      */
     private static final int DIALOG_SEARCH_NETWORK_PROBLEM = 7;
     /**
+     * The id for showing a dialog asking the user whether to add a previously scanned
+     * orphan barcode or not.
+     */
+    public static final int DIALOG_ADD_ORPHAN_BARCODE = 8;
+    /**
      * The request code for indicating that settings has been changed
      */
     protected static final int REQUEST_CODE_SETTINGS_CHANGED = 0;
@@ -113,9 +123,10 @@ public class DrinkDetailActivity extends ListActivity {
     private ArrayList<Comment> mComments;
     private static Drink sDrink;
     private UserRatingAdapter mUserRatingAdapter;
-    private String mToken;
+    private AuthStore.Authentication mAuthentication;
     private GetDrinkTask mGetDrinkTask;
     private GetCommentsTask mGetCommentsTask;
+    private String mOrphanBarcode;
 
     /** Called when the activity is first created. */
     @Override
@@ -127,7 +138,7 @@ public class DrinkDetailActivity extends ListActivity {
 
         setContentView(R.layout.drink_details);
 
-        mToken = AuthStore.getInstance().getStoredToken(this);
+        mAuthentication = getAuthentication();
         
         Bundle extras = getIntent().getExtras();
         final Drink drink = extras.getParcelable(EXTRA_DRINK);
@@ -135,15 +146,13 @@ public class DrinkDetailActivity extends ListActivity {
         mUserRatingAdapter = new UserRatingAdapter(this, 0);
         mSectionedAdapter.addSectionFirst(0, getText(R.string.my_rating), mUserRatingAdapter);
 
-        if (mToken != null) {
+        if (mAuthentication.looksValid()) {
         	launchGetDrinkTask(drink);
         }
 
         TextView nameTextView = (TextView) findViewById(R.id.drink_name);
-        updateHasRatedIconInUi(drink.hasUserRating());
-
-        String yearText = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
-        nameTextView.setText(drink.getName() + yearText);
+        nameTextView.setText(drink.getName());
+        updateHasRatedIconInUi(drink.hasUserRating());        
         
         TextView originCountryTextView = (TextView) findViewById(R.id.drink_origin_country);
         originCountryTextView.setText(drink.getConcatenatedOrigin());
@@ -212,12 +221,34 @@ public class DrinkDetailActivity extends ListActivity {
 
         setListAdapter(mSectionedAdapter);
         sDrink = drink;
+        
+        // See if there is an orphan barcode in the system. If there is then offer to add it.
+        mOrphanBarcode = getApp().getOrphanBarcode();
+    	if(!TextUtils.isEmpty(mOrphanBarcode) && isLoggedIn()) {
+        	showDialog(DIALOG_ADD_ORPHAN_BARCODE);
+    	}
+    }
+    
+    private IglasetApplication getApp() {
+    	return (IglasetApplication) getApplication();
+    }
+    
+    private AuthStore.Authentication getAuthentication() {
+        try {
+			return AuthStore.getInstance().getAuthentication(this);
+		} catch (AuthenticationException e) {
+			return null;
+		}
+    }
+    
+    private boolean isLoggedIn() {
+    	return mAuthentication != null && mAuthentication.looksValid();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mToken = AuthStore.getInstance().getStoredToken(this);
+        mAuthentication = getAuthentication();
     }
 
     @Override
@@ -373,7 +404,7 @@ public class DrinkDetailActivity extends ListActivity {
                         return true;
                     case R.id.comment_created:
                         TextView createdView = (TextView) view;
-                        createdView.setText(((Time) data).format("%Y-%m-%d"));
+                        createdView.setText(DateFormat.format("yyyy-MM-dd", (Date) data));
                         return true;
                     case R.id.comment_comment:
                         TextView commentView = (TextView) view;
@@ -480,7 +511,7 @@ public class DrinkDetailActivity extends ListActivity {
      * @param dialog
      */
     private void tryShowAuthenticatedDialog(int dialog) {
-    	if(null != mToken) {
+    	if(isLoggedIn()) {
     		showDialog(dialog);
     	} else {
     		showDialog(DIALOG_NOT_AUTHENTICATED);
@@ -498,8 +529,7 @@ public class DrinkDetailActivity extends ListActivity {
                 .setPositiveButton(R.string.retry, new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new SuggestBarcodeTask().execute(
-                                mBarcode, sDrink.getId(), mToken);                        
+                        new SuggestBarcodeTask().execute(mBarcode, sDrink, mAuthentication);                        
                     }
                 })
                 .setNegativeButton(getText(android.R.string.cancel), null)
@@ -575,14 +605,13 @@ public class DrinkDetailActivity extends ListActivity {
                         (EditText) addBarcodeLayout.findViewById(R.id.add_barcode);
                 addBarcodeEditText.setSelected(true);
                 return new AlertDialog.Builder(this)
-                    .setTitle("Lägg in streckkod")
+                    .setTitle(getText(R.string.add_barcode))
                     .setView(addBarcodeLayout)
                     .setPositiveButton("Spara", new OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mBarcode = addBarcodeEditText.getText().toString();
-                            new SuggestBarcodeTask().execute(
-                                    mBarcode, sDrink.getId(), mToken);
+                            new SuggestBarcodeTask().execute(mBarcode, sDrink, mAuthentication);
                         }
                     })
                     .setNegativeButton("Cancel", null)
@@ -600,7 +629,10 @@ public class DrinkDetailActivity extends ListActivity {
             		.setPositiveButton(android.R.string.ok, new OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							new AddCommentTask().execute(commentText.getText().toString(), sDrink.getId(), mToken);
+							new AddCommentTask().execute(
+									commentText.getText().toString(),
+									sDrink,
+									mAuthentication);
 						}
             			
             		})
@@ -640,6 +672,29 @@ public class DrinkDetailActivity extends ListActivity {
     		                	}
     		                }
     		             });
+            case DIALOG_ADD_ORPHAN_BARCODE:
+            	String text = String.format(getString(R.string.add_suggested_barcode), mOrphanBarcode);
+                return new AlertDialog.Builder(this)
+                .setTitle(R.string.add_barcode)
+                .setMessage(text)
+                .setPositiveButton("Lägg in", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new SuggestBarcodeTask().execute(mOrphanBarcode, sDrink, mAuthentication);
+                        
+                        // Remove barcode to prevent this dialog for showing again.
+                        getApp().clearOrphanBarcode();
+                	}
+                })
+                .setNeutralButton(R.string.forget_barcode, new OnClickListener() {
+                	@Override
+                	public void onClick(DialogInterface dialog, int which) {
+                        // Remove barcode to prevent this dialog for showing again.
+                		getApp().clearOrphanBarcode();
+                	}
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create();
         }
         return null;
     }
@@ -674,8 +729,7 @@ public class DrinkDetailActivity extends ListActivity {
                         Log.d(TAG, "contents: " + scanResult.getContents());
                         Log.d(TAG, "formatName: " + scanResult.getFormatName());
                         mBarcode = scanResult.getContents();
-                        new SuggestBarcodeTask().execute(
-                                scanResult.getContents(), sDrink.getId(), mToken);
+                        new SuggestBarcodeTask().execute(scanResult.getContents(), sDrink, mAuthentication);
                     } else {
                         Log.d(TAG, "NO SCAN RESULT");
                     }   
@@ -734,7 +788,7 @@ public class DrinkDetailActivity extends ListActivity {
         @Override
         protected Float doInBackground(Float... params) {
             publishProgress();
-            DrinksStore.getInstance().rateDrink(sDrink, params[0], mToken);
+            DrinksStore.getInstance().rateDrink(sDrink, params[0], mAuthentication);
             return params[0];
         }
 
@@ -762,7 +816,10 @@ public class DrinkDetailActivity extends ListActivity {
 		@Override
 		protected Boolean doInBackground(Object... params) {
 			try {
-				return DrinksStore.getInstance().commentDrink(sDrink, (String) params[0], mToken);
+				String comment = (String) params[0];
+				Drink drink = (Drink) params[1];
+				AuthStore.Authentication authentication = (Authentication) params[2];
+				return DrinksStore.getInstance().commentDrink(drink, comment, authentication);
 			} catch(IOException e) {
 				return false;
 			}
@@ -796,8 +853,10 @@ public class DrinkDetailActivity extends ListActivity {
         @Override
         protected Boolean doInBackground(Object... params) {
             try {
-                return BarcodeStore.getInstance().suggest(
-                        (String)params[0], (Integer)params[1], (String)params[2]);
+            	String barcode = (String) params[0];
+            	Drink drink = (Drink) params[1];
+            	AuthStore.Authentication authentication = (Authentication) params[2];
+                return BarcodeStore.getInstance().suggest(barcode, drink.getId(), authentication);
             } catch (IOException e) {
                 return false;
             }
@@ -860,7 +919,7 @@ public class DrinkDetailActivity extends ListActivity {
         @Override
         protected Drink doInBackground(Integer... params) {
             publishProgress();
-            return DrinksStore.getInstance().getDrink(params[0], mToken);
+            return DrinksStore.getInstance().getDrink(params[0], mAuthentication);
         }
 
         @Override

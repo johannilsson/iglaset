@@ -2,6 +2,8 @@ package com.markupartist.iglaset.provider;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,7 +17,6 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.text.TextUtils;
-import android.text.format.Time;
 import android.util.Log;
 
 class CommentsParser extends DefaultHandler {
@@ -23,13 +24,13 @@ class CommentsParser extends DefaultHandler {
     private ArrayList<Comment> mComments = null;
     private Comment mCurrentComment;
     private StringBuilder mBuilder = null;
-    private Time mCreatedTime = null;
+    private SimpleDateFormat mCreatedTime = null;
 
     @Override
     public void startDocument() throws SAXException {
         super.startDocument();
     	mBuilder = new StringBuilder();
-    	mCreatedTime = new Time();
+    	mCreatedTime = new SimpleDateFormat("yyyyMMddHHmmss");
     }
     
     public ArrayList<Comment> parseComments(InputStream in, ArrayList<Comment> comments) {
@@ -59,14 +60,16 @@ class CommentsParser extends DefaultHandler {
             mCurrentComment.setDrinkId(Integer.parseInt(atts.getValue("article_id").trim()));
             mCurrentComment.setUserId(Integer.parseInt(atts.getValue("user_id").trim()));
             mCurrentComment.setNickname(atts.getValue("nickname").trim());
-
-            // The api returns the created time as RFC 2445.
-            mCreatedTime.parse(atts.getValue("created").trim());
-            mCurrentComment.setCreated(mCreatedTime);
+            try {
+				mCurrentComment.setCreated(mCreatedTime.parse(atts.getValue("created").trim()));
+			} catch (ParseException e) {				
+				e.printStackTrace();
+				mCurrentComment.setCreated(null);
+			}
             
             int rating = 0;
-            if (!TextUtils.isEmpty(atts.getValue("user_rating").trim())) {
-                rating = Integer.parseInt(atts.getValue("user_rating").trim());
+            if (!TextUtils.isEmpty(atts.getValue("rating").trim())) {
+                rating = (int) Float.parseFloat(atts.getValue("rating").trim());
             }
             
             mCurrentComment.setRating(rating);
@@ -82,9 +85,10 @@ class CommentsParser extends DefaultHandler {
 
     public void endElement(String uri, String name, String qName)
                 throws SAXException {
-        if (name.equals("comment") && null != mCurrentComment) {
+    	if (name.equals("text") && null != mCurrentComment) {
         	String comment = mBuilder.toString().replaceAll("\n", "").trim();
             mCurrentComment.setComment(comment);
+    	} else if (name.equals("comment") && null != mCurrentComment) {
             mComments.add(mCurrentComment);
             mCurrentComment = null;
         }

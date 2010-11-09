@@ -12,8 +12,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
 import android.util.Log;
@@ -39,13 +41,17 @@ import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.RatingSearchCriteria;
 import com.markupartist.iglaset.provider.RecommendationSearchCriteria;
 import com.markupartist.iglaset.provider.SearchCriteria;
-import com.markupartist.iglaset.provider.AuthStore.Authentication;
 import com.markupartist.iglaset.util.ImageLoader;
+import com.markupartist.iglaset.IglasetApplication;
 
 public class SearchResultActivity extends ListActivity implements
         SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener, SearchDrinkErrorListener {
-    //static final String ACTION_CATEGORY_SEARCH = "com.markupartist.iglaset.action.CATEGORY";
-    //static final String ACTION_BARCODE_SEARCH = "com.markupartist.iglaset.action.BARCODE";
+
+	/**
+	 * Log tag.
+	 */
+	static final String TAG = SearchResultActivity.class.getSimpleName();
+	
     /**
      * Action for triggering a search for user recommendations.
      */
@@ -67,11 +73,10 @@ public class SearchResultActivity extends ListActivity implements
         "com.markupartist.iglaset.search.clickedDrink";
 
     static final int DIALOG_SEARCH_NETWORK_PROBLEM = 0;
-    static final int DIALOG_DRINK_IMAGE = 1;
-    static final String TAG = "SearchResultActivity";
+    static final int DIALOG_DRINK_IMAGE = 1;    
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
-    private String mToken;
+    private AuthStore.Authentication mAuthentication;
     private static SearchCriteria sSearchCriteria;
     
     /**
@@ -107,15 +112,12 @@ public class SearchResultActivity extends ListActivity implements
 
         setContentView(R.layout.search_result);
 
-        Authentication auth = null;
         try {
-            auth = AuthStore.getInstance().getAuthentication(this);
-            mToken = auth.token;
+            mAuthentication = AuthStore.getInstance().getAuthentication(this);
         } catch (AuthenticationException e) {
             Log.e(TAG, "User not authenticated...");
+            mAuthentication = null;
         }
-
-        //mToken = AuthStore.getInstance().getStoredToken(this);
 
         mImageClickListener = new View.OnClickListener() {
     		
@@ -133,7 +135,6 @@ public class SearchResultActivity extends ListActivity implements
         if (data == null) {
             final Intent queryIntent = getIntent();
             final String queryAction = queryIntent.getAction();
-            final TextView searchText = (TextView) findViewById(R.id.search_progress_text);
 
             mSearchDrinksTask = new SearchDrinksTask();
             mSearchDrinksTask.setSearchDrinkCompletedListener(this);
@@ -150,6 +151,7 @@ public class SearchResultActivity extends ListActivity implements
                         SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
                 suggestions.saveRecentQuery(queryString, null);
 
+                final TextView searchText = (TextView) findViewById(R.id.search_progress_text);
                 String searchingText = searchText.getText() + " \"" + queryString + "\"";
                 mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchText.setText(searchingText);
@@ -157,18 +159,19 @@ public class SearchResultActivity extends ListActivity implements
 
                 sSearchCriteria = new SearchCriteria();
                 sSearchCriteria.setQuery(queryString);
+                
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
                 setTitle(R.string.recommendations_label);
 
                 sSearchCriteria = new RecommendationSearchCriteria();
                 ((RecommendationSearchCriteria) sSearchCriteria).setUserId(
-                        auth.userId);
+                        mAuthentication.v2.userId);
             } else if (ACTION_USER_RATINGS.equals(queryAction)) {
                 setTitle(R.string.rated_articles_label);
 
                 sSearchCriteria = new RatingSearchCriteria();
                 ((RatingSearchCriteria) sSearchCriteria).setUserId(
-                        auth.userId);
+                		mAuthentication.v2.userId);
             } else {
             	sSearchCriteria = new SearchCriteria();
             }
@@ -195,7 +198,7 @@ public class SearchResultActivity extends ListActivity implements
                 sSearchCriteria.setTags(tags);
             }
             
-            sSearchCriteria.setToken(mToken);
+            sSearchCriteria.setAuthentication(mAuthentication);
             mSearchDrinksTask.execute(sSearchCriteria);	
 
         } else {
@@ -226,6 +229,9 @@ public class SearchResultActivity extends ListActivity implements
     	if(null != mSearchDrinksTask && mSearchDrinksTask.getStatus() == AsyncTask.Status.RUNNING) {
     		mSearchDrinksTask.cancel(true);
     	}
+
+    	// Remove the stored orphan barcode if the user exits.
+    	((IglasetApplication) getApplication()).clearOrphanBarcode();
     	
         super.onDestroy();
     }
@@ -263,6 +269,11 @@ public class SearchResultActivity extends ListActivity implements
             if(sSearchCriteria instanceof RecommendationSearchCriteria) {
             	emptyResult.setText(R.string.no_recommendations_result);
             }
+            
+            if(sSearchCriteria.hasBarcode()) {
+            	// Store the current orphan barcode so others can use it if necessary.
+            	((IglasetApplication) getApplication()).storeOrphanBarcode(sSearchCriteria.getBarcode());
+            }
 
             Button searchButton = (Button) findViewById(R.id.btn_search);
             searchButton.setVisibility(View.VISIBLE);
@@ -284,7 +295,7 @@ public class SearchResultActivity extends ListActivity implements
         getListView().removeFooterView(mFooterProgressView);
     }
 
-    private void displayDrinkDetails(Drink drink) {
+    private void displayDrinkDetails(Drink drink) {        
         Intent i = new Intent(this, DrinkDetailActivity.class);
         i.putExtra(DrinkDetailActivity.EXTRA_DRINK, drink);
         startActivity(i);
@@ -436,8 +447,7 @@ public class SearchResultActivity extends ListActivity implements
 
             final Drink drink = getItem(position);
             if (drink != null && dvh != null) {
-                String year = drink.getYear() == 0 ? "" : " " + String.valueOf(drink.getYear());
-                dvh.getNameView().setText(drink.getName() + year);
+                dvh.getNameView().setText(drink.getName());
                 if(drink.hasUserRating()) {
                 	dvh.getRateView().setRating(drink.getUserRating());
                 	dvh.getNameView().setCompoundDrawables(null, null, dvh.getGlassIcon(getContext()), null);

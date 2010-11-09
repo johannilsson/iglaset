@@ -13,11 +13,11 @@ import com.markupartist.iglaset.util.HttpManager;
 
 public class CommentsStore {
     private static String TAG = "CommentsStore";
-    private static String COMMENTS_BASE_URI = "http://api.iglaset.se/api/comments/xml/";
+    private static String COMMENTS_BASE_URI = "http://www.iglaset.se/articles/%d/comments.xml";
 
     public ArrayList<Comment> getComments(int drinkId) {
         final ArrayList<Comment> comments = new ArrayList<Comment>();
-        final HttpGet get = new HttpGet(COMMENTS_BASE_URI + drinkId);
+        final HttpGet get = new HttpGet(String.format(COMMENTS_BASE_URI, drinkId));
         HttpEntity entity = null;
         try {
             final HttpResponse response = HttpManager.execute(get);
