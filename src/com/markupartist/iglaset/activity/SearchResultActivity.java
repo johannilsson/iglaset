@@ -46,6 +46,14 @@ public class SearchResultActivity extends ListActivity implements
         SearchDrinkCompletedListener, SearchDrinkProgressUpdatedListener, SearchDrinkErrorListener {
 
 	/**
+	 * Class used to store data between orientation switches.
+	 */
+	private static class ConfigurationData {
+		ArrayList<Drink> drinks;
+		SearchCriteria searchCriteria;
+	}
+	
+	/**
 	 * Log tag.
 	 */
 	static final String TAG = SearchResultActivity.class.getSimpleName();
@@ -128,8 +136,7 @@ public class SearchResultActivity extends ListActivity implements
         
         // Check if already have some data, used if screen is rotated.
         @SuppressWarnings("unchecked")
-        final ArrayList<Drink> data = (ArrayList<Drink>) getLastNonConfigurationInstance();
-        
+        ConfigurationData data = (ConfigurationData) getLastNonConfigurationInstance();        
         if (data == null) {
             final Intent queryIntent = getIntent();
             final String queryAction = queryIntent.getAction();
@@ -137,9 +144,6 @@ public class SearchResultActivity extends ListActivity implements
             mSearchDrinksTask = new SearchDrinksTask();
             mSearchDrinksTask.setSearchDrinkCompletedListener(this);
             mSearchDrinksTask.setSearchDrinkErrorListener(this);
-
-            Log.d(TAG, "action: " + queryAction);
-            mSearchCriteria = null;
             
             // Search actions
             if (Intent.ACTION_SEARCH.equals(queryAction)) {
@@ -199,7 +203,8 @@ public class SearchResultActivity extends ListActivity implements
             mSearchDrinksTask.execute(mSearchCriteria);	
 
         } else {
-        	onDrinkData(data);
+        	mSearchCriteria = data.searchCriteria;
+        	onDrinkData(data.drinks);
         }
     }
 
@@ -210,8 +215,10 @@ public class SearchResultActivity extends ListActivity implements
      */
     @Override
     public Object onRetainNonConfigurationInstance() {
-        //Log.d(TAG, "onRetainNonConfigurationInstance");
-        return mDrinks;
+    	ConfigurationData data = new ConfigurationData();
+    	data.drinks = mDrinks;
+    	data.searchCriteria = mSearchCriteria;
+    	return data;
     }
 
     @Override
