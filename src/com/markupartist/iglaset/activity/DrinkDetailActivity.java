@@ -146,7 +146,7 @@ public class DrinkDetailActivity extends ListActivity {
         mUserRatingAdapter = new UserRatingAdapter(this, 0);
         mSectionedAdapter.addSectionFirst(0, getText(R.string.my_rating), mUserRatingAdapter);
 
-        if (mAuthentication.looksValid()) {
+        if (mAuthentication != null && mAuthentication.looksValid()) {
         	launchGetDrinkTask(drink);
         }
 
