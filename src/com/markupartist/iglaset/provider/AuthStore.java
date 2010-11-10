@@ -121,7 +121,7 @@ public class AuthStore {
         SharedPreferences sharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(context);
 
-        if (!sharedPreferences.contains("preference_token")) {
+        if (!sharedPreferences.contains("preference_token_v2")) {
             throw new AuthenticationException("User not authenticated");
         }
 
