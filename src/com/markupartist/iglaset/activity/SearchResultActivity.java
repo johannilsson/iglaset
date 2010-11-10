@@ -261,13 +261,14 @@ public class SearchResultActivity extends ListActivity implements
         setListAdapter(mListAdapter);
 
         if (drinks.isEmpty()) {
-        	TextView emptyResult = (TextView) findViewById(R.id.search_empty);
-            emptyResult.setVisibility(View.VISIBLE);
+        	View emptyLayout = findViewById(R.id.search_empty_layout);
+        	emptyLayout.setVisibility(View.VISIBLE);
             
             // Show a more verbose message if the user was browsing
             // the recommendations
             if(sSearchCriteria instanceof RecommendationSearchCriteria) {
-            	emptyResult.setText(R.string.no_recommendations_result);
+            	TextView emptyText = (TextView) findViewById(R.id.search_empty);
+            	emptyText.setText(R.string.no_recommendations_result);
             }
             
             if(sSearchCriteria.hasBarcode()) {
@@ -276,7 +277,6 @@ public class SearchResultActivity extends ListActivity implements
             }
 
             Button searchButton = (Button) findViewById(R.id.btn_search);
-            searchButton.setVisibility(View.VISIBLE);
             searchButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
