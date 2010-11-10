@@ -89,7 +89,6 @@ class DrinksParser extends DefaultHandler {
     public void endElement(String uri, String name, String qName)
                 throws SAXException {
     	
-    	Log.d(TAG, name);
     	final String result = mTextBuffer.toString().replace("\n", "").trim();
     	
         if (mCurrentDrink != null) {
