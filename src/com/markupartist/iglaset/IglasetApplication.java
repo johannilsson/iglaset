@@ -12,11 +12,11 @@ public class IglasetApplication extends Application {
 	private final static String PREF_ORPHAN_CODE = "orphan_barcode";
 	
     @Override
-    public void onCreate() {
+    public void onCreate() {    	
+        super.onCreate();
+        
         // Remove any orphan barcodes that were scanned in previous runs.
     	clearOrphanBarcode();
-    	
-        super.onCreate();
 
         final ErrorReporter reporter = ErrorReporter.getInstance();
         reporter.init(getApplicationContext());
