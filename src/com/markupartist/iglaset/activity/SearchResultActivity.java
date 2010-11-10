@@ -75,7 +75,7 @@ public class SearchResultActivity extends ListActivity implements
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
     private AuthStore.Authentication mAuthentication;
-    private static SearchCriteria sSearchCriteria;
+    private SearchCriteria mSearchCriteria;
     
     /**
      * Common click listener used for all the images in the list. Note that
@@ -139,7 +139,7 @@ public class SearchResultActivity extends ListActivity implements
             mSearchDrinksTask.setSearchDrinkErrorListener(this);
 
             Log.d(TAG, "action: " + queryAction);
-            sSearchCriteria = null;
+            mSearchCriteria = null;
             
             // Search actions
             if (Intent.ACTION_SEARCH.equals(queryAction)) {
@@ -155,23 +155,22 @@ public class SearchResultActivity extends ListActivity implements
                 searchText.setText(searchingText);
                 setTitle(searchingText);
 
-                sSearchCriteria = new SearchCriteria();
-                sSearchCriteria.setQuery(queryString);
+                mSearchCriteria = new SearchCriteria();
+                mSearchCriteria.setQuery(queryString);
                 
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
                 setTitle(R.string.recommendations_label);
 
-                sSearchCriteria = new RecommendationSearchCriteria();
-                ((RecommendationSearchCriteria) sSearchCriteria).setUserId(
+                mSearchCriteria = new RecommendationSearchCriteria();
+                ((RecommendationSearchCriteria) mSearchCriteria).setUserId(
                         mAuthentication.v2.userId);
             } else if (ACTION_USER_RATINGS.equals(queryAction)) {
                 setTitle(R.string.rated_articles_label);
 
-                sSearchCriteria = new RatingSearchCriteria();
-                ((RatingSearchCriteria) sSearchCriteria).setUserId(
-                		mAuthentication.v2.userId);
+                mSearchCriteria = new RatingSearchCriteria();
+                ((RatingSearchCriteria) mSearchCriteria).setUserId(mAuthentication.v2.userId);
             } else {
-            	sSearchCriteria = new SearchCriteria();
+            	mSearchCriteria = new SearchCriteria();
             }
             
             // Search parameters
@@ -180,24 +179,24 @@ public class SearchResultActivity extends ListActivity implements
                     .getInt(EXTRA_SEARCH_CATEGORY_ID);
 
                 setTitle(R.string.search_results);
-                sSearchCriteria.setCategory(category);
+                mSearchCriteria.setCategory(category);
             }
             
             if (queryIntent.hasExtra(EXTRA_SEARCH_BARCODE)) {
                 String barcode = queryIntent.getStringExtra(EXTRA_SEARCH_BARCODE);
 
                 setTitle(R.string.search_results);
-                sSearchCriteria.setBarcode(barcode);
+                mSearchCriteria.setBarcode(barcode);
             }
             
             if (queryIntent.hasExtra(EXTRA_SEARCH_TAGS)) {
                 setTitle(R.string.search_results);
                 ArrayList<Integer> tags = queryIntent.getIntegerArrayListExtra(EXTRA_SEARCH_TAGS);
-                sSearchCriteria.setTags(tags);
+                mSearchCriteria.setTags(tags);
             }
             
-            sSearchCriteria.setAuthentication(mAuthentication);
-            mSearchDrinksTask.execute(sSearchCriteria);	
+            mSearchCriteria.setAuthentication(mAuthentication);
+            mSearchDrinksTask.execute(mSearchCriteria);	
 
         } else {
         	onDrinkData(data);
@@ -227,11 +226,17 @@ public class SearchResultActivity extends ListActivity implements
     	if(null != mSearchDrinksTask && mSearchDrinksTask.getStatus() == AsyncTask.Status.RUNNING) {
     		mSearchDrinksTask.cancel(true);
     	}
-
-    	// Remove the stored orphan barcode if the user exits.
-    	((IglasetApplication) getApplication()).clearOrphanBarcode();
     	
         super.onDestroy();
+    }
+    
+    public void onBackPressed() {
+    	// Remove the stored orphan barcode if the user exits.
+    	if(mSearchCriteria.hasBarcode()) {
+    		((IglasetApplication) getApplication()).clearOrphanBarcode();    		
+    	}
+    	
+    	finish();
     }
 
     @Override
@@ -264,14 +269,14 @@ public class SearchResultActivity extends ListActivity implements
             
             // Show a more verbose message if the user was browsing
             // the recommendations
-            if(sSearchCriteria instanceof RecommendationSearchCriteria) {
+            if(mSearchCriteria instanceof RecommendationSearchCriteria) {
             	TextView emptyText = (TextView) findViewById(R.id.search_empty);
             	emptyText.setText(R.string.no_recommendations_result);
             }
             
-            if(sSearchCriteria.hasBarcode()) {
+            if(mSearchCriteria.hasBarcode()) {
             	// Store the current orphan barcode so others can use it if necessary.
-            	((IglasetApplication) getApplication()).storeOrphanBarcode(sSearchCriteria.getBarcode());
+            	((IglasetApplication) getApplication()).storeOrphanBarcode(mSearchCriteria.getBarcode());
             }
 
             Button searchButton = (Button) findViewById(R.id.btn_search);
@@ -283,9 +288,9 @@ public class SearchResultActivity extends ListActivity implements
             });
         }
 
-        if (!TextUtils.isEmpty(sSearchCriteria.getQuery())) {
+        if (!TextUtils.isEmpty(mSearchCriteria.getQuery())) {
             setTitle(getText(R.string.search_results)
-                    + " \"" + sSearchCriteria.getQuery() + "\"");
+                    + " \"" + mSearchCriteria.getQuery() + "\"");
         }
 
         LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);
@@ -374,7 +379,7 @@ public class SearchResultActivity extends ListActivity implements
 		                	    mSearchDrinksTask.setSearchDrinkCompletedListener(SearchResultActivity.this);
 		                	    mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
 		                	    mSearchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
-		                	    mSearchDrinksTask.execute(sSearchCriteria);
+		                	    mSearchDrinksTask.execute(mSearchCriteria);
 			                    break;
 		                	case Dialog.BUTTON_NEGATIVE:
 		                		finish();
@@ -423,12 +428,12 @@ public class SearchResultActivity extends ListActivity implements
             
             if (shouldAppend(position)) {
                 getListView().addFooterView(mFooterProgressView);
-                sSearchCriteria.setPage(mPage.addAndGet(1));
+                mSearchCriteria.setPage(mPage.addAndGet(1));
                 mSearchDrinksTask = new SearchDrinksTask();
                 mSearchDrinksTask.setSearchDrinkCompletedListener(this);
                 mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
                 mSearchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
-                mSearchDrinksTask.execute(sSearchCriteria);
+                mSearchDrinksTask.execute(mSearchCriteria);
             }
 
             if (convertView == null) {
