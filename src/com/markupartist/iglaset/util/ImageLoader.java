@@ -305,7 +305,7 @@ public class ImageLoader {
                 mConn.disconnect();
                 inStream = null;
                 mConn = null;
-            } catch (Exception ex) {
+            } catch (IOException ex) {
             	status = STATUS_ERROR;
             	Log.d(TAG, "Download failed: " + ex.getMessage());
                 // nothing
