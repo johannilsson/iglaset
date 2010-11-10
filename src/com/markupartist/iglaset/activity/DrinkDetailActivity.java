@@ -748,7 +748,7 @@ public class DrinkDetailActivity extends ListActivity {
      */
     private void launchGetCommentsTask(Drink drink) {
         mGetCommentsTask = new GetCommentsTask();
-        mGetCommentsTask.execute(drink.getId());
+        mGetCommentsTask.execute(drink);
     }
     
     /**
@@ -765,10 +765,10 @@ public class DrinkDetailActivity extends ListActivity {
     /**
      * Background task for fetching comments
      */
-    private class GetCommentsTask extends AsyncTask<Integer, Void, ArrayList<Comment>> {
+    private class GetCommentsTask extends AsyncTask<Drink, Void, ArrayList<Comment>> {
 
         @Override
-        protected ArrayList<Comment> doInBackground(Integer... params) {
+        protected ArrayList<Comment> doInBackground(Drink... params) {
             publishProgress();
             return mCommentsStore.getComments(params[0]);
         }
@@ -861,7 +861,7 @@ public class DrinkDetailActivity extends ListActivity {
             	String barcode = (String) params[0];
             	Drink drink = (Drink) params[1];
             	AuthStore.Authentication authentication = (Authentication) params[2];
-                return BarcodeStore.getInstance().suggest(barcode, drink.getId(), authentication);
+                return BarcodeStore.getInstance().suggest(barcode, drink, authentication);
             } catch (IOException e) {
                 return false;
             }
