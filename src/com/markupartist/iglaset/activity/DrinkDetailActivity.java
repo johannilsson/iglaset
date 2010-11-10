@@ -704,7 +704,10 @@ public class DrinkDetailActivity extends ListActivity {
     	switch(id) {
     	case DIALOG_ADD_COMMENT:
     		AlertDialog alert = (AlertDialog) dialog;
-    		alert.getButton(Dialog.BUTTON_POSITIVE).setEnabled(false);
+        	final EditText textView = (EditText) dialog.findViewById(R.id.add_comment_text);
+        	if(null != textView) {
+        		alert.getButton(Dialog.BUTTON_POSITIVE).setEnabled(textView.length() > 0);
+        	}
     		break;
     	case DIALOG_SHOW_DRINK_IMAGE:
     		DrinkImageViewerDialog imageViewer = (DrinkImageViewerDialog) dialog;
