@@ -34,7 +34,7 @@ public class IglasetApplication extends Application {
 	public void storeOrphanBarcode(String barcode) {
     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     	SharedPreferences.Editor editor = preferences.edit();
-    	editor.remove(PREF_ORPHAN_CODE);
+    	editor.putString(PREF_ORPHAN_CODE, barcode);
     	editor.commit();
 	}
 	
