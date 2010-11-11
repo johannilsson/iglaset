@@ -205,7 +205,8 @@ public class DrinksStore {
         	builder.append("&str=").append(URLEncoder.encode(searchCriteria.getQuery()));
         if (searchCriteria.getCategory() > 0)
         	builder.append("&category=").append(searchCriteria.getCategory());
-        if (!TextUtils.isEmpty(searchCriteria.getAuthentication().v2.token))
+        if (searchCriteria.getAuthentication() != null
+                && !TextUtils.isEmpty(searchCriteria.getAuthentication().v2.token))
         	builder.append("&user_credentials=").append(searchCriteria.getAuthentication().v2.token);
 
         ArrayList<Integer> tags = searchCriteria.getTags();
