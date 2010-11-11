@@ -221,7 +221,12 @@ public class DrinkDetailActivity extends ListActivity {
 
         setListAdapter(mSectionedAdapter);
         sDrink = drink;
-        
+    }
+    
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+    	super.onPostCreate(savedInstanceState);
+    	
         // See if there is an orphan barcode in the system. If there is then offer to add it.
         mOrphanBarcode = getApp().getOrphanBarcode();
     	if(!TextUtils.isEmpty(mOrphanBarcode) && isLoggedIn()) {
@@ -681,9 +686,6 @@ public class DrinkDetailActivity extends ListActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         new SuggestBarcodeTask().execute(mOrphanBarcode, sDrink, mAuthentication);
-                        
-                        // Remove barcode to prevent this dialog for showing again.
-                        getApp().clearOrphanBarcode();
                 	}
                 })
                 .setNeutralButton(R.string.forget_barcode, new OnClickListener() {
@@ -746,7 +748,7 @@ public class DrinkDetailActivity extends ListActivity {
      */
     private void launchGetCommentsTask(Drink drink) {
         mGetCommentsTask = new GetCommentsTask();
-        mGetCommentsTask.execute(drink.getId());
+        mGetCommentsTask.execute(drink);
     }
     
     /**
@@ -763,10 +765,10 @@ public class DrinkDetailActivity extends ListActivity {
     /**
      * Background task for fetching comments
      */
-    private class GetCommentsTask extends AsyncTask<Integer, Void, ArrayList<Comment>> {
+    private class GetCommentsTask extends AsyncTask<Drink, Void, ArrayList<Comment>> {
 
         @Override
-        protected ArrayList<Comment> doInBackground(Integer... params) {
+        protected ArrayList<Comment> doInBackground(Drink... params) {
             publishProgress();
             return mCommentsStore.getComments(params[0]);
         }
@@ -859,7 +861,7 @@ public class DrinkDetailActivity extends ListActivity {
             	String barcode = (String) params[0];
             	Drink drink = (Drink) params[1];
             	AuthStore.Authentication authentication = (Authentication) params[2];
-                return BarcodeStore.getInstance().suggest(barcode, drink.getId(), authentication);
+                return BarcodeStore.getInstance().suggest(barcode, drink, authentication);
             } catch (IOException e) {
                 return false;
             }
@@ -874,6 +876,9 @@ public class DrinkDetailActivity extends ListActivity {
         protected void onPostExecute(Boolean response) {
             if (response == true) {
                 Toast.makeText(DrinkDetailActivity.this, "Streckkod sparad", Toast.LENGTH_SHORT).show();
+                
+                // Remove any orphan barcodes to prevent the "add orphan code?" dialog from showing again
+                getApp().clearOrphanBarcode();
             } else {
                 showDialog(DIALOG_SUGGEST_BARCODE_FAIL);
             }

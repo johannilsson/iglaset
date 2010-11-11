@@ -33,14 +33,14 @@ public class BarcodeStore {
         return sInstance;
     }
 
-    public boolean suggest(String barcode, int drinkId, AuthStore.Authentication authentication)
+    public boolean suggest(String barcode, Drink drink, AuthStore.Authentication authentication)
             throws IOException {
         Log.d(TAG, "Suggesting barcode " + barcode);
 
         final HttpPost post = new HttpPost(String.format(BARCODE_SUGGEST_URI, authentication.v2.token));
         
         ArrayList<NameValuePair> payload = new ArrayList<NameValuePair>(1);
-        payload.add(new BasicNameValuePair("article_id", String.valueOf(drinkId)));
+        payload.add(new BasicNameValuePair("article_id", String.valueOf(drink.getId())));
         payload.add(new BasicNameValuePair("ean", barcode));
         
         post.setEntity(new UrlEncodedFormEntity(payload, "utf-8"));
