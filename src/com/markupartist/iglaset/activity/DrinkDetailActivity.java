@@ -814,17 +814,16 @@ public class DrinkDetailActivity extends ListActivity {
         @Override
         protected void onPostExecute(Float rating) {
             Toast.makeText(DrinkDetailActivity.this, getText(R.string.rating_added), Toast.LENGTH_SHORT).show();
-            updateUserRatingInUi(rating);
             
             final boolean hadUserRating = sDrink.hasUserRating();       
             sDrink.setUserRating(rating);
             if(hadUserRating != sDrink.hasUserRating()) {
             	// If the drink had a rating before but not now then decrease, otherwise increase
             	final int offset = hadUserRating ? -1 : 1;
-            	sDrink.setRatingCount(sDrink.getRatingCount() + offset);
-            	
-            	sendBroadcast(Intents.createPublishDrinkIntent(sDrink));
+            	sDrink.setRatingCount(sDrink.getRatingCount() + offset);            	
             }
+            
+        	sendBroadcast(Intents.createPublishDrinkIntent(sDrink));
         }
     }
     
