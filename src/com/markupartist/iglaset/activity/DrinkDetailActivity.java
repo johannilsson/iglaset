@@ -12,9 +12,11 @@ import java.util.Set;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Paint;
@@ -179,12 +181,6 @@ public class DrinkDetailActivity extends ListActivity {
         ImageLoader.getInstance().load(imageView, drink.getThumbnailUrl(w, h), 
                 true, R.drawable.noimage, null);
         
-        TextView ratingCountView = (TextView) findViewById(R.id.drink_rating_count);
-        ratingCountView.setText(String.valueOf(drink.getRatingCount()));
-        
-        TextView commentCountView = (TextView) findViewById(R.id.drink_comment_count);
-        commentCountView.setText(String.valueOf(drink.getCommentCount()));
-        
         //TextView descriptionTextView = (TextView) findViewById(R.id.drink_description);
         //descriptionTextView.setText(Html.fromHtml(drink.getDescription()));
 
@@ -221,7 +217,20 @@ public class DrinkDetailActivity extends ListActivity {
 
         setListAdapter(mSectionedAdapter);
         sDrink = drink;
+        onUpdatedDrink(drink);
+        
+        this.registerReceiver(mBroadcastReceiver, new IntentFilter(Intents.ACTION_PUBLISH_DRINK));
     }
+    
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equals(Intents.ACTION_PUBLISH_DRINK)) {
+				final Drink drink = (Drink) intent.getExtras().get(Intents.EXTRA_DRINK);
+				DrinkDetailActivity.this.onUpdatedDrink(drink);
+			}
+		}
+    };
     
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -260,8 +269,10 @@ public class DrinkDetailActivity extends ListActivity {
     protected void onDestroy() {
     	cancelGetDrinkTask();
     	cancelGetCommentsTask();
+    	
+    	unregisterReceiver(mBroadcastReceiver);
+ 
         super.onDestroy();
-        //Tracker.getInstance().stop();
     }
 
     @Override
@@ -332,6 +343,12 @@ public class DrinkDetailActivity extends ListActivity {
     private void onUpdatedDrink(Drink drink) {
         updateUserRatingInUi(drink.getUserRating());
         updateHasRatedIconInUi(drink.hasUserRating());
+        
+        TextView ratingCountView = (TextView) findViewById(R.id.drink_rating_count);
+        ratingCountView.setText(String.valueOf(drink.getRatingCount()));
+        
+        TextView commentCountView = (TextView) findViewById(R.id.drink_comment_count);
+        commentCountView.setText(String.valueOf(drink.getCommentCount()));
     }
 
     private void updateUserRatingInUi(float rating) {
@@ -807,8 +824,15 @@ public class DrinkDetailActivity extends ListActivity {
             Toast.makeText(DrinkDetailActivity.this, getText(R.string.rating_added), Toast.LENGTH_SHORT).show();
             updateUserRatingInUi(rating);
             
+            final boolean hadUserRating = sDrink.hasUserRating();       
             sDrink.setUserRating(rating);
-            updateHasRatedIconInUi(sDrink.hasUserRating());
+            if(hadUserRating != sDrink.hasUserRating()) {
+            	// If the drink had a rating before but not now then decrease, otherwise increase
+            	final int offset = hadUserRating ? -1 : 1;
+            	sDrink.setRatingCount(sDrink.getRatingCount() + offset);
+            	
+            	sendBroadcast(Intents.createPublishDrinkIntent(sDrink));
+            }
         }
     }
     
@@ -840,9 +864,13 @@ public class DrinkDetailActivity extends ListActivity {
 			if(true == response) {
 				Toast.makeText(DrinkDetailActivity.this, R.string.comment_saved, Toast.LENGTH_SHORT).show();
 				
+				sDrink.setCommentCount(sDrink.getCommentCount() + 1);
+				
 				// TODO: We might want to inject the comment directly into the adapter,
 				// but just refresh all the comments for now.
 				launchGetCommentsTask(sDrink);
+				
+				sendBroadcast(Intents.createPublishDrinkIntent(sDrink));
 			} else {
 				// TODO: Show a retry/cancel here or maybe a better text than just "failed"?
 				Toast.makeText(DrinkDetailActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();

@@ -8,10 +8,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
@@ -135,7 +137,6 @@ public class SearchResultActivity extends ListActivity implements
     	};
         
         // Check if already have some data, used if screen is rotated.
-        @SuppressWarnings("unchecked")
         ConfigurationData data = (ConfigurationData) getLastNonConfigurationInstance();        
         if (data == null) {
             final Intent queryIntent = getIntent();
@@ -206,7 +207,34 @@ public class SearchResultActivity extends ListActivity implements
         	mSearchCriteria = data.searchCriteria;
         	onDrinkData(data.drinks);
         }
+        
+        this.registerReceiver(mBroadcastReceiver, new IntentFilter(Intents.ACTION_PUBLISH_DRINK));
     }
+    
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equals(Intents.ACTION_PUBLISH_DRINK)) {
+				final Drink updatedDrink = (Drink) intent.getExtras().get(Intents.EXTRA_DRINK);
+				
+				// The incoming drink is most likely pointing to one of the drinks in
+				// our list but we can't be sure of that. Brute force find it.
+				ArrayList<Drink> drinkList = SearchResultActivity.this.mDrinks;
+				for(Drink drink : drinkList) {
+					if(drink.getId() == updatedDrink.getId()) {
+						drink.setUserRating(updatedDrink.getUserRating());
+						drink.setRatingCount(updatedDrink.getRatingCount());
+						drink.setCommentCount(updatedDrink.getCommentCount());
+						
+						DrinkAdapter adapter = (DrinkAdapter) SearchResultActivity.this.getListAdapter();
+						adapter.notifyDataSetChanged();
+						break;
+					}
+				}
+				//DrinkDetailActivity.this.onUpdatedDrink(drink);
+			}
+		}
+    };
 
     /**
      * Called before this activity is destroyed, returns the previous search 
@@ -234,6 +262,7 @@ public class SearchResultActivity extends ListActivity implements
     		mSearchDrinksTask.cancel(true);
     	}
     	
+    	unregisterReceiver(mBroadcastReceiver);
         super.onDestroy();
     }
     
@@ -391,6 +420,8 @@ public class SearchResultActivity extends ListActivity implements
 		                	case Dialog.BUTTON_NEGATIVE:
 		                		finish();
 		                		break;
+		                	default:
+		                		break;
 		                	}
 		                }
 		             });
@@ -407,6 +438,9 @@ public class SearchResultActivity extends ListActivity implements
     		DrinkImageViewerDialog imageDialog = (DrinkImageViewerDialog) dialog;
     		imageDialog.setDrink(mClickedDrink);
     		imageDialog.load();
+    		break;
+    	default:
+    		break;
     	}
     }
 
