@@ -214,36 +214,36 @@ public class SearchResultActivity extends ListActivity implements
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			
+			// Publish an updated drink in the UI.
 			if(intent.getAction().equals(Intents.ACTION_PUBLISH_DRINK)) {
-				if(intent.getExtras() == null) {
-					Log.e(TAG, "No data available.");
-					return;
-				}
-				
-				final Drink updatedDrink = (Drink) intent.getExtras().get(Intents.EXTRA_DRINK);
-				if(updatedDrink == null) {
+				Bundle extras = intent.getExtras();
+				if(extras != null && extras.containsKey(Intents.EXTRA_DRINK)) {
+					final Drink drink = (Drink) intent.getExtras().get(Intents.EXTRA_DRINK);
+					SearchResultActivity.this.onUpdatedDrink(drink);
+				} else {
 					Log.e(TAG, "No drink data available");
-				}
-				
-				// The incoming drink is most likely pointing to one of the drinks in
-				// our list but we can't be sure of that. Brute force find it.
-				ArrayList<Drink> drinkList = SearchResultActivity.this.mDrinks;
-				for(Drink drink : drinkList) {
-					if(drink.getId() == updatedDrink.getId()) {
-						drink.setUserRating(updatedDrink.getUserRating());
-						drink.setRatingCount(updatedDrink.getRatingCount());
-						drink.setCommentCount(updatedDrink.getCommentCount());
-						
-						DrinkAdapter adapter = (DrinkAdapter) SearchResultActivity.this.getListAdapter();
-						adapter.notifyDataSetChanged();
-						break;
-					}
-				}
-				//DrinkDetailActivity.this.onUpdatedDrink(drink);
+				}	
 			}
 		}
     };
 
+    public void onUpdatedDrink(Drink updatedDrink) {
+		// The incoming drink is most likely pointing to one of the drinks in
+		// our list but we can't be sure of that. Brute force find it.
+		for(Drink drink : mDrinks) {
+			if(drink.getId() == updatedDrink.getId()) {
+				drink.setUserRating(updatedDrink.getUserRating());
+				drink.setRatingCount(updatedDrink.getRatingCount());
+				drink.setCommentCount(updatedDrink.getCommentCount());
+				
+				DrinkAdapter adapter = (DrinkAdapter) getListAdapter();
+				adapter.notifyDataSetChanged();
+				break;
+			}
+		}
+    }
+    
     /**
      * Called before this activity is destroyed, returns the previous search 
      * result. This list is used if the screen is rotated. Then we don't need
