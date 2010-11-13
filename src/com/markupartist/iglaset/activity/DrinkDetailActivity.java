@@ -67,14 +67,6 @@ import com.markupartist.iglaset.widget.SectionedAdapter.Section;
 
 public class DrinkDetailActivity extends ListActivity {
     /**
-     * Key to identify a barcode
-     */
-    private static final String EXTRA_BARCODE = "com.markupartist.iglaset.article.barcode";
-    /**
-     * Key to identify which drink to display
-     */
-    public static final String EXTRA_DRINK = "com.markupartist.iglaset.Drink";
-    /**
      * The id for the rating dialog
      */
     private static final int DIALOG_RATE = 0;
@@ -143,7 +135,7 @@ public class DrinkDetailActivity extends ListActivity {
         mAuthentication = getAuthentication();
         
         Bundle extras = getIntent().getExtras();
-        final Drink drink = extras.getParcelable(EXTRA_DRINK);
+        final Drink drink = extras.getParcelable(Intents.EXTRA_DRINK);
 
         mUserRatingAdapter = new UserRatingAdapter(this, 0);
         mSectionedAdapter.addSectionFirst(0, getText(R.string.my_rating), mUserRatingAdapter);
@@ -294,8 +286,8 @@ public class DrinkDetailActivity extends ListActivity {
      * @param savedInstanceState the saved state
      */
     private void restoreBarcode(Bundle savedInstanceState) {
-        if (savedInstanceState.containsKey(EXTRA_BARCODE)) {
-            mBarcode = savedInstanceState.getString(EXTRA_BARCODE);
+        if (savedInstanceState.containsKey(Intents.EXTRA_BARCODE)) {
+            mBarcode = savedInstanceState.getString(Intents.EXTRA_BARCODE);
         }
     }
 
@@ -311,7 +303,7 @@ public class DrinkDetailActivity extends ListActivity {
      * @param outState the out state
      */
     private void saveBarcodeState(Bundle outState) {
-        outState.putString(EXTRA_BARCODE, mBarcode);
+        outState.putString(Intents.EXTRA_BARCODE, mBarcode);
     }
 
     /**

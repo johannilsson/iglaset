@@ -6,8 +6,14 @@ import com.markupartist.iglaset.provider.Drink;
 
 public class Intents {
 
-	public final static String EXTRA_DRINK = "com.markupartist.iglaset.extras.DRINK";
-	public final static String ACTION_PUBLISH_DRINK = "com.markupartist.igaset.action.PUBLISH_DRINK";
+	public static final String EXTRA_DRINK = "com.markupartist.iglaset.extras.DRINK";
+	
+    /**
+     * Key to identify a barcode
+     */
+    public static final String EXTRA_BARCODE = "com.markupartist.iglaset.article.barcode";
+	
+	public static final String ACTION_PUBLISH_DRINK = "com.markupartist.igaset.action.PUBLISH_DRINK";
 	
 	/**
 	 * Create a publish drink intent. This signals the listeners that the
