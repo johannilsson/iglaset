@@ -36,6 +36,7 @@ Changelog
     * Optimization in the search result view
     * Show drink rate/comment count in search- and detailed view
     * Better flow when scanning new barcodes
+    * Minor data status fix: Rating or commenting drinks will now update more parts of the UI.
 * 1.3.2
     * Fixed several crashes when exiting various dialogs when a network activity was in progress
     * Larger thumbnails for HDPI screens
