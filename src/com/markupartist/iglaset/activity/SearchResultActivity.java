@@ -215,7 +215,15 @@ public class SearchResultActivity extends ListActivity implements
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equals(Intents.ACTION_PUBLISH_DRINK)) {
+				if(intent.getExtras() == null) {
+					Log.e(TAG, "No data available.");
+					return;
+				}
+				
 				final Drink updatedDrink = (Drink) intent.getExtras().get(Intents.EXTRA_DRINK);
+				if(updatedDrink == null) {
+					Log.e(TAG, "No drink data available");
+				}
 				
 				// The incoming drink is most likely pointing to one of the drinks in
 				// our list but we can't be sure of that. Brute force find it.
