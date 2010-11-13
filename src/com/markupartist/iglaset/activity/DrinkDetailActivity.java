@@ -201,10 +201,13 @@ public class DrinkDetailActivity extends ListActivity {
         // Check if already have some data, used if screen is rotated.
         @SuppressWarnings("unchecked")
         final ArrayList<Comment> comments = (ArrayList<Comment>) getLastNonConfigurationInstance();
-        if (comments == null) {
-            launchGetCommentsTask(drink);
+        if (comments != null) {
+        	updateCommentsInUi(comments);
+        } else if(drink.getCommentCount() == 0) {
+        	// Update the comment list with an empty array
+        	updateCommentsInUi(new ArrayList<Comment>());
         } else {
-            updateCommentsInUi(comments);
+            launchGetCommentsTask(drink);
         }
 
         setListAdapter(mSectionedAdapter);
