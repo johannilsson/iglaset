@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.markupartist.iglaset"
-      xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="38" android:versionName="1.4.0RC1">
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      android:versionCode="38"
+      android:versionName="1.4.0RC1"
+      android:installLocation="auto"
+      >
     <supports-screens
         android:largeScreens="true"
         android:normalScreens="true"
@@ -61,9 +65,8 @@
             </intent-filter>
         </activity>
 
-        
 </application>
-    <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="8" />
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest> 
