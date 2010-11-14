@@ -62,6 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="70dip"
                 android:layout_marginRight="10dip"
+                android:background="@drawable/btn_default"
                 />
             <LinearLayout
                 android:orientation="vertical"
@@ -89,6 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="70dip"
                 android:layout_marginRight="10dip"
+                android:background="@drawable/btn_default"
                 />
             <LinearLayout
                 android:orientation="vertical"
@@ -116,6 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="70dip"
                 android:layout_marginRight="10dip"
+                android:background="@drawable/btn_default"
                 />
             <LinearLayout
                 android:orientation="vertical"
@@ -143,6 +146,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="70dip"
                 android:layout_marginRight="10dip"
+                android:background="@drawable/btn_default"
                 />
             <LinearLayout
                 android:orientation="vertical"
