@@ -26,7 +26,7 @@
     <RelativeLayout
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_alignParentBottom="true" android:background="@drawable/transparent_pixel_70" android:id="@+id/orphan_barcode_layout">
+        android:layout_alignParentBottom="true" android:background="@drawable/transparent_pixel_70" android:id="@+id/orphan_barcode_layout" android:visibility="gone">
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
