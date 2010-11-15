@@ -60,7 +60,8 @@ public class BarcodeStore {
         final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
         String searchUri = String.format(BARCODE_SEARCH_URI, searchCriteria.getBarcode(), searchCriteria.getPage());
-        if (!TextUtils.isEmpty(searchCriteria.getAuthentication().v2.token))
+        if (searchCriteria.getAuthentication() != null
+                && !TextUtils.isEmpty(searchCriteria.getAuthentication().v2.token))
             searchUri += "&user_credentials=" + searchCriteria.getAuthentication().v2.token;
 
         final HttpGet get = new HttpGet(searchUri);
