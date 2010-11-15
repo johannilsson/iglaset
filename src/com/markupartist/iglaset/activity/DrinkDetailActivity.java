@@ -212,22 +212,20 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         sDrink = drink;
         onUpdatedDrink(drink);
 
-        // Show the orphan barcode handler if there is one in the system.
-        if(!TextUtils.isEmpty(getApp().getOrphanBarcode()) && isLoggedIn()) {
-    		View orphanLayout = findViewById(R.id.orphan_barcode_layout);
-    		
-    		TextView textView = (TextView) orphanLayout.findViewById(R.id.orphan_barcode_text);
-    		textView.setText(String.format(this.getString(R.string.add_suggested_barcode), getApp().getOrphanBarcode()));
-    		
-    		Button buttonAdd = (Button) orphanLayout.findViewById(R.id.btn_add_orphan_code);
-    		buttonAdd.setOnClickListener(this);
-    		
-    		Button buttonForget = (Button) orphanLayout.findViewById(R.id.btn_forget_orphan_barcode);
-    		buttonForget.setOnClickListener(this);
-    		
-    		Button buttonCancel = (Button) orphanLayout.findViewById(R.id.btn_cancel);
-    		buttonCancel.setOnClickListener(this);
-    	}
+        // Orphan barcode handler layout
+		View orphanLayout = findViewById(R.id.orphan_barcode_layout);
+		
+		TextView textView = (TextView) orphanLayout.findViewById(R.id.orphan_barcode_text);
+		textView.setText(String.format(this.getString(R.string.add_suggested_barcode), getApp().getOrphanBarcode()));
+		
+		Button buttonAdd = (Button) orphanLayout.findViewById(R.id.btn_add_orphan_code);
+		buttonAdd.setOnClickListener(this);
+		
+		Button buttonForget = (Button) orphanLayout.findViewById(R.id.btn_forget_orphan_barcode);
+		buttonForget.setOnClickListener(this);
+		
+		Button buttonCancel = (Button) orphanLayout.findViewById(R.id.btn_cancel);
+		buttonCancel.setOnClickListener(this);
         
         this.registerReceiver(mBroadcastReceiver, new IntentFilter(Intents.ACTION_PUBLISH_DRINK));
     }
@@ -236,12 +234,12 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
     public void onClick(View view) {
     	switch(view.getId()) {
     	case R.id.btn_add_orphan_code:
-            new SuggestBarcodeTask().execute(getApp().getOrphanBarcode(), sDrink, mAuthentication);
-            hideOrphanBarcodeLayout();
+    		hideOrphanBarcodeLayout();
+            new SuggestBarcodeTask().execute(getApp().getOrphanBarcode(), sDrink, mAuthentication);            
             break;
     	case R.id.btn_forget_orphan_barcode:
-    		getApp().clearOrphanBarcode();
-            hideOrphanBarcodeLayout();
+    		hideOrphanBarcodeLayout();
+    		getApp().clearOrphanBarcode();            
     		break;
     	case R.id.btn_cancel:
             hideOrphanBarcodeLayout();
@@ -288,9 +286,13 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
     protected void onPostCreate(Bundle savedInstanceState) {
     	super.onPostCreate(savedInstanceState);
     	
-    	if(!TextUtils.isEmpty(getApp().getOrphanBarcode()) && isLoggedIn()) {
+    	if(shouldShowOrphanBarcodeLayout()) {
     		showOrphanBarcodeLayout();
     	}
+    }
+    
+    private boolean shouldShowOrphanBarcodeLayout() {
+    	return !TextUtils.isEmpty(getApp().getOrphanBarcode()) && isLoggedIn();
     }
     
     private IglasetApplication getApp() {
@@ -607,7 +609,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
                 .setNegativeButton(getText(android.R.string.cancel), new OnClickListener() {
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
-						if(!TextUtils.isEmpty(getApp().getOrphanBarcode()) && isLoggedIn()) {
+						if(shouldShowOrphanBarcodeLayout()) {
 							showOrphanBarcodeLayout();
 						}
 						dismissDialog(DIALOG_SUGGEST_BARCODE_FAIL);
