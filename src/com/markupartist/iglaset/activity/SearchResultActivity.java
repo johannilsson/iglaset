@@ -135,30 +135,22 @@ public class SearchResultActivity extends ListActivity implements
     			showDialog(DIALOG_DRINK_IMAGE);
     		}
     	};
-        
+
         // Check if already have some data, used if screen is rotated.
         ConfigurationData data = (ConfigurationData) getLastNonConfigurationInstance();
         if(data != null) {
         	mDrinks = data.drinks;
         	mSearchCriteria = data.searchCriteria;
-        }        
+        }      
 
         if(mDrinks != null) {
         	onDrinkData(mDrinks);
-        } else if(mSearchCriteria != null) {        	
-            mSearchDrinksTask = new SearchDrinksTask();
-            mSearchDrinksTask.setSearchDrinkCompletedListener(this);
-            mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
-            mSearchDrinksTask.setSearchDrinkErrorListener(this);
-        	mSearchDrinksTask.execute(mSearchCriteria);
+        } else if(mSearchCriteria != null) {
+        	executeSearchDrinksTask(mSearchCriteria);
         } else {
             final Intent queryIntent = getIntent();
             final String queryAction = queryIntent.getAction();
 
-            mSearchDrinksTask = new SearchDrinksTask();
-            mSearchDrinksTask.setSearchDrinkCompletedListener(this);
-            mSearchDrinksTask.setSearchDrinkErrorListener(this);
-            
             // Search actions
             if (Intent.ACTION_SEARCH.equals(queryAction)) {
                 final String queryString = queryIntent.getStringExtra(SearchManager.QUERY);
@@ -169,7 +161,6 @@ public class SearchResultActivity extends ListActivity implements
 
                 final TextView searchText = (TextView) findViewById(R.id.search_progress_text);
                 String searchingText = searchText.getText() + " \"" + queryString + "\"";
-                mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
                 searchText.setText(searchingText);
                 setTitle(searchingText);
 
@@ -214,7 +205,7 @@ public class SearchResultActivity extends ListActivity implements
             }
             
             mSearchCriteria.setAuthentication(mAuthentication);
-            mSearchDrinksTask.execute(mSearchCriteria);	
+            executeSearchDrinksTask(mSearchCriteria);
         }
         
         this.registerReceiver(mBroadcastReceiver, new IntentFilter(Intents.ACTION_PUBLISH_DRINK));
@@ -236,6 +227,18 @@ public class SearchResultActivity extends ListActivity implements
 			}
 		}
     };
+    
+    private void executeSearchDrinksTask(SearchCriteria search) {
+    	if(null != mSearchDrinksTask && mSearchDrinksTask.getStatus() == AsyncTask.Status.RUNNING) {
+    		mSearchDrinksTask.cancel(true);
+    	}
+    	
+		mSearchDrinksTask = new SearchDrinksTask();
+		mSearchDrinksTask.setSearchDrinkCompletedListener(this);
+		mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
+		mSearchDrinksTask.setSearchDrinkErrorListener(this);
+		mSearchDrinksTask.execute(search);
+    }
 
     public void onUpdatedDrink(Drink updatedDrink) {
 		// The incoming drink is most likely pointing to one of the drinks in
@@ -428,11 +431,7 @@ public class SearchResultActivity extends ListActivity implements
 		                public void onClick(DialogInterface dialog, int which) {
 		                	switch(which) {
 		                	case Dialog.BUTTON_POSITIVE:
-		                	    mSearchDrinksTask = new SearchDrinksTask();
-		                	    mSearchDrinksTask.setSearchDrinkCompletedListener(SearchResultActivity.this);
-		                	    mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
-		                	    mSearchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
-		                	    mSearchDrinksTask.execute(mSearchCriteria);
+		                		executeSearchDrinksTask(mSearchCriteria);
 			                    break;
 		                	case Dialog.BUTTON_NEGATIVE:
 		                		finish();
@@ -487,11 +486,7 @@ public class SearchResultActivity extends ListActivity implements
             if (shouldAppend(position)) {
                 getListView().addFooterView(mFooterProgressView);
                 mSearchCriteria.setPage(mPage.addAndGet(1));
-                mSearchDrinksTask = new SearchDrinksTask();
-                mSearchDrinksTask.setSearchDrinkCompletedListener(this);
-                mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(SearchResultActivity.this);
-                mSearchDrinksTask.setSearchDrinkErrorListener(SearchResultActivity.this);
-                mSearchDrinksTask.execute(mSearchCriteria);
+                executeSearchDrinksTask(mSearchCriteria);
             }
 
             if (convertView == null) {
