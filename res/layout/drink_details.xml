@@ -34,13 +34,13 @@
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
-            android:gravity="center_horizontal"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:id="@+id/orphan_barcode_text"
             android:textColor="#ffffff"
-            android:text="@string/add_suggested_barcode"/>
+            android:text="@string/add_suggested_barcode"
+            android:padding="5dip"/>
         <LinearLayout
             android:layout_height="wrap_content"
             android:orientation="horizontal"
