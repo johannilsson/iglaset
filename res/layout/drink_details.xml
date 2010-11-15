@@ -21,12 +21,16 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/drink_detail_layout" android:layout_height="wrap_content">
+        android:layout_below="@+id/drink_detail_layout"
+        android:layout_height="wrap_content">
     </ListView>
     <RelativeLayout
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_alignParentBottom="true" android:background="@drawable/transparent_pixel_70" android:id="@+id/orphan_barcode_layout" android:visibility="gone">
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/transparent_pixel_70"
+        android:id="@+id/orphan_barcode_layout"
+        android:visibility="gone">
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
@@ -34,7 +38,9 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:id="@+id/orphan_barcode_text" android:textColor="#ffffff" android:text="@string/add_suggested_barcode"/>
+            android:id="@+id/orphan_barcode_text"
+            android:textColor="#ffffff"
+            android:text="@string/add_suggested_barcode"/>
         <LinearLayout
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -44,16 +50,21 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/orphan_barcode_text"
                 android:layout_weight="1"
-                android:layout_width="0px" android:id="@+id/btn_add_orphan_code" android:text="@string/add"/>
+                android:layout_width="0px"
+                android:id="@+id/btn_add_orphan_code"
+                android:text="@string/add"/>
             <Button
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:layout_width="0px"
-                android:id="@+id/btn_forget_orphan_barcode" android:text="@string/forget_barcode"/>
+                android:id="@+id/btn_forget_orphan_barcode"
+                android:text="@string/forget_barcode"/>
             <Button
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:layout_width="0px" android:id="@+id/btn_cancel" android:text="@string/cancel"/>
+                android:layout_width="0px"
+                android:id="@+id/btn_cancel"
+                android:text="@string/cancel"/>
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>
