@@ -36,7 +36,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -65,7 +69,7 @@ import com.markupartist.iglaset.widget.DrinkDescriptionAdapter;
 import com.markupartist.iglaset.widget.SectionedAdapter;
 import com.markupartist.iglaset.widget.SectionedAdapter.Section;
 
-public class DrinkDetailActivity extends ListActivity {
+public class DrinkDetailActivity extends ListActivity implements View.OnClickListener {
     /**
      * The id for the rating dialog
      */
@@ -99,11 +103,6 @@ public class DrinkDetailActivity extends ListActivity {
      */
     private static final int DIALOG_SEARCH_NETWORK_PROBLEM = 7;
     /**
-     * The id for showing a dialog asking the user whether to add a previously scanned
-     * orphan barcode or not.
-     */
-    public static final int DIALOG_ADD_ORPHAN_BARCODE = 8;
-    /**
      * The request code for indicating that settings has been changed
      */
     protected static final int REQUEST_CODE_SETTINGS_CHANGED = 0;
@@ -120,7 +119,6 @@ public class DrinkDetailActivity extends ListActivity {
     private AuthStore.Authentication mAuthentication;
     private GetDrinkTask mGetDrinkTask;
     private GetCommentsTask mGetCommentsTask;
-    private String mOrphanBarcode;
 
     /** Called when the activity is first created. */
     @Override
@@ -213,8 +211,42 @@ public class DrinkDetailActivity extends ListActivity {
         setListAdapter(mSectionedAdapter);
         sDrink = drink;
         onUpdatedDrink(drink);
+
+        // Show the orphan barcode handler if there is one in the system.
+        if(!TextUtils.isEmpty(getApp().getOrphanBarcode()) && isLoggedIn()) {
+    		View orphanLayout = findViewById(R.id.orphan_barcode_layout);
+    		
+    		TextView textView = (TextView) orphanLayout.findViewById(R.id.orphan_barcode_text);
+    		textView.setText(String.format(this.getString(R.string.add_suggested_barcode), getApp().getOrphanBarcode()));
+    		
+    		Button buttonAdd = (Button) orphanLayout.findViewById(R.id.btn_add_orphan_code);
+    		buttonAdd.setOnClickListener(this);
+    		
+    		Button buttonForget = (Button) orphanLayout.findViewById(R.id.btn_forget_orphan_barcode);
+    		buttonForget.setOnClickListener(this);
+    		
+    		Button buttonCancel = (Button) orphanLayout.findViewById(R.id.btn_cancel);
+    		buttonCancel.setOnClickListener(this);
+    	}
         
         this.registerReceiver(mBroadcastReceiver, new IntentFilter(Intents.ACTION_PUBLISH_DRINK));
+    }
+    
+    @Override
+    public void onClick(View view) {
+    	switch(view.getId()) {
+    	case R.id.btn_add_orphan_code:
+            new SuggestBarcodeTask().execute(getApp().getOrphanBarcode(), sDrink, mAuthentication);
+            hideOrphanBarcodeLayout();
+            break;
+    	case R.id.btn_forget_orphan_barcode:
+    		getApp().clearOrphanBarcode();
+            hideOrphanBarcodeLayout();
+    		break;
+    	case R.id.btn_cancel:
+            hideOrphanBarcodeLayout();
+    		break;
+    	}
     }
     
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -227,14 +259,37 @@ public class DrinkDetailActivity extends ListActivity {
 		}
     };
     
+    private void showOrphanBarcodeLayout() {
+		View orphanLayout = findViewById(R.id.orphan_barcode_layout);
+		orphanLayout.setVisibility(View.VISIBLE);
+		Animation animation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.push_up_in);
+		orphanLayout.startAnimation(animation);		
+    }
+    
+    private void hideOrphanBarcodeLayout() {
+		final View orphanLayout = findViewById(R.id.orphan_barcode_layout);
+		Animation animation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.push_down_out);
+		animation.setAnimationListener(new AnimationListener() {
+			@Override
+			public void onAnimationEnd(Animation anim) {
+				orphanLayout.setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation anim) {}
+
+			@Override
+			public void onAnimationStart(Animation anim) {}
+		});
+		orphanLayout.startAnimation(animation);
+    }
+    
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
     	super.onPostCreate(savedInstanceState);
     	
-        // See if there is an orphan barcode in the system. If there is then offer to add it.
-        mOrphanBarcode = getApp().getOrphanBarcode();
-    	if(!TextUtils.isEmpty(mOrphanBarcode) && isLoggedIn()) {
-        	showDialog(DIALOG_ADD_ORPHAN_BARCODE);
+    	if(!TextUtils.isEmpty(getApp().getOrphanBarcode()) && isLoggedIn()) {
+    		showOrphanBarcodeLayout();
     	}
     }
     
@@ -549,7 +604,15 @@ public class DrinkDetailActivity extends ListActivity {
                         new SuggestBarcodeTask().execute(mBarcode, sDrink, mAuthentication);                        
                     }
                 })
-                .setNegativeButton(getText(android.R.string.cancel), null)
+                .setNegativeButton(getText(android.R.string.cancel), new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						if(!TextUtils.isEmpty(getApp().getOrphanBarcode()) && isLoggedIn()) {
+							showOrphanBarcodeLayout();
+						}
+						dismissDialog(DIALOG_SUGGEST_BARCODE_FAIL);
+					}	
+                })
                 .create();
             case DIALOG_RATE:
                 float userRating = mUserRatingAdapter.getUserRating();
@@ -591,11 +654,7 @@ public class DrinkDetailActivity extends ListActivity {
                         startActivityForResult(i, REQUEST_CODE_SETTINGS_CHANGED);
                     }
                 })
-                .setNegativeButton(R.string.back, new OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        ;
-                    }
-                })
+                .setNegativeButton(R.string.back, null)
                 .create();
             case DIALOG_CHOOSE_ADD_BARCODE_METHOD:
                 CharSequence[] methods = {"Scanna", "Manuellt"};
@@ -689,26 +748,6 @@ public class DrinkDetailActivity extends ListActivity {
     		                	}
     		                }
     		             });
-            case DIALOG_ADD_ORPHAN_BARCODE:
-            	String text = String.format(getString(R.string.add_suggested_barcode), mOrphanBarcode);
-                return new AlertDialog.Builder(this)
-                .setTitle(R.string.add_barcode)
-                .setMessage(text)
-                .setPositiveButton("Lägg in", new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        new SuggestBarcodeTask().execute(mOrphanBarcode, sDrink, mAuthentication);
-                	}
-                })
-                .setNeutralButton(R.string.forget_barcode, new OnClickListener() {
-                	@Override
-                	public void onClick(DialogInterface dialog, int which) {
-                        // Remove barcode to prevent this dialog for showing again.
-                		getApp().clearOrphanBarcode();
-                	}
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .create();
         }
         return null;
     }

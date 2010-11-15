@@ -1,30 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
+    
     <LinearLayout
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical"
-        >
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/drink_detail_layout">
         <include layout="@layout/drink_detail" />
     </LinearLayout>
-    <!--
-    <TextView
-        android:id="@+id/drink_description"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:linksClickable="true"
-        android:lines="10"  
-        android:lineSpacingExtra="4dip"
-    />
-     -->
-    <ListView 
+    <ListView
         android:id="@+id/android:list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
         style="@style/AppListView"
-        />
-</LinearLayout>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/drink_detail_layout" android:layout_height="wrap_content">
+    </ListView>
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true" android:background="@drawable/transparent_pixel_70" android:id="@+id/orphan_barcode_layout">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:gravity="center_horizontal"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:id="@+id/orphan_barcode_text" android:textColor="#ffffff" android:text="@string/add_suggested_barcode"/>
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_below="@id/orphan_barcode_text">
+            <Button
+                android:layout_height="wrap_content"
+                android:layout_below="@id/orphan_barcode_text"
+                android:layout_weight="1"
+                android:layout_width="0px" android:id="@+id/btn_add_orphan_code" android:text="@string/add"/>
+            <Button
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:layout_width="0px"
+                android:id="@+id/btn_forget_orphan_barcode" android:text="@string/forget_barcode"/>
+            <Button
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:layout_width="0px" android:id="@+id/btn_cancel" android:text="@string/cancel"/>
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>
+
+
+
+
+
+
