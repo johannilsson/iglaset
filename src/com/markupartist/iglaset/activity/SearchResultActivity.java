@@ -137,8 +137,21 @@ public class SearchResultActivity extends ListActivity implements
     	};
         
         // Check if already have some data, used if screen is rotated.
-        ConfigurationData data = (ConfigurationData) getLastNonConfigurationInstance();        
-        if (data == null) {
+        ConfigurationData data = (ConfigurationData) getLastNonConfigurationInstance();
+        if(data != null) {
+        	mDrinks = data.drinks;
+        	mSearchCriteria = data.searchCriteria;
+        }        
+
+        if(mDrinks != null) {
+        	onDrinkData(mDrinks);
+        } else if(mSearchCriteria != null) {        	
+            mSearchDrinksTask = new SearchDrinksTask();
+            mSearchDrinksTask.setSearchDrinkCompletedListener(this);
+            mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
+            mSearchDrinksTask.setSearchDrinkErrorListener(this);
+        	mSearchDrinksTask.execute(mSearchCriteria);
+        } else {
             final Intent queryIntent = getIntent();
             final String queryAction = queryIntent.getAction();
 
@@ -202,10 +215,6 @@ public class SearchResultActivity extends ListActivity implements
             
             mSearchCriteria.setAuthentication(mAuthentication);
             mSearchDrinksTask.execute(mSearchCriteria);	
-
-        } else {
-        	mSearchCriteria = data.searchCriteria;
-        	onDrinkData(data.drinks);
         }
         
         this.registerReceiver(mBroadcastReceiver, new IntentFilter(Intents.ACTION_PUBLISH_DRINK));
