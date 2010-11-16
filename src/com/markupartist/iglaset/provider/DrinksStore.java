@@ -22,7 +22,7 @@ import com.markupartist.iglaset.util.StringUtils;
 
 public class DrinksStore {
     private static DrinksStore mInstance;
-    private static String TAG = "DrinksStore";
+    private static String TAG = DrinksStore.class.getSimpleName();
     private static String ARTICLES_BASE_URI =
     	"http://www.iglaset.se/articles.xml";
     private static String ARTICLE_DETAILS_URI =

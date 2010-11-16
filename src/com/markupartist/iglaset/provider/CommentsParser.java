@@ -20,7 +20,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 class CommentsParser extends DefaultHandler {
-    private static final String TAG = "CommentsParser";
+    private static final String TAG = CommentsParser.class.getSimpleName();
     private ArrayList<Comment> mComments = null;
     private Comment mCurrentComment;
     private StringBuilder mBuilder = null;

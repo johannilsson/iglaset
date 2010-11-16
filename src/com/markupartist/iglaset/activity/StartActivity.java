@@ -40,7 +40,7 @@ import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.util.ErrorReporter;
 
 public class StartActivity extends Activity implements android.view.View.OnClickListener, TextView.OnEditorActionListener {
-    private static final String TAG = "StartActivity";
+    private static final String TAG = StartActivity.class.getSimpleName();
 
     private static final int DIALOG_ABOUT = 0;
     private static final int DIALOG_NOT_AUTHENTICATED = 1;

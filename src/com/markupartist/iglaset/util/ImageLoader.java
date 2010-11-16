@@ -23,8 +23,8 @@ import android.widget.ImageView;
  * http://wu-media.com/2009/06/android-imageloader-load-images-sequencially-in-the-background/
  */
 public class ImageLoader {
-    static private ImageLoader sInstance;
-    static final String TAG = "ImageLoader";
+    private static ImageLoader sInstance;
+    private final static String TAG = ImageLoader.class.getSimpleName();
     static final int IO_BUFFER_SIZE = 4096;
 
     static public ImageLoader getInstance() {

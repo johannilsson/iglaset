@@ -110,7 +110,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
     /**
      * The log tag
      */
-    static String TAG = "DrinkDetailActivity";
+    private static final String TAG = DrinkDetailActivity.class.getSimpleName();
     private CommentsStore mCommentsStore = new CommentsStore();
     private SimpleAdapter mCommentsAdapter;
     private ArrayList<Comment> mComments;
