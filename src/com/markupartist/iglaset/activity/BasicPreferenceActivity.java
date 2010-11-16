@@ -19,7 +19,6 @@ import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthUserTask;
 
 public class BasicPreferenceActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener, AuthUserTask.OnAuthorizeListener {
-    private static final String TAG = "BasicPreferenceActivity";
     private static final int DIALOG_CLEAR_SEARCH_HISTORY = 0;
     private static final int DIALOG_AUTH_FAILED = 1;
     private AuthUserTask mAuthUserTask;
