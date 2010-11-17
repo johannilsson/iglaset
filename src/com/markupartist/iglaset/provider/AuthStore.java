@@ -25,7 +25,7 @@ import android.util.Log;
 import com.markupartist.iglaset.util.HttpManager;
 
 public class AuthStore {
-    private static final String TAG = "AuthStore";
+    private static final String TAG = AuthStore.class.getSimpleName();
     private static final String AUTH_BASE_URI_V2 = "http://www.iglaset.se/user_session.xml";
     private static AuthStore sInstance;
 

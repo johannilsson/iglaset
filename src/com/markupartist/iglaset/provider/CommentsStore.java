@@ -12,7 +12,7 @@ import android.util.Log;
 import com.markupartist.iglaset.util.HttpManager;
 
 public class CommentsStore {
-    private static String TAG = "CommentsStore";
+    private static String TAG = CommentsStore.class.getSimpleName();
     private static String COMMENTS_BASE_URI = "http://www.iglaset.se/articles/%d/comments.xml";
 
     public ArrayList<Comment> getComments(Drink drink) {

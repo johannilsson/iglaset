@@ -18,7 +18,7 @@ import android.util.Log;
 import com.markupartist.iglaset.util.HttpManager;
 
 public class BarcodeStore {
-    private static final String TAG = "BarcodeStore";
+    private static final String TAG = BarcodeStore.class.getSimpleName();
     private static final String BARCODE_SUGGEST_URI = "http://www.iglaset.se/barcodes/suggest_ean.xml?user_credentials=%s";
     private static final String BARCODE_SEARCH_URI = "http://www.iglaset.se/barcodes/show_by_ean/%s.xml?page=%d";
     private static BarcodeStore sInstance;

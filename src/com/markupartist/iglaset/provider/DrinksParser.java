@@ -20,7 +20,7 @@ import android.util.Log;
 import com.markupartist.iglaset.provider.Drink.Volume;
 
 class DrinksParser extends DefaultHandler {
-    private static final String TAG = "DrinksParser";
+    private static final String TAG = DrinksParser.class.getSimpleName();
     private ArrayList<Drink> mDrinks = null;
     private Drink mCurrentDrink;
     private Volume mCurrentVolume = null;

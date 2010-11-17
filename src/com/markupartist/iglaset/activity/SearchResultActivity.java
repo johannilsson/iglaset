@@ -220,7 +220,7 @@ public class SearchResultActivity extends ListActivity implements
 				Bundle extras = intent.getExtras();
 				if(extras != null && extras.containsKey(Intents.EXTRA_DRINK)) {
 					final Drink drink = (Drink) intent.getExtras().get(Intents.EXTRA_DRINK);
-					SearchResultActivity.this.onUpdatedDrink(drink);
+					onUpdatedDrink(drink);
 				} else {
 					Log.e(TAG, "No drink data available");
 				}	
