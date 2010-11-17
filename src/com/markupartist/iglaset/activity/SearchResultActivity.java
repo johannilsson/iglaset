@@ -146,7 +146,7 @@ public class SearchResultActivity extends ListActivity implements
         if(mDrinks != null) {
         	onDrinkData(mDrinks);
         } else if(mSearchCriteria != null) {
-        	executeSearchDrinksTask(mSearchCriteria);
+        	createSearchDrinksTask().execute(mSearchCriteria);
         } else {
             final Intent queryIntent = getIntent();
             final String queryAction = queryIntent.getAction();
@@ -205,7 +205,7 @@ public class SearchResultActivity extends ListActivity implements
             }
             
             mSearchCriteria.setAuthentication(mAuthentication);
-            executeSearchDrinksTask(mSearchCriteria);
+            createSearchDrinksTask().execute(mSearchCriteria);
         }
         
         this.registerReceiver(mBroadcastReceiver, new IntentFilter(Intents.ACTION_PUBLISH_DRINK));
@@ -228,7 +228,7 @@ public class SearchResultActivity extends ListActivity implements
 		}
     };
     
-    private void executeSearchDrinksTask(SearchCriteria search) {
+    private SearchDrinksTask createSearchDrinksTask() {
     	if(null != mSearchDrinksTask && mSearchDrinksTask.getStatus() == AsyncTask.Status.RUNNING) {
     		mSearchDrinksTask.cancel(true);
     	}
@@ -237,7 +237,7 @@ public class SearchResultActivity extends ListActivity implements
 		mSearchDrinksTask.setSearchDrinkCompletedListener(this);
 		mSearchDrinksTask.setSearchDrinkProgressUpdatedListener(this);
 		mSearchDrinksTask.setSearchDrinkErrorListener(this);
-		mSearchDrinksTask.execute(search);
+		return mSearchDrinksTask;
     }
 
     public void onUpdatedDrink(Drink updatedDrink) {
@@ -432,7 +432,7 @@ public class SearchResultActivity extends ListActivity implements
 		                public void onClick(DialogInterface dialog, int which) {
 		                	switch(which) {
 		                	case Dialog.BUTTON_POSITIVE:
-		                		executeSearchDrinksTask(mSearchCriteria);
+		                		createSearchDrinksTask().execute(mSearchCriteria);
 			                    break;
 		                	case Dialog.BUTTON_NEGATIVE:
 		                		finish();
@@ -487,7 +487,9 @@ public class SearchResultActivity extends ListActivity implements
             if (shouldAppend(position)) {
                 getListView().addFooterView(mFooterProgressView);
                 mSearchCriteria.setPage(mPage.addAndGet(1));
-                executeSearchDrinksTask(mSearchCriteria);
+                SearchDrinksTask task = createSearchDrinksTask();
+                task.setSearchDrinkCompletedListener(this);
+                task.execute(mSearchCriteria);
             }
 
             if (convertView == null) {
