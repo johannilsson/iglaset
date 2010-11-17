@@ -286,13 +286,14 @@ public class SearchResultActivity extends ListActivity implements
         super.onDestroy();
     }
     
+    @Override
     public void onBackPressed() {
     	// Remove the stored orphan barcode if the user exits.
     	if(mSearchCriteria.hasBarcode()) {
     		((IglasetApplication) getApplication()).clearOrphanBarcode();    		
     	}
     	
-    	finish();
+    	super.onBackPressed();
     }
 
     @Override
