@@ -486,6 +486,7 @@ public class SearchResultActivity extends ListActivity implements
             
             if (shouldAppend(position)) {
                 getListView().addFooterView(mFooterProgressView);
+                getListView().forceLayout();
                 mSearchCriteria.setPage(mPage.addAndGet(1));
                 SearchDrinksTask task = createSearchDrinksTask();
                 task.setSearchDrinkCompletedListener(this);
