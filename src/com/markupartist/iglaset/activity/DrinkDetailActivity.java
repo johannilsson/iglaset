@@ -5,7 +5,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +18,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -68,6 +66,7 @@ import com.markupartist.iglaset.util.ImageLoader;
 import com.markupartist.iglaset.widget.DrinkDescriptionAdapter;
 import com.markupartist.iglaset.widget.SectionedAdapter;
 import com.markupartist.iglaset.widget.SectionedAdapter.Section;
+import com.markupartist.iglaset.widget.VolumeAdapter;
 
 public class DrinkDetailActivity extends ListActivity implements View.OnClickListener {
     /**
@@ -1003,36 +1002,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         }
     }
     
-    private class VolumeAdapter extends ArrayAdapter<Volume> {
-        public VolumeAdapter(Context context, List<Volume> objects) {
-            super(context, R.layout.volume_row, objects);
-        }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-        	if(null == convertView) {
-        		convertView = getLayoutInflater().inflate(R.layout.volume_row, parent, false);
-        	}
-
-            Volume volume = getItem(position);
-            TextView id = (TextView) convertView.findViewById(R.id.volume_id);
-            id.setText(String.valueOf(volume.getArticleId()));
-
-            TextView amount = (TextView) convertView.findViewById(R.id.volume_amount);
-            amount.setText(String.valueOf(volume.getVolume()) + " ml"); // TODO should fix hard coded string
-
-            TextView price = (TextView) convertView.findViewById(R.id.volume_price);
-            price.setText(volume.getPriceSek() + " kr"); // TODO should fix hard coded string
-
-            if (volume.isRetired()) {
-                id.setPaintFlags(id.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                amount.setPaintFlags(amount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                price.setPaintFlags(price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            }
-
-            return convertView;
-        }
-    }
 
     private class UserRatingAdapter extends ArrayAdapter<String> {
         private float mUserRating;
