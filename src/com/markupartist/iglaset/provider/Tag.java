@@ -1,6 +1,9 @@
 package com.markupartist.iglaset.provider;
 
-public class Tag {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Tag implements Parcelable {
 	
 	public static final int UNDEFINED_ID = -1;
 
@@ -10,6 +13,19 @@ public class Tag {
 	
 	public Tag() {
 		id = UNDEFINED_ID;
+	}
+	
+    public Tag(Parcel in) {
+        id = in.readInt();
+        type = in.readString();
+        name = in.readString();
+    }
+    
+	@Override
+	public void writeToParcel(Parcel parcel, int flags) {
+		parcel.writeInt(id);
+		parcel.writeString(type);
+		parcel.writeString(name);
 	}
 	
 	public int getId() {
@@ -38,5 +54,10 @@ public class Tag {
 	
 	public String toString() {
 		return this.name;
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
 	}
 }
