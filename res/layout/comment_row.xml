@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -7,48 +7,39 @@
     android:paddingBottom="7dip"
     android:paddingLeft="20dip"
     >
-    <LinearLayout
+    <TextView
+        android:id="@+id/comment_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textStyle="bold"
+        android:paddingRight="15dip"
+        android:maxLength="13"
+        android:text="johanjohan" />
+    <TextView android:id="@+id/comment_created"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="5dip"
+        android:textColor="?android:attr/textColorSecondary"
+        android:text="2009-10-10"
+        android:layout_alignParentRight="true"/>
+    <RatingBar
+        android:id="@+id/comment_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="2dip"
+        android:layout_marginRight="4dip"
+        android:gravity="right"
+        android:numStars="10"
+        android:stepSize="1"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_below="@+id/comment_created"
+        android:layout_alignParentLeft="true"/>
+    <TextView android:id="@+id/comment_comment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="fill"
-        android:orientation="horizontal"
-        >
-	    <TextView
-	        android:id="@+id/comment_nickname"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textColor="?android:attr/textColorPrimary"
-	        android:textStyle="bold"
-	        android:paddingRight="15dip"
-	        android:maxLength="13"
-	        android:text="johanjohan"
-	        />
-	    <TextView
-	        android:id="@+id/comment_created"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:paddingRight="5dip"
-	        android:textColor="?android:attr/textColorSecondary"
-	        android:text="2009"
-	        android:layout_weight="1"
-	        />
-	    <RatingBar
-	        android:id="@+id/comment_rating"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:paddingTop="2dip"
-            android:layout_marginRight="4dip"
-	        android:gravity="right"
-	        android:numStars="10"
-	        android:stepSize="1"
-	        style="?android:attr/ratingBarStyleSmall"
-	    />
-    </LinearLayout>
-	<TextView
-	    android:id="@+id/comment_comment"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:textColor="?android:attr/textColorPrimary"
-	    android:text="Usch!!!"
-		/>
-</LinearLayout>
+        android:textColor="?android:attr/textColorPrimary"
+        android:text="Usch!!!"
+        android:layout_below="@+id/comment_rating"/>
+
+</RelativeLayout>
