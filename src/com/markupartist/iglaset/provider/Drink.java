@@ -20,10 +20,11 @@ public class Drink implements Parcelable {
     private String mAlcoholPercent;
     private int mYear;
     private String mDescription;
-    private String mRating = "0";
+    private float mUserRating;
+    private float mEstimatedRating;
+    private float mAverageRating;
     private ArrayList<Volume> mVolumes;
     private ArrayList<Tag> mTags;
-    private float mUserRating;
     private int mCommentCount;
     private int mRatingCount;
     private TreeMap<ImageSize, String> mImages;
@@ -49,7 +50,6 @@ public class Drink implements Parcelable {
         mAlcoholPercent = in.readString();
         mYear = in.readInt();
         mDescription = in.readString();
-        mRating = in.readString();
         mCommentCount = in.readInt();
         mRatingCount = in.readInt();
         
@@ -63,6 +63,8 @@ public class Drink implements Parcelable {
         in.readTypedList(mTags, Tag.CREATOR);
 
         mUserRating = in.readFloat();
+        mAverageRating = in.readFloat();
+        mEstimatedRating = in.readFloat();
     }
 
     public void addVolume(Volume volume) {
@@ -98,13 +100,14 @@ public class Drink implements Parcelable {
         dest.writeString(mAlcoholPercent);
         dest.writeInt(mYear);
         dest.writeString(mDescription);
-        dest.writeString(mRating);
         dest.writeInt(mCommentCount);
         dest.writeInt(mRatingCount);
         dest.writeMap(mImages);
         dest.writeTypedList(mVolumes);
         dest.writeTypedList(mTags);
         dest.writeFloat(mUserRating);
+        dest.writeFloat(mAverageRating);
+        dest.writeFloat(mEstimatedRating);
     }
 
     public static final Creator<Drink> CREATOR = new Creator<Drink>() {
@@ -284,12 +287,12 @@ public class Drink implements Parcelable {
         this.mDescription = description;
     }
 
-    public String getRating() {
-        return mRating;
+    public float getAverageRating() {
+        return mAverageRating;
     }
 
-    public void setRating(String rating) {
-        this.mRating = rating;
+    public void setAverageRating(float rating) {
+        this.mAverageRating = rating;
     }
 
     public float getUserRating() {
@@ -302,6 +305,18 @@ public class Drink implements Parcelable {
     
     public void setUserRating(float userRating) {
         this.mUserRating = userRating;
+    }
+    
+    public void setEstimatedRating(float rating) {
+    	this.mEstimatedRating = rating;
+    }
+    
+    public float getEstimatedRating() {
+    	return this.mEstimatedRating;
+    }
+    
+    public boolean hasEstimatedRating() {
+    	return this.mEstimatedRating != 0.0;
     }
 
     /**

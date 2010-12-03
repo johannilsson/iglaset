@@ -119,8 +119,8 @@ class DrinksParser extends DefaultHandler {
             	// Use newline as <br>. That's why the distilled "result" variable
             	// cannot be used.
                 mCurrentDrink.setDescription(mTextBuffer.toString().trim().replaceAll("\n", "<br/>"));
-            } else if (name.equals("avg_rating")) {
-                mCurrentDrink.setRating(result);
+            } else if (name.equals("avg_rating") && result.length() > 0) {
+                mCurrentDrink.setAverageRating(Float.parseFloat(result));
             } else if (name.equals("comments")) {
             	mCurrentDrink.setCommentCount(Integer.parseInt(result));
             } else if (name.equals("small")) {
@@ -141,6 +141,8 @@ class DrinksParser extends DefaultHandler {
             	mCurrentDrink.setCommentCount(Integer.parseInt(result));
             } else if (name.equals("ratings")) {
             	mCurrentDrink.setRatingCount(Integer.parseInt(result));
+            } else if (name.equals("estimated_rating") && result.length() > 0) {
+            	mCurrentDrink.setEstimatedRating(Float.parseFloat(result));
             }
         }
 

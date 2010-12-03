@@ -166,6 +166,7 @@ public class SearchResultActivity extends ListActivity implements
 
                 mSearchCriteria = new SearchCriteria();
                 mSearchCriteria.setQuery(queryString);
+                mSearchCriteria.setSortMode(SearchCriteria.Sort.Recommendation);
                 
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
                 setTitle(R.string.recommendations_label);
@@ -502,9 +503,10 @@ public class SearchResultActivity extends ListActivity implements
                 	dvh.getRateView().setRating(drink.getUserRating());
                 	dvh.getNameView().setCompoundDrawables(null, null, dvh.getGlassIcon(getContext()), null);
                 } else {
-                	dvh.getRateView().setRating(Float.parseFloat(drink.getRating()));
+                	dvh.getRateView().setRating(drink.getAverageRating());
                 	dvh.getNameView().setCompoundDrawables(null, null, null, null);
                 }
+                
                 dvh.getOriginCountryView().setText(drink.getConcatenatedOrigin());
                 dvh.getAlcoholView().setText(drink.getAlcoholPercent());
                 dvh.getRatingCountView().setText(String.valueOf(drink.getRatingCount()));
