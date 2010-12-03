@@ -5,7 +5,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import android.app.AlertDialog;
@@ -28,6 +30,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -62,7 +65,10 @@ import com.markupartist.iglaset.provider.CommentsStore;
 import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.DrinksStore;
 import com.markupartist.iglaset.provider.Drink.Volume;
+import com.markupartist.iglaset.provider.Tag;
 import com.markupartist.iglaset.util.ImageLoader;
+import com.markupartist.iglaset.util.ListUtils;
+import com.markupartist.iglaset.util.MultiHashMap;
 import com.markupartist.iglaset.widget.DrinkDescriptionAdapter;
 import com.markupartist.iglaset.widget.SectionedAdapter;
 import com.markupartist.iglaset.widget.SectionedAdapter.Section;
@@ -178,11 +184,15 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         	mSectionedAdapter.addSection(0, getText(R.string.manufacturers_description), adapter);
         }
         
-        HashMap<String, ArrayList<String>> tags = drink.getTags();
-        Set<Map.Entry<String, ArrayList<String>>> nameSet = tags.entrySet();
-        for (Map.Entry<String, ArrayList<String>> entry : nameSet) {
-            mSectionedAdapter.addSection(0, entry.getKey(), new ArrayAdapter<String>(this, 
-                    R.layout.simple_row, entry.getValue()));
+        ArrayList<Tag> tags = drink.getTags();
+	    if(tags.isEmpty() == false) {
+	    	MultiHashMap<String, Tag> tagMap = ListUtils.toMultiHashMap(tags, "getType");
+	        Set<Entry<String, List<Tag>>> nameSet = tagMap.entrySet();
+	        for (Entry<String, List<Tag>> entry : nameSet) {
+	            mSectionedAdapter.addSection(0, entry.getKey(),
+	            		new ArrayAdapter<Tag>(this, 
+	                    R.layout.simple_row, entry.getValue()));
+	        }
         }
 
         ArrayList<Volume> volumes = drink.getVolumes();
@@ -522,6 +532,13 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         if (item instanceof Volume) {
             Volume volume = (Volume) item;
             startActivity(createInventoryIntent(volume));
+        } else if (item instanceof Tag) {
+        	Tag tag = (Tag) item;
+        	ArrayList<Integer> tags = new ArrayList<Integer>();
+        	tags.add(tag.getId());
+            Intent searchIntent = new Intent(this, SearchResultActivity.class);
+            searchIntent.putExtra(SearchResultActivity.EXTRA_SEARCH_TAGS, tags);
+            startActivity(searchIntent); 
         } else if (section.adapter instanceof UserRatingAdapter) {
         	tryShowAuthenticatedDialog(DIALOG_RATE);
         } else if (section.adapter instanceof DrinkDescriptionAdapter) {

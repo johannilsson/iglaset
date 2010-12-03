@@ -24,7 +24,7 @@ class DrinksParser extends DefaultHandler {
     private ArrayList<Drink> mDrinks = null;
     private Drink mCurrentDrink;
     private Volume mCurrentVolume = null;
-    private String mCurrentTagType;
+    private Tag mCurrentTag = null;
     private StringBuilder mTextBuffer = null;
     private int mArticleCount;
     public static int COUNT_UNDEFINED = -1;
@@ -78,7 +78,9 @@ class DrinksParser extends DefaultHandler {
             mCurrentVolume.setPriceSek(atts.getValue("price").trim());
             mCurrentVolume.setRetired(Integer.parseInt(atts.getValue("retired").trim()));
         } else if (name.equals("tag")) {
-            mCurrentTagType = atts.getValue("type").trim();
+        	mCurrentTag = new Tag();
+        	mCurrentTag.setId(Integer.parseInt(atts.getValue("id")));
+        	mCurrentTag.setType(atts.getValue("type"));
         }
     }
 
@@ -109,8 +111,10 @@ class DrinksParser extends DefaultHandler {
             } else if (name.equals("volume")) {
                 mCurrentVolume.setVolume(Integer.parseInt(result));
                 mCurrentDrink.addVolume(mCurrentVolume);
-            } else if (name.equals("tag")) {
-                mCurrentDrink.addTag(mCurrentTagType, result);
+            } else if (name.equals("tag")) {      
+            	mCurrentTag.setName(result);
+                mCurrentDrink.addTag(mCurrentTag);
+                mCurrentTag = null;
             } else if (name.equals("commercial_desc")) {
             	// Use newline as <br>. That's why the distilled "result" variable
             	// cannot be used.

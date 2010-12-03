@@ -1,7 +1,6 @@
 package com.markupartist.iglaset.provider;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.TreeMap;
 
 import android.os.Parcel;
@@ -23,7 +22,7 @@ public class Drink implements Parcelable {
     private String mDescription;
     private String mRating = "0";
     private ArrayList<Volume> mVolumes;
-    private HashMap<String, ArrayList<String>> mTags;
+    private ArrayList<Tag> mTags;
     private float mUserRating;
     private int mCommentCount;
     private int mRatingCount;
@@ -60,8 +59,8 @@ public class Drink implements Parcelable {
         mVolumes = new ArrayList<Volume>();
         in.readTypedList(mVolumes, Volume.CREATOR);
 
-        mTags = new HashMap<String, ArrayList<String>>();
-        in.readMap(mTags, ClassLoader.getSystemClassLoader());
+        mTags = new ArrayList<Tag>();
+        in.readTypedList(mTags, Tag.CREATOR);
 
         mUserRating = in.readFloat();
     }
@@ -72,23 +71,16 @@ public class Drink implements Parcelable {
         mVolumes.add(volume);
     }
 
-    public HashMap<String, ArrayList<String>> getTags() {
-        return mTags;
+    public void addTag(Tag tag) {
+    	if(mTags == null) {
+    		mTags = new ArrayList<Tag>();
+    	}
+    	
+    	mTags.add(tag);
     }
     
-    public void addTag(String type, String name) {
-        if (mTags == null)
-            mTags = new HashMap<String, ArrayList<String>>();
-
-        ArrayList<String> tagList;
-        if (mTags.containsKey(type)) {
-            tagList = mTags.get(type);
-            tagList.add(name);
-        } else {
-            tagList = new ArrayList<String>();
-            tagList.add(name);
-            mTags.put(type, tagList);
-        }
+    public ArrayList<Tag> getTags() {
+    	return mTags;
     }
 
     public int describeContents() {
@@ -111,8 +103,8 @@ public class Drink implements Parcelable {
         dest.writeInt(mRatingCount);
         dest.writeMap(mImages);
         dest.writeTypedList(mVolumes);
-        dest.writeMap(mTags);
-        dest.writeFloat(mUserRating);        
+        dest.writeTypedList(mTags);
+        dest.writeFloat(mUserRating);
     }
 
     public static final Creator<Drink> CREATOR = new Creator<Drink>() {
