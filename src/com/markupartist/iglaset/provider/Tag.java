@@ -1,9 +1,11 @@
 package com.markupartist.iglaset.provider;
 
+import com.markupartist.iglaset.util.HasKey;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Tag implements Parcelable {
+public class Tag implements Parcelable, HasKey<String> {
 	
 	public static final int UNDEFINED_ID = -1;
 
@@ -69,5 +71,10 @@ public class Tag implements Parcelable {
 	@Override
 	public int describeContents() {
 		return 0;
+	}
+
+	@Override
+	public String getKey() {
+		return this.type;
 	}
 }
