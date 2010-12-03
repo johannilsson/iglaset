@@ -26,10 +26,10 @@ public class Comment {
         this.mUserId = userId;
     }
     public Date getCreated() {
-        return mCreated;
+        return (Date) mCreated.clone();
     }
     public void setCreated(Date date) {
-        this.mCreated = date;
+        this.mCreated = (Date) date.clone();
     }
     /**
      * Get comment date.
