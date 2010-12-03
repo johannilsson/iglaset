@@ -26,6 +26,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -124,6 +125,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
     private AuthStore.Authentication mAuthentication;
     private GetDrinkTask mGetDrinkTask;
     private GetCommentsTask mGetCommentsTask;
+    private DrinkViewHolder mViewHolder;
 
     /** Called when the activity is first created. */
     @Override
@@ -139,46 +141,22 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         
         Bundle extras = getIntent().getExtras();
         final Drink drink = extras.getParcelable(Intents.EXTRA_DRINK);
-
+        sDrink = drink;
+        
+        // Populate drink details
+        View detailsLayout = this.findViewById(R.id.drink_detail_layout);
+        mViewHolder = new DrinkViewHolder(detailsLayout);
+        mViewHolder.populate(this, drink, mImageClickListener);
+    	float rating = (drink.hasEstimatedRating() ? drink.getEstimatedRating() : drink.getAverageRating());
+    	mViewHolder.getRateView().setRating(rating);
+        
         mUserRatingAdapter = new UserRatingAdapter(this, 0);
+        this.updateUserRatingInUi(drink.getUserRating());
         mSectionedAdapter.addSectionFirst(0, getText(R.string.my_rating), mUserRatingAdapter);
 
         if (mAuthentication != null && mAuthentication.looksValid()) {
         	launchGetDrinkTask(drink);
         }
-
-        TextView nameTextView = (TextView) findViewById(R.id.drink_name);
-        nameTextView.setText(drink.getName());
-        updateHasRatedIconInUi(drink.hasUserRating());        
-        
-        TextView originCountryTextView = (TextView) findViewById(R.id.drink_origin_country);
-        originCountryTextView.setText(drink.getConcatenatedOrigin());
-
-        TextView alcoholPercentTextView = (TextView) findViewById(R.id.drink_alcohol_percent);
-        alcoholPercentTextView.setText(drink.getAlcoholPercent());
-
-        //TextView yearTextView = (TextView) findViewById(R.id.drink_year);
-        //yearTextView.setText(drink.getYear() == 0 ? "" : String.valueOf(drink.getYear()));
-
-        RatingBar drinkRatingBar = (RatingBar) findViewById(R.id.drink_rating);
-    	float rating = (drink.hasEstimatedRating() ? drink.getEstimatedRating() : drink.getAverageRating());
-    	drinkRatingBar.setRating(rating);
-
-        ImageView imageView = (ImageView) findViewById(R.id.drink_image);
-        imageView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showDialog(DIALOG_SHOW_DRINK_IMAGE);
-			}
-		});
-        
-        final int w = imageView.getDrawable().getIntrinsicWidth();
-        final int h = imageView.getDrawable().getIntrinsicHeight();
-        ImageLoader.getInstance().load(imageView, drink.getThumbnailUrl(w, h), 
-                true, R.drawable.noimage, null);
-        
-        //TextView descriptionTextView = (TextView) findViewById(R.id.drink_description);
-        //descriptionTextView.setText(Html.fromHtml(drink.getDescription()));
 
         if(true == drink.hasDescription()) {
         	DrinkDescriptionAdapter adapter = new DrinkDescriptionAdapter(this, drink.getDescription());
@@ -219,9 +197,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         }
 
         setListAdapter(mSectionedAdapter);
-        sDrink = drink;
-        onUpdatedDrink(drink);
-
+        
         // Orphan barcode handler layout
 		View orphanLayout = findViewById(R.id.orphan_barcode_layout);
 		
@@ -256,6 +232,13 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
     		break;
     	}
     }
+    
+    private final View.OnClickListener mImageClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			showDialog(DIALOG_SHOW_DRINK_IMAGE);
+		}
+	};
     
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -404,13 +387,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
 
     private void onUpdatedDrink(Drink drink) {
         updateUserRatingInUi(drink.getUserRating());
-        updateHasRatedIconInUi(drink.hasUserRating());
-        
-        TextView ratingCountView = (TextView) findViewById(R.id.drink_rating_count);
-        ratingCountView.setText(String.valueOf(drink.getRatingCount()));
-        
-        TextView commentCountView = (TextView) findViewById(R.id.drink_comment_count);
-        commentCountView.setText(String.valueOf(drink.getCommentCount()));
+        mViewHolder.populate(this, drink, mImageClickListener);
     }
 
     private void updateUserRatingInUi(float rating) {
@@ -421,20 +398,6 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         }
     }
     
-    private void updateHasRatedIconInUi(Boolean hasRated) {
-    	TextView nameTextView = (TextView) findViewById(R.id.drink_name);
-    	if(null != nameTextView) {
-        	Drawable icon = null;
-
-	    	if(true == hasRated) {
-	        	icon = getResources().getDrawable(R.drawable.glass_icon);
-	        	icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
-	    	}
-	    	
-    		nameTextView.setCompoundDrawables(null, null, icon, null);
-    	}
-    }
-
     /**
      * Update comments view.
      * @param comments the comments
@@ -1019,9 +982,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         	}
         }
     }
-    
-
-
+ 
     private class UserRatingAdapter extends ArrayAdapter<String> {
         private float mUserRating;
         public UserRatingAdapter(Context context, float userRating) {

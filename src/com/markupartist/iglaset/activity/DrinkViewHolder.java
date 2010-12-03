@@ -1,6 +1,8 @@
 package com.markupartist.iglaset.activity;
 
 import com.markupartist.iglaset.R;
+import com.markupartist.iglaset.provider.Drink;
+import com.markupartist.iglaset.util.ImageLoader;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -12,8 +14,6 @@ import android.widget.TextView;
 public class DrinkViewHolder {
     private View layout;
     private TextView nameView;
-    //private TextView yearView;
-    //private TextView originView;
     private TextView originCountryView;
     private RatingBar rateView;
     private TextView alcoholView;
@@ -25,6 +25,40 @@ public class DrinkViewHolder {
     public DrinkViewHolder(View layout) {
         this.layout = layout;
     }
+    
+    /**
+     * Populate the view holder with a drink's data. This will set every child
+     * view with the appropriate drink data, with the exception of the drink
+     * rating since that differs slightly depending on where the view is used.
+     * 
+     * @param drink Drink to use for updating.
+     * @param imageClickListener Click listener to attach to thumbnail.
+     */
+    public void populate(Context context, Drink drink, View.OnClickListener imageClickListener) {
+        getNameView().setText(drink.getName());
+        getOriginCountryView().setText(drink.getConcatenatedOrigin());
+        getAlcoholView().setText(drink.getAlcoholPercent());
+        getRatingCountView().setText(String.valueOf(drink.getRatingCount()));
+        getCommentCountView().setText(String.valueOf(drink.getCommentCount()));
+
+        if(drink.hasUserRating()) {
+    		getNameView().setCompoundDrawables(null, null, getGlassIcon(context), null);
+    	} else {
+    		getNameView().setCompoundDrawables(null, null, null, null);
+    	}
+
+        // Only load the image if it's not already loaded. Trying to load it
+        // twice will cause the image's background (R.drawable.noimage) to
+        // show for a brief second while the new image is applied.
+        Drink tag = (Drink) getImageView().getTag();
+        if(null == tag || tag.getId() != drink.getId()) {
+	        final int w = getImageView().getDrawable().getIntrinsicWidth();
+	        final int h = getImageView().getDrawable().getIntrinsicHeight();
+	        ImageLoader.getInstance().load(getImageView(), drink.getThumbnailUrl(w, h), true, R.drawable.noimage, null);
+	        getImageView().setTag(drink);
+        }
+        getImageView().setOnClickListener(imageClickListener);
+    }
 
     public TextView getNameView() {
         if (nameView == null) {
@@ -32,15 +66,6 @@ public class DrinkViewHolder {
         }
         return nameView;
     }
-
-    /*
-    public TextView getYearView() {
-        if (yearView == null) {
-            yearView = (TextView) layout.findViewById(R.id.drink_year);
-        }
-        return yearView;
-    }
-    */
 
     public TextView getOriginCountryView() {
         if (originCountryView == null) {

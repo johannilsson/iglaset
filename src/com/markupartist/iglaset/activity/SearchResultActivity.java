@@ -165,7 +165,8 @@ public class SearchResultActivity extends ListActivity implements
                 setTitle(searchingText);
 
                 mSearchCriteria = new SearchCriteria();
-                mSearchCriteria.setQuery(queryString);                
+                mSearchCriteria.setQuery(queryString);
+                
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
                 setTitle(R.string.recommendations_label);
 
@@ -483,9 +484,9 @@ public class SearchResultActivity extends ListActivity implements
             }
 
             if (convertView == null) {
-                    convertView = getLayoutInflater().inflate(R.layout.drink_detail, null);
-                    dvh = new DrinkViewHolder(convertView);
-                    convertView.setTag(dvh);
+	            convertView = getLayoutInflater().inflate(R.layout.drink_detail, null);
+	            dvh = new DrinkViewHolder(convertView);
+	            convertView.setTag(dvh);
             } else {
                 dvh = (DrinkViewHolder) convertView.getTag(); 
 
@@ -496,28 +497,13 @@ public class SearchResultActivity extends ListActivity implements
 
             final Drink drink = getItem(position);
             if (drink != null && dvh != null) {
-                dvh.getNameView().setText(drink.getName());
+            	dvh.populate(getContext(), drink, mImageClickListener);
                 if(drink.hasUserRating()) {
                 	dvh.getRateView().setRating(drink.getUserRating());
-                	dvh.getNameView().setCompoundDrawables(null, null, dvh.getGlassIcon(getContext()), null);
                 } else {
                 	float rating = (drink.hasEstimatedRating() ? drink.getEstimatedRating() : drink.getAverageRating());
                 	dvh.getRateView().setRating(rating);
-                	dvh.getNameView().setCompoundDrawables(null, null, null, null);
                 }
-                
-                dvh.getOriginCountryView().setText(drink.getConcatenatedOrigin());
-                dvh.getAlcoholView().setText(drink.getAlcoholPercent());
-                dvh.getRatingCountView().setText(String.valueOf(drink.getRatingCount()));
-                dvh.getCommentCountView().setText(String.valueOf(drink.getCommentCount()));
-
-                final int w = dvh.getImageView().getDrawable().getIntrinsicWidth();
-                final int h = dvh.getImageView().getDrawable().getIntrinsicHeight();
-                ImageLoader.getInstance().load(dvh.getImageView(),
-                		drink.getThumbnailUrl(w, h), true, R.drawable.noimage,
-                		null);
-                dvh.getImageView().setTag(drink);
-                dvh.getImageView().setOnClickListener(mImageClickListener);
             }
 
             return convertView;
