@@ -21,7 +21,7 @@ public class TagsStore {
 	 * 
 	 * @param category Category on which to search for tags.
 	 * @return List of tags attached to the category. Note that the list might be empty.
-	 * @throws IOException
+	 * @throws IOException if tag downloading fails.
 	 */
 	public static ArrayList<Tag> getTags(int category) throws IOException {
 		assert(category >= 0);
