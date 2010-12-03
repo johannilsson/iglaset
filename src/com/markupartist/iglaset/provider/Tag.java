@@ -7,6 +7,16 @@ public class Tag implements Parcelable {
 	
 	public static final int UNDEFINED_ID = -1;
 
+    public static final Creator<Tag> CREATOR = new Creator<Tag>() {
+        public Tag createFromParcel(Parcel in) {
+            return new Tag(in);
+        }
+
+        public Tag[] newArray(int size) {
+            return new Tag[size];
+        }
+    };
+	
 	private int id;
 	private String type;
 	private String name;
