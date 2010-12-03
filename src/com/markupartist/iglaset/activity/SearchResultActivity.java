@@ -165,9 +165,7 @@ public class SearchResultActivity extends ListActivity implements
                 setTitle(searchingText);
 
                 mSearchCriteria = new SearchCriteria();
-                mSearchCriteria.setQuery(queryString);
-                mSearchCriteria.setSortMode(SearchCriteria.Sort.Recommendation);
-                
+                mSearchCriteria.setQuery(queryString);                
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
                 setTitle(R.string.recommendations_label);
 
