@@ -30,6 +30,8 @@ Schedule
 Changelog
 ---------
 * Next:
+    * Fixed crash on 1.6 devices (thanks to Daniel Ekström for the report)
+    * Minor comment layout fix
 * 1.4.0
     * Changed link to Systembolaget to link to their inventory mobile friendly page    
     * Added support for tag browsing
