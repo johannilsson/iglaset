@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.markupartist.iglaset"
       xmlns:android="http://schemas.android.com/apk/res/android"
-      android:versionCode="38"
-      android:versionName="1.4.0RC1"
       android:installLocation="auto"
-      >
+      android:versionName="1.4.0" android:versionCode="39">
     <supports-screens
         android:largeScreens="true"
         android:normalScreens="true"
