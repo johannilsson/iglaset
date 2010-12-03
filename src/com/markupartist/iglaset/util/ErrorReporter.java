@@ -102,8 +102,8 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
             mFingerPrint = android.os.Build.FINGERPRINT;
             mHost = android.os.Build.HOST;
             mId = android.os.Build.ID;
-            // Manufacturer = android.os.Build.;
             mModel = android.os.Build.MODEL;
+            mManufacturer = android.os.Build.MANUFACTURER;
             mProduct = android.os.Build.PRODUCT;
             mTags = android.os.Build.TAGS;
             mTime = android.os.Build.TIME;
@@ -115,51 +115,36 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
         }
     }
 
+    private void appendLog(StringBuilder builder, String key, String value) {
+    	builder.append(key).append(" : ").append(value).append("\n");
+    }
+    
     public String createInformationString() {
-        String returnVal = "";
-        returnVal += "Version : " + mVersionName;
-        returnVal += "\n";
-        returnVal += "Package : " + mPackageName;
-        returnVal += "\n";
-        returnVal += "FilePath : " + mFilePath;
-        returnVal += "\n";
-        returnVal += "Phone Model : " + mPhoneModel;
-        returnVal += "\n";
-        returnVal += "Android Version : " + mAndroidVersion;
-        returnVal += "\n";
-        returnVal += "Board : " + mBoard;
-        returnVal += "\n";
-        returnVal += "Brand : " + mBrand;
-        returnVal += "\n";
-        returnVal += "Device : " + mDevice;
-        returnVal += "\n";
-        returnVal += "Display : " + mDisplay;
-        returnVal += "\n";
-        returnVal += "Finger Print : " + mFingerPrint;
-        returnVal += "\n";
-        returnVal += "Host : " + mHost;
-        returnVal += "\n";
-        returnVal += "ID : " + mId;
-        returnVal += "\n";
-        returnVal += "Model : " + mModel;
-        returnVal += "\n";
-        returnVal += "Product : " + mProduct;
-        returnVal += "\n";
-        returnVal += "Tags : " + mTags;
-        returnVal += "\n";
-        returnVal += "Time : " + mTime;
-        returnVal += "\n";
-        returnVal += "Type : " + mType;
-        returnVal += "\n";
-        returnVal += "User : " + mUser;
-        returnVal += "\n";
-        returnVal += "Total Internal memory : " + getTotalInternalMemorySize();
-        returnVal += "\n";
-        returnVal += "Available Internal memory : "
-                + getAvailableInternalMemorySize();
-        returnVal += "\n";
+    	
+    	StringBuilder builder = new StringBuilder();
+    	appendLog(builder, "Version", mVersionName);
+    	appendLog(builder, "Package", mPackageName);
+    	appendLog(builder, "FilePath", mFilePath);
+    	appendLog(builder, "Phone Model", mPhoneModel);
+    	appendLog(builder, "Android Version", mAndroidVersion);
+    	appendLog(builder, "Board", mBoard);
+    	appendLog(builder, "Brand", mBrand);
+    	appendLog(builder, "Device", mDevice);
+    	appendLog(builder, "Display", mDisplay);
+    	appendLog(builder, "Finger Print", mFingerPrint);
+    	appendLog(builder, "Host", mHost);
+    	appendLog(builder, "ID", mId);
+    	appendLog(builder, "Model", mModel);
+    	appendLog(builder, "Manufacturer", mManufacturer);
+    	appendLog(builder, "Product", mProduct);
+    	appendLog(builder, "Tags", mTags);
+    	appendLog(builder, "Time", Long.toString(mTime));
+    	appendLog(builder, "Type", mType);
+    	appendLog(builder, "User", mUser);
+    	appendLog(builder, "Total Internal Memory", Long.toString(getTotalInternalMemorySize()));
+    	appendLog(builder, "Available Internal Memory", Long.toString(getAvailableInternalMemorySize()));
 
-        return returnVal;
+        return builder.toString();
     }
 
     public void uncaughtException(Thread t, Throwable e) {
