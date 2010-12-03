@@ -35,6 +35,7 @@ import android.widget.TextView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.markupartist.iglaset.IglasetApplication;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
 import com.markupartist.iglaset.util.ErrorReporter;
@@ -73,6 +74,14 @@ public class StartActivity extends Activity implements android.view.View.OnClick
         ratedDrinksButton.setOnClickListener(this);
     }
 
+    @Override
+    public void onResume() {
+    	// Remove the stored orphan barcode when the user reenters the start screen.
+    	((IglasetApplication) getApplication()).clearOrphanBarcode();
+    	
+    	super.onResume();
+    }
+    
     /**
      * We don't allow searches from this activity since we have a search at the
      * top already.

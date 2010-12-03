@@ -14,10 +14,7 @@ public class IglasetApplication extends Application {
     @Override
     public void onCreate() {    	
         super.onCreate();
-        
-        // Remove any orphan barcodes that were scanned in previous runs.
-    	clearOrphanBarcode();
-
+ 
         final ErrorReporter reporter = ErrorReporter.getInstance();
         reporter.init(getApplicationContext());
     }

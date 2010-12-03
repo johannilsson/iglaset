@@ -285,16 +285,6 @@ public class SearchResultActivity extends ListActivity implements
     	unregisterReceiver(mBroadcastReceiver);
         super.onDestroy();
     }
-    
-    @Override
-    public void onBackPressed() {
-    	// Remove the stored orphan barcode if the user exits.
-    	if(mSearchCriteria.hasBarcode()) {
-    		((IglasetApplication) getApplication()).clearOrphanBarcode();    		
-    	}
-    	
-    	super.onBackPressed();
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
