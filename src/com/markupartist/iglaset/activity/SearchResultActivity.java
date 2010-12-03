@@ -503,7 +503,8 @@ public class SearchResultActivity extends ListActivity implements
                 	dvh.getRateView().setRating(drink.getUserRating());
                 	dvh.getNameView().setCompoundDrawables(null, null, dvh.getGlassIcon(getContext()), null);
                 } else {
-                	dvh.getRateView().setRating(drink.getAverageRating());
+                	float rating = (drink.hasEstimatedRating() ? drink.getEstimatedRating() : drink.getAverageRating());
+                	dvh.getRateView().setRating(rating);
                 	dvh.getNameView().setCompoundDrawables(null, null, null, null);
                 }
                 

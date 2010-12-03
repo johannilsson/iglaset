@@ -161,7 +161,8 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         //yearTextView.setText(drink.getYear() == 0 ? "" : String.valueOf(drink.getYear()));
 
         RatingBar drinkRatingBar = (RatingBar) findViewById(R.id.drink_rating);
-        drinkRatingBar.setRating(drink.getAverageRating());
+    	float rating = (drink.hasEstimatedRating() ? drink.getEstimatedRating() : drink.getAverageRating());
+    	drinkRatingBar.setRating(rating);
 
         ImageView imageView = (ImageView) findViewById(R.id.drink_image);
         imageView.setOnClickListener(new View.OnClickListener() {
