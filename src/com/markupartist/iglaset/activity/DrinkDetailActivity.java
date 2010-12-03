@@ -186,7 +186,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         
         ArrayList<Tag> tags = drink.getTags();
 	    if(tags.isEmpty() == false) {
-	    	MultiHashMap<String, Tag> tagMap = ListUtils.toMultiHashMap(tags, "getType");
+	    	MultiHashMap<String, Tag> tagMap = ListUtils.toMultiHashMap(tags);
 	        Set<Entry<String, List<Tag>>> nameSet = tagMap.entrySet();
 	        for (Entry<String, List<Tag>> entry : nameSet) {
 	            mSectionedAdapter.addSection(0, entry.getKey(),

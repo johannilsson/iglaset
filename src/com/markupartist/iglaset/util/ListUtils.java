@@ -10,15 +10,15 @@ public class ListUtils {
 	 * @param <K> Key type.
 	 * @param <V> Value type.
 	 * @param list List of objects to map.
-	 * @param method Method to call on {@code K}.
 	 * @return A multimap with the objects sorted using the key from {@code method}.
 	 * 
-	 * Convert a list of objects to a multimap by using the return value of a
-	 * method call to the objects as key.
+	 * Convert a list of objects to a multimap using the objects' {@code getKey}
+	 * return value as key. This means that the class being sorted must implement
+	 * the {@link HasKey} interface.
 	 * 
 	 * <pre>
 	 * {@code
-	 * class Animal {
+	 * class Animal implements HasKey<String> {
 	 *    private String name;
 	 *    private String type;
 	 *    
@@ -32,6 +32,9 @@ public class ListUtils {
 	 *    public String getType() {
 	 *       return type;
 	 *    }
+	 *    public String getKey() {
+	 *    	 return this.type;
+	 *    }
 	 * }
 	 * 
 	 * ArrayList<Animal> animalList = new ArrayList<Animal>();
@@ -39,7 +42,7 @@ public class ListUtils {
 	 * animalList.add(new Animal("Fido", "Dog"));
 	 * animalList.add(new Animal("Brutus", "Dog"));
 	 * animalList.add(new Animal("Sebastian", "Cat"));
-	 * MultiHashMap<String, Animal> = ListUtils.toMultiHashMap(animalList, "getType"));
+	 * MultiHashMap<String, Animal> = ListUtils.toMultiHashMap(animalList));
 	 * }
 	 * </pre>
 	 * 
@@ -56,45 +59,14 @@ public class ListUtils {
 	 * }
 	 * </pre>
 	 * 
-	 * There are some limitations to the signature of the function to call to
-	 * get the key.
-	 * <ul>
-	 * <li>It cannot return void</li>
-	 * <li>It cannot accept any parameters</li>
-	 * <li>It must be public</li>
-	 * <li>It must actually exist</li>
-	 * </ul>
-	 * 
 	 * Note that this call is not type safe and exceptions thrown within it
 	 * will be caught and silently ignored for ease of use. 
 	 */
-	@SuppressWarnings("unchecked")
-	public static <K, V> MultiHashMap<K, V> toMultiHashMap(ArrayList<V> list, String method) {
+	public static <K, V extends HasKey<K>> MultiHashMap<K, V> toMultiHashMap(ArrayList<V> list) {
 		MultiHashMap<K, V> map = new MultiHashMap<K, V>();
 		
-		Method call;
-		K key;
 		for(V object : list) {
-			try {
-				call = object.getClass().getDeclaredMethod(method);
-				key = (K) call.invoke(object);
-				map.put(key, object);
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			map.put(object.getKey(), object);
 		}
 		
 		return map;

@@ -281,7 +281,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 			
 			try {
 				ArrayList<Tag> categoryTags = TagsStore.getTags(params[0]);
-				tagMap = ListUtils.toMultiHashMap(categoryTags, "getType");
+				tagMap = ListUtils.toMultiHashMap(categoryTags);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
