@@ -30,6 +30,7 @@ Schedule
 Changelog
 ---------
 * Next:
+* 1.4.0
     * Changed link to Systembolaget to link to their inventory mobile friendly page    
     * Added support for tag browsing
     * Crash fixes in the drink detail view
