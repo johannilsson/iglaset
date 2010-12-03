@@ -2,12 +2,14 @@ package com.markupartist.iglaset.activity;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.Tag;
 import com.markupartist.iglaset.provider.TagsStore;
+import com.markupartist.iglaset.util.ListUtils;
+import com.markupartist.iglaset.util.MultiHashMap;
 import com.markupartist.iglaset.util.StringUtils;
 import com.markupartist.iglaset.widget.SectionedAdapter;
 
@@ -38,7 +40,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
     private static final int DIALOG_SEARCH_NETWORK_PROBLEM = 0;
 
     private SectionedAdapter sectionedAdapter;
-    private TreeMap<String, ArrayList<Tag>> tagMap;
+    private MultiHashMap<String, Tag> tagMap;
     private GetTagsTask getTagsTask;
     private int categoryId;
     
@@ -55,7 +57,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
     	/**
     	 * Available tags on rotation.
     	 */
-    	TreeMap<String, ArrayList<Tag>> tags;
+    	MultiHashMap<String, Tag> tags;
     }
 	
     @Override
@@ -216,7 +218,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
         numSelectedView.setText(builder.toString());
 	}
 	
-	private void setTagMap(TreeMap<String, ArrayList<Tag>> tagMap) {
+	private void setTagMap(MultiHashMap<String, Tag> tagMap) {
         LinearLayout progressBar = (LinearLayout) findViewById(R.id.search_progress);
         progressBar.setVisibility(View.GONE);
         
@@ -230,9 +232,9 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 		}
 	}
 	
-	private void populateList(TreeMap<String, ArrayList<Tag>> tagMap) {
+	private void populateList(MultiHashMap<String, Tag> tagMap) {
 		int sectionId = 1;
-		for(Map.Entry<String, ArrayList<Tag>> entry : tagMap.entrySet()) {
+		for(Map.Entry<String, List<Tag>> entry : tagMap.entrySet()) {
 			ArrayAdapter<Tag> adapter =
 				new ArrayAdapter<Tag>(this, android.R.layout.simple_list_item_multiple_choice, entry.getValue()) {
 				@Override
@@ -271,26 +273,15 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
     	}
     }
 	
-	private class GetTagsTask extends AsyncTask<Integer, Void, TreeMap<String, ArrayList<Tag>>> {
+	private class GetTagsTask extends AsyncTask<Integer, Void, MultiHashMap<String, Tag>> {
 
 		@Override
-		protected TreeMap<String, ArrayList<Tag>> doInBackground(Integer... params) {
-			TreeMap<String, ArrayList<Tag>> tagMap = null;
+		protected MultiHashMap<String, Tag> doInBackground(Integer... params) {
+			MultiHashMap<String, Tag> tagMap = null;
 			
 			try {
 				ArrayList<Tag> categoryTags = TagsStore.getTags(params[0]);
-				tagMap = new TreeMap<String, ArrayList<Tag>>();
-				
-				// Move the tags over to a map to have one section per tag type
-				for(Tag tag : categoryTags) {
-					ArrayList<Tag> list = tagMap.get(tag.getType());
-					if(null == list) {
-						list = new ArrayList<Tag>();
-						tagMap.put(tag.getType(), list);
-					}
-					
-					list.add(tag);
-				}
+				tagMap = ListUtils.toMultiHashMap(categoryTags, "getType");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -304,7 +295,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
         }
 
         @Override
-        protected void onPostExecute(TreeMap<String, ArrayList<Tag>> result) {
+        protected void onPostExecute(MultiHashMap<String, Tag> result) {
             setProgressBarIndeterminateVisibility(false);
             
             if(null != result) {
