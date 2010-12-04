@@ -13,13 +13,30 @@ public class SearchCriteria {
     private String mBarcode;
     private ArrayList<Integer> mTags;
     private AuthStore.Authentication mAuthentication;
+    private Sort mSortMode = Sort.Undefined;
 
+    public enum Sort {
+    	Undefined,
+    	Created,
+    	Name,
+    	Producer,
+    	Recommendation
+    }
+    
     public AuthStore.Authentication getAuthentication() {
 		return mAuthentication;
 	}
 
 	public void setAuthentication(AuthStore.Authentication authentication) {
 		this.mAuthentication = authentication;
+	}
+	
+	public void setSortMode(Sort mode) {
+		mSortMode = mode;
+	}
+	
+	public Sort getSortMode() {
+		return mSortMode;
 	}
 
 	public String getQuery() {
@@ -79,6 +96,7 @@ public class SearchCriteria {
             + ", mQuery=" + mQuery 
             + ", mBarcode=" + mBarcode
             + ", mTags=" + mTags
+            + ", mSortMode=" + mSortMode
             + "]";
     }
 }

@@ -21,7 +21,6 @@ import com.markupartist.iglaset.util.HttpManager;
 import com.markupartist.iglaset.util.StringUtils;
 
 public class DrinksStore {
-    private static DrinksStore mInstance;
     private static String TAG = DrinksStore.class.getSimpleName();
     private static String ARTICLES_BASE_URI =
     	"http://www.iglaset.se/articles.xml";
@@ -41,12 +40,13 @@ public class DrinksStore {
 
     private DrinksStore() {
     }
+    
+    private static class SingletonHolder {
+    	public static final DrinksStore instance = new DrinksStore();
+    }
 
     public static DrinksStore getInstance() {
-        if (mInstance == null) {
-            mInstance = new DrinksStore();
-        }
-        return mInstance;
+    	return SingletonHolder.instance;
     }
 
     public ArrayList<Drink> searchDrinks(SearchCriteria searchCriteria)
@@ -196,9 +196,10 @@ public class DrinksStore {
      */
     private String buildSearchUri(SearchCriteria searchCriteria) {
         Log.d(TAG, "building search uri from " + searchCriteria);
-    	
+          
     	StringBuilder builder = new StringBuilder();    	
         builder.append(ARTICLES_BASE_URI).append("?");
+ 
         builder.append("page=").append(searchCriteria.getPage());
 
         if (!TextUtils.isEmpty(searchCriteria.getQuery()))
@@ -208,6 +209,26 @@ public class DrinksStore {
         if (searchCriteria.getAuthentication() != null
                 && !TextUtils.isEmpty(searchCriteria.getAuthentication().v2.token))
         	builder.append("&user_credentials=").append(searchCriteria.getAuthentication().v2.token);
+        
+        // Append sorting
+    	SearchCriteria.Sort mode = searchCriteria.getSortMode();
+    	builder.append("&order_by=");
+    	switch(mode) {
+    	case Name:
+    		builder.append("name");
+    		break;
+    	case Producer:
+    		builder.append("producer");
+    		break;
+    	case Recommendation:
+    		builder.append("recommendation");
+    		break;
+    	case Created:
+    	case Undefined:
+		default:
+			builder.append("default");
+			break;
+    	}
 
         ArrayList<Integer> tags = searchCriteria.getTags();
         if (null != tags && tags.size() > 0) {
