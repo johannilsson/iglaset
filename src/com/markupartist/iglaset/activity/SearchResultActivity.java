@@ -41,7 +41,6 @@ import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.RatingSearchCriteria;
 import com.markupartist.iglaset.provider.RecommendationSearchCriteria;
 import com.markupartist.iglaset.provider.SearchCriteria;
-import com.markupartist.iglaset.util.ImageLoader;
 import com.markupartist.iglaset.IglasetApplication;
 
 public class SearchResultActivity extends ListActivity implements

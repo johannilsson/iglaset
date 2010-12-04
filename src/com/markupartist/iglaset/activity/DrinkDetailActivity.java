@@ -67,7 +67,6 @@ import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.DrinksStore;
 import com.markupartist.iglaset.provider.Drink.Volume;
 import com.markupartist.iglaset.provider.Tag;
-import com.markupartist.iglaset.util.ImageLoader;
 import com.markupartist.iglaset.util.ListUtils;
 import com.markupartist.iglaset.util.MultiHashMap;
 import com.markupartist.iglaset.widget.DrinkDescriptionAdapter;
