@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.Random;
 
 import com.markupartist.iglaset.R;
+import com.markupartist.iglaset.provider.DrinksStore;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -52,7 +53,6 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
     String mUser;
 
     private Thread.UncaughtExceptionHandler mPreviousHandler;
-    private static ErrorReporter sInstance;
     private Context mCurContext;
 
     public void init(Context context) {
@@ -188,10 +188,12 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
         mPreviousHandler.uncaughtException(t, e);
     }
 
+    private static class SingletonHolder {
+    	public static final ErrorReporter instance = new ErrorReporter();
+    }
+    
     public static ErrorReporter getInstance() {
-        if (sInstance == null)
-            sInstance = new ErrorReporter();
-        return sInstance;
+    	return SingletonHolder.instance;
     }
 
     private void sendErrorMail(Context context, String ErrorContent) {

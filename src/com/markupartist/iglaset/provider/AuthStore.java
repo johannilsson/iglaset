@@ -27,16 +27,16 @@ import com.markupartist.iglaset.util.HttpManager;
 public class AuthStore {
     private static final String TAG = AuthStore.class.getSimpleName();
     private static final String AUTH_BASE_URI_V2 = "http://www.iglaset.se/user_session.xml";
-    private static AuthStore sInstance;
 
     private AuthStore() {
     }
+    
+    private static class SingletonHolder {
+    	public static final AuthStore instance = new AuthStore();
+    }
 
     public static AuthStore getInstance() {
-        if (sInstance == null) {
-            sInstance = new AuthStore();
-        }
-        return sInstance;
+        return SingletonHolder.instance;
     }
 
     public void authenticateUser(Context context)
