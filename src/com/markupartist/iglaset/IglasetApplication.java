@@ -1,7 +1,7 @@
 package com.markupartist.iglaset;
 
+import com.google.android.imageloader.ImageLoader;
 import com.markupartist.iglaset.util.ErrorReporter;
-import com.markupartist.iglaset.util.ImageLoader;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 public class IglasetApplication extends Application {
 	
 	private final static String PREF_ORPHAN_CODE = "orphan_barcode";
+	private ImageLoader imageLoader;
 	
     @Override
     public void onCreate() {    	
@@ -17,17 +18,9 @@ public class IglasetApplication extends Application {
  
         final ErrorReporter reporter = ErrorReporter.getInstance();
         reporter.init(getApplicationContext());
+        imageLoader = new ImageLoader();
     }
 
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-
-        if (true == ImageLoader.hasInstance()) {
-            ImageLoader.getInstance().clearCache();
-        }
-    }
-    
 	public void storeOrphanBarcode(String barcode) {
     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     	SharedPreferences.Editor editor = preferences.edit();
@@ -45,5 +38,14 @@ public class IglasetApplication extends Application {
     	SharedPreferences.Editor editor = preferences.edit();
     	editor.remove(PREF_ORPHAN_CODE);
     	editor.commit();
+	}
+	
+	@Override
+	public Object getSystemService(String name) {
+		if(name.equals(ImageLoader.IMAGE_LOADER_SERVICE)) {
+			return imageLoader;
+		}
+		
+		return super.getSystemService(name);
 	}
 }

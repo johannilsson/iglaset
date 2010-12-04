@@ -1,8 +1,9 @@
 package com.markupartist.iglaset.activity;
 
+import com.google.android.imageloader.ImageLoader;
+import com.google.android.imageloader.ImageLoader.BindResult;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.Drink;
-import com.markupartist.iglaset.util.ImageLoader;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -54,12 +55,28 @@ public class DrinkViewHolder {
         if(null == tag || tag.getId() != drink.getId()) {
 	        final int w = getImageView().getDrawable().getIntrinsicWidth();
 	        final int h = getImageView().getDrawable().getIntrinsicHeight();
-	        ImageLoader.getInstance().load(getImageView(), drink.getThumbnailUrl(w, h), true, R.drawable.noimage, null);
+	        
+	        ImageLoader.get(context).unbind(getImageView());
+	        BindResult result = ImageLoader.get(context).bind(getImageView(), drink.getThumbnailUrl(w, h), imageLoaderCallback);
+	        if(result == ImageLoader.BindResult.LOADING || result == ImageLoader.BindResult.ERROR) {
+				getImageView().setImageResource(R.drawable.noimage);
+	        }
 	        getImageView().setTag(drink);
         }
         getImageView().setOnClickListener(imageClickListener);
     }
 
+    private ImageLoader.Callback imageLoaderCallback = new ImageLoader.Callback() {
+		
+		@Override
+		public void onImageLoaded(ImageView view, String url) {}
+		
+		@Override
+		public void onImageError(ImageView view, String url, Throwable error) {
+			view.setImageResource(R.drawable.noimage);
+		}
+	};
+    
     public TextView getNameView() {
         if (nameView == null) {
             nameView = (TextView) layout.findViewById(R.id.drink_name);
