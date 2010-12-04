@@ -3,6 +3,7 @@
     <string name="retry">Försök igen</string>
     <string name="logging_in">Loggar in...</string>
     <string name="app_name">iglaset</string>
+    <string name="sort_label">Sortering</string>
     <string name="search_label">Sök</string>
     <string name="search_description">Namn, artikelnummer eller valfri text</string>
     <string name="home_label">Hem</string>

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -80,7 +81,8 @@ public class SearchResultActivity extends ListActivity implements
         "com.markupartist.iglaset.search.clickedDrink";
 
     static final int DIALOG_SEARCH_NETWORK_PROBLEM = 0;
-    static final int DIALOG_DRINK_IMAGE = 1;    
+    static final int DIALOG_DRINK_IMAGE = 1;  
+    static final int DIALOG_SELECT_SORTING = 2;
     private DrinkAdapter mListAdapter;
     private ArrayList<Drink> mDrinks;
     private AuthStore.Authentication mAuthentication;
@@ -372,12 +374,15 @@ public class SearchResultActivity extends ListActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_search:
-                onSearchRequested();
-                return true;
-            case R.id.menu_home:
-                startActivity(new Intent(this, StartActivity.class));
-                return true;
+        case R.id.menu_sort:
+        	showDialog(DIALOG_SELECT_SORTING);
+        	return true;
+        case R.id.menu_search:
+            onSearchRequested();
+            return true;
+        case R.id.menu_home:
+            startActivity(new Intent(this, StartActivity.class));
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -434,8 +439,28 @@ public class SearchResultActivity extends ListActivity implements
         
         case DIALOG_DRINK_IMAGE:
         	return new DrinkImageViewerDialog(this, mClickedDrink);
+        	
+        case DIALOG_SELECT_SORTING:
+        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        	builder.setTitle("Sortering");
+        	builder.setSingleChoiceItems(
+        			SearchCriteria.getSortModeNames(),
+        			mSearchCriteria.getSortMode(),
+        			new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int item) {
+					dismissDialog(DIALOG_SELECT_SORTING);
+					mDrinks.clear();
+					mSearchCriteria.setSortMode(item);
+					mSearchCriteria.setPage(1);
+		            createSearchDrinksTask().execute(mSearchCriteria);
+				}
+			});
+        	return builder.create();
+        default:
+        	return null;
         }
-        return null;
     }
     
     protected void onPrepareDialog(int id, Dialog dialog) {
