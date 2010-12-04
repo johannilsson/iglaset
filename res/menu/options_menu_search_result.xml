@@ -1,11 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_sort"
+        android:title="@string/sort_label"
+        android:icon="@android:drawable/ic_menu_sort_by_size"/>
     <item 
         android:id="@+id/menu_search"
         android:title="@string/search_label"
-        android:icon="@android:drawable/ic_menu_search"
-        />
+        android:icon="@android:drawable/ic_menu_search"/>
     <item
         android:id="@+id/menu_home"
         android:title="@string/home_label"
         android:icon="@drawable/ic_menu_home"/>
+
 </menu>
