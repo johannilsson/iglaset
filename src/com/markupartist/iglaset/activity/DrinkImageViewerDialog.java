@@ -11,14 +11,13 @@ import android.widget.Toast;
 
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.Drink;
-import com.google.android.imageloader.ImageLoader;
-import com.google.android.imageloader.ImageLoader.BindResult;
+import com.markupartist.iglaset.util.ImageLoader;
 
 /**
  * @author marco
  *
  */
-public class DrinkImageViewerDialog extends Dialog implements ImageLoader.Callback, View.OnClickListener {
+public class DrinkImageViewerDialog extends Dialog implements ImageLoader.EventHandler, View.OnClickListener {
 
 	private ImageView imageView;
 	private ProgressBar progressBar;
@@ -62,27 +61,13 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.Callba
 	 */
 	public void load() {
 		if(null != drink) {
-			BindResult result = ImageLoader.get(getContext()).bind(imageView, drink.getLargestImageUrl(), this);
-			if(result == ImageLoader.BindResult.LOADING) {
-				progressBar.setVisibility(ProgressBar.VISIBLE);
-				imageView.setVisibility(ImageView.GONE);
-			}
+	    	ImageLoader.getInstance().load(
+	    			imageView, drink.getLargestImageUrl(), true, this);
 		}
 	}
 
 	@Override
-	public void onClick(View v) {
-		dismiss();
-	}
-
-	@Override
-	public void onImageLoaded(ImageView view, String url) {
-		progressBar.setVisibility(ProgressBar.GONE);
-		imageView.setVisibility(ImageView.VISIBLE);
-	}
-
-	@Override
-	public void onImageError(ImageView view, String url, Throwable error) {
+	public void onDownloadError() {
 		OnClickListener onClickListener = new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -101,5 +86,28 @@ public class DrinkImageViewerDialog extends Dialog implements ImageLoader.Callba
 		
 		hide();
 		DialogFactory.createNetworkProblemDialog(getContext(), onClickListener).show();
+	}
+
+	@Override
+	public void onDownloadStarted() {
+		progressBar.setVisibility(ProgressBar.VISIBLE);
+		imageView.setVisibility(ImageView.GONE);
+	}
+
+	@Override
+	public void onFinished() {
+		progressBar.setVisibility(ProgressBar.GONE);
+		imageView.setVisibility(ImageView.VISIBLE);
+	}
+
+	@Override
+	public void onClick(View v) {
+		dismiss();
+	}
+
+	@Override
+	public void onDecodeFailed() {
+		dismiss();
+		Toast.makeText(getContext(), R.string.image_decode_failed, Toast.LENGTH_SHORT).show();
 	}
 }
