@@ -13,14 +13,25 @@ public class SearchCriteria {
     private String mBarcode;
     private ArrayList<Integer> mTags;
     private AuthStore.Authentication mAuthentication;
-    private Sort mSortMode = Sort.Undefined;
-
-    public enum Sort {
-    	Undefined,
-    	Created,
-    	Name,
-    	Producer,
-    	Recommendation
+    
+    public final static int SORT_MODE_NONE = 0;
+    public final static int SORT_MODE_NAME = 1;
+    public final static int SORT_MODE_PRODUCER = 2;
+    public final static int SORT_MODE_RECOMMENDATION = 3;
+    private int mSortMode = SORT_MODE_NONE;
+    
+    public static CharSequence[] getSortModeNames() {
+    	CharSequence[] names = {
+    			"Ingen",
+    			"Namn",
+    			"Producent",
+    			"Rekommendationer"
+    	};
+    	return names;
+    }
+    
+    public boolean supportsSorting() {
+    	return true;
     }
     
     public AuthStore.Authentication getAuthentication() {
@@ -31,11 +42,11 @@ public class SearchCriteria {
 		this.mAuthentication = authentication;
 	}
 	
-	public void setSortMode(Sort mode) {
+	public void setSortMode(int mode) {
 		mSortMode = mode;
 	}
 	
-	public Sort getSortMode() {
+	public int getSortMode() {
 		return mSortMode;
 	}
 

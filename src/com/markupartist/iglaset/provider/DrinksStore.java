@@ -211,20 +211,19 @@ public class DrinksStore {
         	builder.append("&user_credentials=").append(searchCriteria.getAuthentication().v2.token);
         
         // Append sorting
-    	SearchCriteria.Sort mode = searchCriteria.getSortMode();
+    	int mode = searchCriteria.getSortMode();
     	builder.append("&order_by=");
     	switch(mode) {
-    	case Name:
+    	case SearchCriteria.SORT_MODE_NAME:
     		builder.append("name");
     		break;
-    	case Producer:
+    	case SearchCriteria.SORT_MODE_PRODUCER:
     		builder.append("producer");
     		break;
-    	case Recommendation:
+    	case SearchCriteria.SORT_MODE_RECOMMENDATION:
     		builder.append("recommendation");
     		break;
-    	case Created:
-    	case Undefined:
+    	case SearchCriteria.SORT_MODE_NONE:
 		default:
 			builder.append("default");
 			break;
