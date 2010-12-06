@@ -32,8 +32,9 @@ Changelog
 * Next:
     * Fixed crash on 1.6 devices (thanks to Daniel Ekström for the report)
     * Minor comment layout fix
-    * Tags in the drink detail are now clickable (#13)
+    * Tags in the drink detail are now clickable (Issue #13)
     * Show estimated rating instead of average if available
+    * Fixed a bug where drink images were loaded into the wrong search row (Issue #19)
 * 1.4.0
     * Changed link to Systembolaget to link to their inventory mobile friendly page    
     * Added support for tag browsing
