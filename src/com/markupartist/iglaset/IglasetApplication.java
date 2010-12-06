@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 public class IglasetApplication extends Application {
 	
 	private final static String PREF_ORPHAN_CODE = "orphan_barcode";
+	private final static String PREF_SORT_MODE = "sort_mode";
 	private ImageLoader imageLoader;
 	
     @Override
@@ -21,23 +22,24 @@ public class IglasetApplication extends Application {
         imageLoader = new ImageLoader();
     }
 
+    private SharedPreferences getPreferences() {
+    	return PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    }
+    
+    private SharedPreferences.Editor getPreferencesEditor() {
+    	return getPreferences().edit();
+    }
+    
 	public void storeOrphanBarcode(String barcode) {
-    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-    	SharedPreferences.Editor editor = preferences.edit();
-    	editor.putString(PREF_ORPHAN_CODE, barcode);
-    	editor.commit();
+    	getPreferencesEditor().putString(PREF_ORPHAN_CODE, barcode).commit();
 	}
 	
 	public String getOrphanBarcode() {
-    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-    	return preferences.getString(PREF_ORPHAN_CODE, null);
+		return getPreferences().getString(PREF_ORPHAN_CODE, null);
 	}
 	
 	public void clearOrphanBarcode() {
-    	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-    	SharedPreferences.Editor editor = preferences.edit();
-    	editor.remove(PREF_ORPHAN_CODE);
-    	editor.commit();
+		getPreferencesEditor().remove(PREF_ORPHAN_CODE).commit();
 	}
 	
 	@Override
