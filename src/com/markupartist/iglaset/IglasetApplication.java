@@ -42,6 +42,14 @@ public class IglasetApplication extends Application {
 		getPreferencesEditor().remove(PREF_ORPHAN_CODE).commit();
 	}
 	
+	public void storeSearchSortMode(int mode) {
+		getPreferencesEditor().putInt(PREF_SORT_MODE, mode).commit();
+	}
+	
+	public int getSearchSortMode() {
+		return getPreferences().getInt(PREF_SORT_MODE, 0);
+	}
+	
 	@Override
 	public Object getSystemService(String name) {
 		if(name.equals(ImageLoader.IMAGE_LOADER_SERVICE)) {
