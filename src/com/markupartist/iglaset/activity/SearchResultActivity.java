@@ -205,7 +205,10 @@ public class SearchResultActivity extends ListActivity implements
                 mSearchCriteria.setTags(tags);
             }
             
-            mSearchCriteria.setSortMode(getApp().getSearchSortMode());
+            if(mSearchCriteria.supportsSorting()) {
+            	mSearchCriteria.setSortMode(getApp().getSearchSortMode());
+            }
+            
             mSearchCriteria.setAuthentication(mAuthentication);
             createSearchDrinksTask().execute(mSearchCriteria);
         }
