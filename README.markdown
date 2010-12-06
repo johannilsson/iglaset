@@ -35,6 +35,7 @@ Changelog
     * Tags in the drink detail are now clickable (Issue #13)
     * Show estimated rating instead of average if available
     * Fixed a bug where drink images were loaded into the wrong search row (Issue #19)
+    * Added sorting support in searches
 * 1.4.0
     * Changed link to Systembolaget to link to their inventory mobile friendly page    
     * Added support for tag browsing

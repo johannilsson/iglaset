@@ -205,11 +205,16 @@ public class SearchResultActivity extends ListActivity implements
                 mSearchCriteria.setTags(tags);
             }
             
+            mSearchCriteria.setSortMode(getApp().getSearchSortMode());
             mSearchCriteria.setAuthentication(mAuthentication);
             createSearchDrinksTask().execute(mSearchCriteria);
         }
         
         this.registerReceiver(mBroadcastReceiver, new IntentFilter(Intents.ACTION_PUBLISH_DRINK));
+    }
+    
+    private IglasetApplication getApp() {
+    	return (IglasetApplication) getApplication();
     }
     
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -368,6 +373,11 @@ public class SearchResultActivity extends ListActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu_search_result, menu);
+        
+        if(mSearchCriteria.supportsSorting() == false) {
+        	menu.removeItem(R.id.menu_sort);
+        }
+        
         return true;
     }
 
@@ -449,12 +459,13 @@ public class SearchResultActivity extends ListActivity implements
         			new DialogInterface.OnClickListener() {
 				
 				@Override
-				public void onClick(DialogInterface dialog, int item) {
-					dismissDialog(DIALOG_SELECT_SORTING);
+				public void onClick(DialogInterface dialog, int item) {					
 					mDrinks.clear();
 					mSearchCriteria.setSortMode(item);
 					mSearchCriteria.setPage(1);
+					getApp().storeSearchSortMode(item);
 		            createSearchDrinksTask().execute(mSearchCriteria);
+		            dismissDialog(DIALOG_SELECT_SORTING);
 				}
 			});
         	return builder.create();
