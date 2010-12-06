@@ -30,6 +30,10 @@ public class SearchCriteria {
     	return names;
     }
     
+    public boolean supportsSorting() {
+    	return true;
+    }
+    
     public AuthStore.Authentication getAuthentication() {
 		return mAuthentication;
 	}

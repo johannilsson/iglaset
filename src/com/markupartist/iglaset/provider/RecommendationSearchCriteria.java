@@ -10,4 +10,9 @@ public class RecommendationSearchCriteria extends SearchCriteria {
     public int getUserId() {
         return mUserId;
     }
+    
+    @Override
+    public boolean supportsSorting() {
+    	return false;
+    }
 }
