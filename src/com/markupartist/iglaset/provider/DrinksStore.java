@@ -104,6 +104,7 @@ public class DrinksStore {
         builder.append("&user_credentials=").append(searchCriteria.getAuthentication().v2.token);
         builder.append("&page=").append(searchCriteria.getPage());
         builder.append(getSortModeParameter(searchCriteria.getSortMode()));
+        Log.d(TAG, builder.toString());
 
         final HttpGet get = new HttpGet(builder.toString());
         HttpEntity entity = null;
@@ -243,11 +244,14 @@ public class DrinksStore {
     		name = "recommendation";
     		break;
     	case SearchCriteria.SORT_MODE_DATE:
+    	    name = "time";
+    	    break;
+    	case SearchCriteria.SORT_MODE_NONE:
     	default:
-    		name = "time";
+    		name = null;
     		break;
     	}
     	
-    	return (name != null ? "order_by=" + name : "");
+    	return (name != null ? "&order_by=" + name : "");
     }
 }
