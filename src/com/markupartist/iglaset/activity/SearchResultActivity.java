@@ -469,11 +469,11 @@ public class SearchResultActivity extends ListActivity implements
 				@Override
 				public void onClick(DialogInterface dialog, int item) {					
 					mDrinks.clear();
-					mSearchCriteria.setSortMode(item);
+					
+					int sortMode = mSearchCriteria.getSortModeFromIndex(item);
+					mSearchCriteria.setSortMode(sortMode);
 					mSearchCriteria.setPage(1);
-					getApp().storeSearchSortMode(
-							mSearchCriteria.getClass(),
-							mSearchCriteria.getSortModeFromIndex(item));
+					getApp().storeSearchSortMode(mSearchCriteria.getClass(), sortMode);
 		            createSearchDrinksTask().execute(mSearchCriteria);
 		            dismissDialog(DIALOG_SELECT_SORTING);
 				}
