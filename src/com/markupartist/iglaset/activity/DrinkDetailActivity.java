@@ -450,7 +450,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
                         return true;
                     case R.id.comment_created:
                         TextView createdView = (TextView) view;
-                        createdView.setText(DateFormat.format("yyyy-MM-dd", (Date) data));
+                        createdView.setText(textRepresentation);
                         return true;
                     case R.id.comment_comment:
                         TextView commentView = (TextView) view;

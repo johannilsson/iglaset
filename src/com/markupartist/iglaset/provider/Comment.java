@@ -5,7 +5,7 @@ import java.util.Date;
 public class Comment {
     private int mDrinkId;
     private int mUserId;
-    private Date mCreated;
+    private CharSequence mCreated;
     private String mComment;
     private String mNickname;
     private int mRating = 0;
@@ -25,11 +25,12 @@ public class Comment {
     public void setUserId(int userId) {
         this.mUserId = userId;
     }
-    public Date getCreated() {
-        return (Date) mCreated.clone();
+    public CharSequence getCreated() {
+        return mCreated;
     }
-    public void setCreated(Date date) {
-        this.mCreated = (Date) date.clone();
+    public void setCreated(CharSequence date) {
+        //this.mCreated = (Date) date.clone();
+        this.mCreated = date;
     }
     /**
      * Get comment date.
