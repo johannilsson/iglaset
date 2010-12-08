@@ -7,6 +7,7 @@ import com.markupartist.iglaset.provider.Drink;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -32,10 +33,34 @@ public class DrinkViewHolder {
      * view with the appropriate drink data, with the exception of the drink
      * rating since that differs slightly depending on where the view is used.
      * 
+     * @param context Calling context.
      * @param drink Drink to use for updating.
      * @param imageClickListener Click listener to attach to thumbnail.
      */
     public void populate(Context context, Drink drink, View.OnClickListener imageClickListener) {
+    	update(context, drink);
+
+        getImageView().setTag(drink);
+        getImageView().setOnClickListener(imageClickListener);
+
+        final int w = getImageView().getDrawable().getIntrinsicWidth();
+        final int h = getImageView().getDrawable().getIntrinsicHeight();
+        
+        ImageLoader.get(context).unbind(getImageView());
+        BindResult result = ImageLoader.get(context).bind(getImageView(), drink.getThumbnailUrl(w, h), imageLoaderCallback);
+        if(result == ImageLoader.BindResult.LOADING || result == ImageLoader.BindResult.ERROR) {
+			getImageView().setImageResource(R.drawable.noimage);
+        }
+    }
+    
+    /**
+     * Update the view holder with refreshed drink data. Note that this will
+     * not reload the image since that is expected to be static.
+     * 
+     * @param context Calling context.
+     * @param drink Drink data to use for updating.
+     */
+    public void update(Context context, Drink drink) {
         getNameView().setText(drink.getName());
         getOriginCountryView().setText(drink.getConcatenatedOrigin());
         getAlcoholView().setText(drink.getAlcoholPercent());
@@ -47,23 +72,6 @@ public class DrinkViewHolder {
     	} else {
     		getNameView().setCompoundDrawables(null, null, null, null);
     	}
-
-        // Only load the image if it's not already loaded. Trying to load it
-        // twice will cause the image's background (R.drawable.noimage) to
-        // show for a brief second while the new image is applied.
-        Drink tag = (Drink) getImageView().getTag();
-        if(null == tag || tag.getId() != drink.getId()) {
-	        final int w = getImageView().getDrawable().getIntrinsicWidth();
-	        final int h = getImageView().getDrawable().getIntrinsicHeight();
-	        
-	        ImageLoader.get(context).unbind(getImageView());
-	        BindResult result = ImageLoader.get(context).bind(getImageView(), drink.getThumbnailUrl(w, h), imageLoaderCallback);
-	        if(result == ImageLoader.BindResult.LOADING || result == ImageLoader.BindResult.ERROR) {
-				getImageView().setImageResource(R.drawable.noimage);
-	        }
-	        getImageView().setTag(drink);
-        }
-        getImageView().setOnClickListener(imageClickListener);
     }
 
     private ImageLoader.Callback imageLoaderCallback = new ImageLoader.Callback() {

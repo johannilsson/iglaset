@@ -386,7 +386,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
 
     private void onUpdatedDrink(Drink drink) {
         updateUserRatingInUi(drink.getUserRating());
-        mViewHolder.populate(this, drink, mImageClickListener);
+        mViewHolder.update(this, drink);
     }
 
     private void updateUserRatingInUi(float rating) {
