@@ -22,5 +22,6 @@
         android:layout_width="fill_parent"
         android:id="@+id/description_text"
         android:layout_below="@+id/description_row"
-        android:visibility="gone" />
+        android:visibility="gone" 
+        android:autoLink="web"/>
 </RelativeLayout>
