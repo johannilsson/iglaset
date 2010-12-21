@@ -3,7 +3,6 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -12,6 +11,10 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:id="@+id/drink_detail_layout">
+		<com.markupartist.android.widget.ActionBar
+	        android:id="@+id/actionbar"
+	        style="@style/ActionBar"
+            />
         <include layout="@layout/drink_detail" />
     </LinearLayout>
     <ListView
