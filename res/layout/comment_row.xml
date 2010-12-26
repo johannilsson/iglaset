@@ -40,6 +40,7 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         android:text="Usch!!!"
-        android:layout_below="@+id/comment_rating"/>
+        android:layout_below="@+id/comment_rating"
+        android:autoLink="web"/>
 
 </RelativeLayout>

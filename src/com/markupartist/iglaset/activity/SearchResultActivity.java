@@ -32,6 +32,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkCompletedListener;
 import com.markupartist.iglaset.activity.SearchDrinksTask.SearchDrinkErrorListener;
@@ -43,6 +45,7 @@ import com.markupartist.iglaset.provider.RatingSearchCriteria;
 import com.markupartist.iglaset.provider.RecommendationSearchCriteria;
 import com.markupartist.iglaset.provider.SearchCriteria;
 import com.markupartist.iglaset.provider.TextSearchCriteria;
+import com.markupartist.iglaset.widget.SearchAction;
 import com.markupartist.iglaset.IglasetApplication;
 
 public class SearchResultActivity extends ListActivity implements
@@ -78,6 +81,8 @@ public class SearchResultActivity extends ListActivity implements
         "com.markupartist.iglaset.search.categoryId";
     static final String EXTRA_SEARCH_TAGS =
     	"com.markupartist.iglaset.search.tags";
+    static final String EXTRA_SEARCH_TAGS_SELECTED =
+        "com.markupartist.iglaset.search.tagsString";
     static final String EXTRA_CLICKED_DRINK =
         "com.markupartist.iglaset.search.clickedDrink";
 
@@ -122,6 +127,16 @@ public class SearchResultActivity extends ListActivity implements
 
         setContentView(R.layout.search_result);
 
+        ActionBar actionBar = (ActionBar) findViewById(R.id.actionbar);
+        actionBar.setTitle(R.string.search_results);
+        actionBar.setHomeAction(new IntentAction(this, StartActivity.createIntent(this), R.drawable.ic_actionbar_home_default));
+        actionBar.addAction(new SearchAction() {
+            @Override
+            public void performAction() {
+                onSearchRequested();
+            }
+        });
+        
         try {
             mAuthentication = AuthStore.getInstance().getAuthentication(this);
         } catch (AuthenticationException e) {
@@ -164,19 +179,19 @@ public class SearchResultActivity extends ListActivity implements
                 final TextView searchText = (TextView) findViewById(R.id.search_progress_text);
                 String searchingText = searchText.getText() + " \"" + queryString + "\"";
                 searchText.setText(searchingText);
-                setTitle(searchingText);
+                actionBar.setTitle(searchingText);
 
                 mSearchCriteria = new TextSearchCriteria();
                 mSearchCriteria.setQuery(queryString);
                 
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
-                setTitle(R.string.recommendations_label);
+                actionBar.setTitle(R.string.recommendations_label);
 
                 mSearchCriteria = new RecommendationSearchCriteria();
                 ((RecommendationSearchCriteria) mSearchCriteria).setUserId(
                         mAuthentication.v2.userId);
             } else if (ACTION_USER_RATINGS.equals(queryAction)) {
-                setTitle(R.string.rated_articles_label);
+                actionBar.setTitle(R.string.rated_articles_label);
 
                 mSearchCriteria = new RatingSearchCriteria();
                 ((RatingSearchCriteria) mSearchCriteria).setUserId(mAuthentication.v2.userId);
@@ -190,20 +205,25 @@ public class SearchResultActivity extends ListActivity implements
                 final int category = queryIntent.getExtras()
                     .getInt(EXTRA_SEARCH_CATEGORY_ID);
 
-                setTitle(R.string.search_results);
+                actionBar.setTitle(R.string.search_results);
                 mSearchCriteria.setCategory(category);
             }
             
             if (queryIntent.hasExtra(EXTRA_SEARCH_BARCODE)) {
                 String barcode = queryIntent.getStringExtra(EXTRA_SEARCH_BARCODE);
 
-                setTitle(R.string.search_results);
+                actionBar.setTitle(R.string.search_results);
                 mSearchCriteria.setBarcode(barcode);
             }
             
             if (queryIntent.hasExtra(EXTRA_SEARCH_TAGS)) {
-                setTitle(R.string.search_results);
+                actionBar.setTitle(R.string.search_results);
                 ArrayList<Integer> tags = queryIntent.getIntegerArrayListExtra(EXTRA_SEARCH_TAGS);
+
+                TextView selectedTags = (TextView) findViewById(R.id.tagSearchSelectedText);
+                selectedTags.setText(queryIntent.getStringExtra(EXTRA_SEARCH_TAGS_SELECTED));
+                selectedTags.setVisibility(View.VISIBLE);
+
                 mSearchCriteria.setTags(tags);
             }
             
@@ -220,7 +240,7 @@ public class SearchResultActivity extends ListActivity implements
         
         this.registerReceiver(mBroadcastReceiver, new IntentFilter(Intents.ACTION_PUBLISH_DRINK));
     }
-    
+
     private IglasetApplication getApp() {
     	return (IglasetApplication) getApplication();
     }
@@ -473,7 +493,7 @@ public class SearchResultActivity extends ListActivity implements
 					int sortMode = mSearchCriteria.getSortModeFromIndex(item);
 					mSearchCriteria.setSortMode(sortMode);
 					mSearchCriteria.setPage(1);
-					getApp().storeSearchSortMode(mSearchCriteria.getClass(), sortMode);
+					getApp().storeSearchSortMode(item);
 		            createSearchDrinksTask().execute(mSearchCriteria);
 		            dismissDialog(DIALOG_SELECT_SORTING);
 				}

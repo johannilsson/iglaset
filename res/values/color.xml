@@ -3,4 +3,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="list_divider">#DBDBDB</color>
     <color name="header_background">#CFCFCF</color>
+    <color name="actionbar_separator">#B3B3B3</color>
+    <color name="actionbar_background_start">#4D4D4D</color>
+    <color name="actionbar_background_end">#525252</color>
 </resources>

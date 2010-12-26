@@ -29,7 +29,8 @@ Schedule
 
 Changelog
 ---------
-* Next:
+* Next
+* 1.4.1
     * Fixed crash on 1.6 devices (thanks to Daniel Ekström for the report)
     * Minor comment layout fix
     * Tags in the drink detail are now clickable (Issue #13)

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -17,7 +18,10 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.text.TextUtils;
+import android.text.format.DateFormat;
+import android.text.format.Time;
 import android.util.Log;
+import android.util.TimeUtils;
 
 class CommentsParser extends DefaultHandler {
     private static final String TAG = CommentsParser.class.getSimpleName();
@@ -60,13 +64,15 @@ class CommentsParser extends DefaultHandler {
             mCurrentComment.setDrinkId(Integer.parseInt(atts.getValue("article_id").trim()));
             mCurrentComment.setUserId(Integer.parseInt(atts.getValue("user_id").trim()));
             mCurrentComment.setNickname(atts.getValue("nickname").trim());
+
             try {
-				mCurrentComment.setCreated(mCreatedTime.parse(atts.getValue("created").trim()));
-			} catch (ParseException e) {				
-				e.printStackTrace();
-				mCurrentComment.setCreated(null);
-			}
-            
+                Date created = mCreatedTime.parse(atts.getValue("created").trim());
+                mCurrentComment.setCreated(DateFormat.format("yyyy-MM-dd", created));
+                //mCurrentComment.setCreated(mCreatedTime.parse(atts.getValue("created").trim()));
+            } catch (ParseException e) {
+                mCurrentComment.setCreated(null);
+            }
+
             int rating = 0;
             if (!TextUtils.isEmpty(atts.getValue("rating").trim())) {
                 rating = (int) Float.parseFloat(atts.getValue("rating").trim());

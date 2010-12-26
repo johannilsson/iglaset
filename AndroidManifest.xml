@@ -2,7 +2,7 @@
 <manifest package="com.markupartist.iglaset"
       xmlns:android="http://schemas.android.com/apk/res/android"
       android:installLocation="auto"
-      android:versionName="1.4.0" android:versionCode="39">
+      android:versionCode="41" android:versionName="1.4.1">
     <supports-screens
         android:largeScreens="true"
         android:normalScreens="true"
@@ -13,7 +13,7 @@
                        android:value=".activity.SearchResultActivity" />
         <activity android:label="@string/app_name" 
                   android:name=".activity.StartActivity"
-                  android:theme="@android:style/Theme.Light"
+                  android:theme="@android:style/Theme.Light.NoTitleBar"
                   android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +22,7 @@
         </activity>
         <activity android:label="@string/search_results" 
                   android:name=".activity.SearchResultActivity"
-                  android:theme="@android:style/Theme.Light">
+                  android:theme="@android:style/Theme.Light.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="com.markupartist.iglaset.action.USER_RECOMMENDATIONS" />
@@ -45,15 +45,15 @@
                   android:authorities="com.markupartist.iglaset.activity.SuggestionProvider" />
 
         <activity android:name=".activity.DrinkDetailActivity"
-                  android:theme="@android:style/Theme.Light">
+                  android:theme="@android:style/Theme.Light.NoTitleBar">
         </activity>
 
         <activity android:name=".activity.CategoryActivity"
-                  android:theme="@android:style/Theme.Light">
+                  android:theme="@android:style/Theme.Light.NoTitleBar">
         </activity>
         
         <activity android:name=".activity.TagActivity"
-                  android:theme="@android:style/Theme.Light">
+                  android:theme="@android:style/Theme.Light.NoTitleBar">
         </activity>
 
         <activity android:name=".activity.BasicPreferenceActivity" 

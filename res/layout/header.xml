@@ -2,6 +2,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"  
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="3dip"
+    android:padding="5dip"
     android:textStyle="bold"
-    android:background="@color/header_background" />
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:text="sdsds"
+    android:background="@color/header_background"
+     />
+    <!-- android:background="@drawable/header_background" -->
