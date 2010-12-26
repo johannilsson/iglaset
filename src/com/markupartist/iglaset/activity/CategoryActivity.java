@@ -9,7 +9,10 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.markupartist.iglaset.R;
+import com.markupartist.iglaset.widget.SearchAction;
 
 public class CategoryActivity extends ListActivity {
     /** Called when the activity is first created. */
@@ -18,12 +21,27 @@ public class CategoryActivity extends ListActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.category_list);
-        setTitle(getText(R.string.categories));
+
+        ActionBar actionBar = (ActionBar) findViewById(R.id.actionbar);
+        actionBar.setHomeAction(new IntentAction(this, StartActivity.createIntent(this), R.drawable.ic_actionbar_home_default));
+        actionBar.setTitle(R.string.categories);
+        actionBar.addAction(new SearchAction() {
+            @Override
+            public void performAction() {
+                onSearchRequested();
+            }
+        });
 
         ArrayAdapter<Category> categoryAdapter = new ArrayAdapter<Category>(
                 this, R.layout.category_list_row, createCategories());
 
         this.setListAdapter(categoryAdapter);
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        startSearch(null, false, null, false);
+        return true;
     }
 
     /** Called when the list is clicked. */

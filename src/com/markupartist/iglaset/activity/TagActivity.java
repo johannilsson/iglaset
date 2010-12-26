@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.Tag;
 import com.markupartist.iglaset.provider.TagsStore;
 import com.markupartist.iglaset.util.ListUtils;
 import com.markupartist.iglaset.util.MultiHashMap;
 import com.markupartist.iglaset.util.StringUtils;
+import com.markupartist.iglaset.widget.SearchAction;
 import com.markupartist.iglaset.widget.SectionedAdapter;
 
 import android.app.Dialog;
@@ -66,7 +69,17 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
         Bundle extras = getIntent().getExtras();
 
         setContentView(R.layout.tag_list);
-        setTitle(extras.getString(EXTRA_CATEGORY_NAME));
+
+        ActionBar actionBar = (ActionBar) findViewById(R.id.actionbar);
+        actionBar.setHomeAction(new IntentAction(this, StartActivity.createIntent(this), R.drawable.ic_actionbar_home_default));
+        actionBar.setTitle(extras.getString(EXTRA_CATEGORY_NAME));
+        actionBar.addAction(new SearchAction() {
+            @Override
+            public void performAction() {
+                onSearchRequested();
+            }
+        });
+
         categoryId = extras.getInt(EXTRA_CATEGORY_ID);
         
         View tagSearchLayout = this.findViewById(R.id.tagSearchLayout);
@@ -156,7 +169,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
 			break;
 		}
 	}
-	
+
 	private void doSearch() {
         Intent searchIntent = new Intent(this, SearchResultActivity.class);
         searchIntent.putExtra(SearchResultActivity.EXTRA_SEARCH_CATEGORY_ID, categoryId);
@@ -171,7 +184,10 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
         	}
         }
         
+        TextView numSelectedView = (TextView) findViewById(R.id.tagSearchSelectedText);
+        
         searchIntent.putExtra(SearchResultActivity.EXTRA_SEARCH_TAGS, checkedIds);
+        searchIntent.putExtra(SearchResultActivity.EXTRA_SEARCH_TAGS_SELECTED, numSelectedView.getText());
         startActivity(searchIntent); 
 	}
 	

@@ -55,6 +55,8 @@ import android.widget.SimpleAdapter.ViewBinder;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.markupartist.iglaset.IglasetApplication;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
@@ -70,6 +72,7 @@ import com.markupartist.iglaset.provider.Tag;
 import com.markupartist.iglaset.util.ListUtils;
 import com.markupartist.iglaset.util.MultiHashMap;
 import com.markupartist.iglaset.widget.DrinkDescriptionAdapter;
+import com.markupartist.iglaset.widget.SearchAction;
 import com.markupartist.iglaset.widget.SectionedAdapter;
 import com.markupartist.iglaset.widget.SectionedAdapter.Section;
 import com.markupartist.iglaset.widget.VolumeAdapter;
@@ -131,9 +134,6 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        requestWindowFeature(Window.FEATURE_NO_TITLE); 
-
         setContentView(R.layout.drink_details);
 
         mAuthentication = getAuthentication();
@@ -141,6 +141,16 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         Bundle extras = getIntent().getExtras();
         final Drink drink = extras.getParcelable(Intents.EXTRA_DRINK);
         sDrink = drink;
+
+        ActionBar actionBar = (ActionBar) findViewById(R.id.actionbar);
+        actionBar.setHomeAction(new IntentAction(this, StartActivity.createIntent(this), R.drawable.ic_actionbar_home_default));
+        actionBar.setTitle(sDrink.getName());
+        actionBar.addAction(new SearchAction() {
+            @Override
+            public void performAction() {
+                onSearchRequested();
+            }
+        });
         
         // Populate drink details
         View detailsLayout = this.findViewById(R.id.drink_detail_layout);
