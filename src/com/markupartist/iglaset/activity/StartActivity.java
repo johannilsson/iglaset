@@ -35,7 +35,6 @@ import android.widget.TextView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.markupartist.android.widget.ActionBar;
 import com.markupartist.iglaset.IglasetApplication;
 import com.markupartist.iglaset.R;
 import com.markupartist.iglaset.provider.AuthStore;
@@ -58,9 +57,6 @@ public class StartActivity extends Activity implements android.view.View.OnClick
         reporter.checkErrorAndReport(this);
 
         setContentView(R.layout.start);
-
-        ActionBar actionBar = (ActionBar) findViewById(R.id.actionbar);
-        actionBar.setHomeLogo(R.drawable.logo_top);
 
         mSearchView = (AutoCompleteTextView) findViewById(R.id.search_text);
         mSearchView.setAdapter(new AutoCompleteSearchAdapter(this, R.layout.simple_list_row_inverted));
