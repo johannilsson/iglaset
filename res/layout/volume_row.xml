@@ -11,10 +11,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#008B00"
+        android:background="@drawable/volume_background"
         android:textColor="#FFFF00"
-        android:paddingLeft="2dip"
-        android:paddingRight="2dip"
+        android:paddingLeft="4dip"
+        android:paddingRight="4dip"
         android:textSize="12dip"
         android:text="SB"
         android:layout_marginRight="10dip"
