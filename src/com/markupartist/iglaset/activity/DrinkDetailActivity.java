@@ -504,6 +504,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         	tags.add(tag.getId());
             Intent searchIntent = new Intent(this, SearchResultActivity.class);
             searchIntent.putExtra(SearchResultActivity.EXTRA_SEARCH_TAGS, tags);
+            searchIntent.putExtra(SearchResultActivity.EXTRA_SEARCH_TAGS_SELECTED, tag.getName());
             startActivity(searchIntent); 
         } else if (section.adapter instanceof UserRatingAdapter) {
         	tryShowAuthenticatedDialog(DIALOG_RATE);
