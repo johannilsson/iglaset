@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.Random;
 
 import com.markupartist.iglaset.R;
-import com.markupartist.iglaset.provider.DrinksStore;
 
 import android.app.AlertDialog;
 import android.content.Context;

@@ -19,9 +19,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.text.format.Time;
 import android.util.Log;
-import android.util.TimeUtils;
 
 class CommentsParser extends DefaultHandler {
     private static final String TAG = CommentsParser.class.getSimpleName();
