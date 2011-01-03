@@ -10,11 +10,13 @@ import android.text.TextUtils;
 public class Drink implements Parcelable {
     private static String THUMB_RESIZE_FORMAT =
     	"http://api.iglaset.se/resizely/crop/%dx%d/?url=%s";
+        
     private int mId;
     private String mName;
     private String mOrigin;
     private String mOriginCountry;
     private String mProducer;
+    private int mProducerId = Producer.UNDEFINED_ID;
     private String mSupplierUrl;
     private String mSupplier;
     private String mAlcoholPercent;
@@ -45,6 +47,7 @@ public class Drink implements Parcelable {
         mOrigin = in.readString();
         mOriginCountry = in.readString();
         mProducer = in.readString();
+        mProducerId = in.readInt();
         mSupplierUrl = in.readString();
         mSupplier = in.readString();
         mAlcoholPercent = in.readString();
@@ -95,6 +98,7 @@ public class Drink implements Parcelable {
         dest.writeString(mOrigin);
         dest.writeString(mOriginCountry);
         dest.writeString(mProducer);
+        dest.writeInt(mProducerId);
         dest.writeString(mSupplierUrl);
         dest.writeString(mSupplier);
         dest.writeString(mAlcoholPercent);
@@ -241,6 +245,14 @@ public class Drink implements Parcelable {
 
     public void setProducer(String producer) {
         this.mProducer = producer;
+    }
+    
+    public int getProducerId() {
+    	return mProducerId;
+    }
+    
+    public void setProducerId(int id) {
+    	this.mProducerId = id;
     }
 
     public String getSupplierUrl() {
