@@ -81,6 +81,13 @@ class DrinksParser extends DefaultHandler {
         	mCurrentTag = new Tag();
         	mCurrentTag.setId(Integer.parseInt(atts.getValue("id")));
         	mCurrentTag.setType(atts.getValue("type"));
+        } else if (name.equals("producer")) {
+        	String producerId = atts.getValue("id");
+        	if(producerId != null) {
+        		mCurrentDrink.setProducerId(Integer.parseInt(producerId.trim()));
+        	} else {
+        		mCurrentDrink.setProducerId(Producer.UNDEFINED_ID);
+        	}
         }
     }
 
