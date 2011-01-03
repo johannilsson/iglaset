@@ -2,6 +2,7 @@ package com.markupartist.iglaset;
 
 import com.google.android.imageloader.ImageLoader;
 import com.markupartist.iglaset.util.ErrorReporter;
+import com.markupartist.iglaset.util.StringUtils;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -42,12 +43,12 @@ public class IglasetApplication extends Application {
 		getPreferencesEditor().remove(PREF_ORPHAN_CODE).commit();
 	}
 	
-	public void storeSearchSortMode(int mode) {
-		getPreferencesEditor().putInt(PREF_SORT_MODE, mode).commit();
+	public void storeSearchSortMode(Class<? extends Object> namespace, int mode) {
+		getPreferencesEditor().putInt(PREF_SORT_MODE + namespace.getSimpleName(), mode).commit();
 	}
 	
-	public int getSearchSortMode() {
-		return getPreferences().getInt(PREF_SORT_MODE, 0);
+	public int getSearchSortMode(Class<? extends Object> namespace, int defaultValue) {
+		return getPreferences().getInt(PREF_SORT_MODE + namespace.getSimpleName(), defaultValue);
 	}
 	
 	@Override

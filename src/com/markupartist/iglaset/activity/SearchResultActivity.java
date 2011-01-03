@@ -44,6 +44,7 @@ import com.markupartist.iglaset.provider.Drink;
 import com.markupartist.iglaset.provider.RatingSearchCriteria;
 import com.markupartist.iglaset.provider.RecommendationSearchCriteria;
 import com.markupartist.iglaset.provider.SearchCriteria;
+import com.markupartist.iglaset.provider.TextSearchCriteria;
 import com.markupartist.iglaset.widget.SearchAction;
 import com.markupartist.iglaset.IglasetApplication;
 
@@ -180,7 +181,7 @@ public class SearchResultActivity extends ListActivity implements
                 searchText.setText(searchingText);
                 actionBar.setTitle(searchingText);
 
-                mSearchCriteria = new SearchCriteria();
+                mSearchCriteria = new TextSearchCriteria();
                 mSearchCriteria.setQuery(queryString);
                 
             } else if (ACTION_USER_RECOMMENDATIONS.equals(queryAction)) {
@@ -195,7 +196,8 @@ public class SearchResultActivity extends ListActivity implements
                 mSearchCriteria = new RatingSearchCriteria();
                 ((RatingSearchCriteria) mSearchCriteria).setUserId(mAuthentication.v2.userId);
             } else {
-            	mSearchCriteria = new SearchCriteria();
+            	Log.d(TAG, "Unknown search criteria. Falling back to empty text.");
+            	mSearchCriteria = new TextSearchCriteria();
             }
             
             // Search parameters
@@ -226,7 +228,10 @@ public class SearchResultActivity extends ListActivity implements
             }
             
             if(mSearchCriteria.supportsSorting()) {
-            	mSearchCriteria.setSortMode(getApp().getSearchSortMode());
+            	int mode = getApp().getSearchSortMode(
+            			mSearchCriteria.getClass(),
+            			mSearchCriteria.getDefaultSortMode());
+            	mSearchCriteria.setSortMode(mode);
             }
             
             mSearchCriteria.setAuthentication(mAuthentication);
@@ -477,17 +482,18 @@ public class SearchResultActivity extends ListActivity implements
         	AlertDialog.Builder builder = new AlertDialog.Builder(this);
         	builder.setTitle("Sortering");
         	builder.setSingleChoiceItems(
-        			SearchCriteria.getSortModeNames(),
-        			mSearchCriteria.getSortMode(),
+        			mSearchCriteria.getSortModeNames(),
+        			mSearchCriteria.getSortIndexFromMode(mSearchCriteria.getSortMode()),
         			new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int item) {					
-					mSearchCriteria.setSortMode(item);
+					int sortMode = mSearchCriteria.getSortModeFromIndex(item);
+					mSearchCriteria.setSortMode(sortMode);
 					mSearchCriteria.setPage(1);
 					getApp().storeSearchSortMode(item);
 		            createSearchDrinksTask().execute(mSearchCriteria);
-		            dismissDialog(DIALOG_SELECT_SORTING);
+		            removeDialog(DIALOG_SELECT_SORTING);
 				}
 			});
         	return builder.create();
