@@ -4,7 +4,7 @@ public class RatingSearchCriteria extends SearchCriteria {
     private int mUserId;
 
 	private final static int[] SortModes = {
-		SearchCriteria.SORT_MODE_DATE,
+		SearchCriteria.SORT_MODE_NONE,
 		SearchCriteria.SORT_MODE_RATING,
 		SearchCriteria.SORT_MODE_NAME
 	};
@@ -24,6 +24,6 @@ public class RatingSearchCriteria extends SearchCriteria {
 
 	@Override
 	public int getDefaultSortMode() {
-		return SORT_MODE_DATE;
+		return SORT_MODE_NONE;
 	}
 }
