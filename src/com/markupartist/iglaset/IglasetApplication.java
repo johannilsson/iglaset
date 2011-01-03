@@ -2,7 +2,6 @@ package com.markupartist.iglaset;
 
 import com.google.android.imageloader.ImageLoader;
 import com.markupartist.iglaset.util.ErrorReporter;
-import com.markupartist.iglaset.util.StringUtils;
 
 import android.app.Application;
 import android.content.SharedPreferences;
