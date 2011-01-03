@@ -485,7 +485,7 @@ public class SearchResultActivity extends ListActivity implements
         	AlertDialog.Builder builder = new AlertDialog.Builder(this);
         	builder.setTitle("Sortering");
         	builder.setSingleChoiceItems(
-        			mSearchCriteria.getSortModeNames(),
+        			mSearchCriteria.getSortModeNames(this),
         			mSearchCriteria.getSortIndexFromMode(mSearchCriteria.getSortMode()),
         			new DialogInterface.OnClickListener() {
 				

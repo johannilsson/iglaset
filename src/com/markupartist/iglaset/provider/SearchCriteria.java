@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import com.markupartist.iglaset.R;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 /**
@@ -34,7 +35,7 @@ public abstract class SearchCriteria {
 	public abstract int[] getSortModes();
 	public abstract int getDefaultSortMode();
     
-    public CharSequence[] getSortModeNames() {
+    public CharSequence[] getSortModeNames(Context context) {
     	Vector<CharSequence> names = new Vector<CharSequence>();
 
     	int[] modes = getSortModes();    	
@@ -42,22 +43,22 @@ public abstract class SearchCriteria {
     		for(int i=0; i<modes.length; ++i) {
     			switch(modes[i]) {
     			case SORT_MODE_NAME:
-    				names.add("Namn");
+    				names.add(context.getText(R.string.sort_mode_name));
     				break;
     			case SORT_MODE_PRODUCER:
-    				names.add("Producent");
+    				names.add(context.getText(R.string.sort_mode_producer));
     				break;
     			case SORT_MODE_RECOMMENDATIONS:
-    				names.add("Rekommendationer");
+    				names.add(context.getText(R.string.sort_mode_recommendations));
     				break;
     			case SORT_MODE_RATING:
-    				names.add("Betyg");
+    				names.add(context.getText(R.string.sort_mode_rating));
     				break;
     			case SORT_MODE_DATE:
-    				names.add("Datum");
+    				names.add(context.getText(R.string.sort_mode_date));
     				break;
     			case SORT_MODE_NONE:
-    				names.add("Ingen");
+    				names.add(context.getText(R.string.sort_mode_none));
     			default:
     				break;
     			}
