@@ -54,7 +54,7 @@ abstract public class SectionedAdapter extends BaseAdapter {
 
     public void removeSection(int id) {
         for (Section section : sections) {
-            if (section.id == id) {
+            if (section.getId() == id) {
                 sections.remove(section);
             }
         }
@@ -205,7 +205,7 @@ abstract public class SectionedAdapter extends BaseAdapter {
     }
 
     public static class Section {
-        int id;
+        private int id;
         public CharSequence caption;
         public Adapter adapter;
 
@@ -214,5 +214,9 @@ abstract public class SectionedAdapter extends BaseAdapter {
             this.caption = caption;
             this.adapter = adapter;
         }
+
+		public int getId() {
+			return id;
+		}
     }
 }
