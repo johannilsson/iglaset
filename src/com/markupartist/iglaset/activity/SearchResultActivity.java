@@ -163,6 +163,7 @@ public class SearchResultActivity extends ListActivity implements
         if(mDrinks != null) {
         	onDrinkData(mDrinks);
         } else if(mSearchCriteria != null) {
+            setProgressBarIndeterminateVisibility(true);
         	createSearchDrinksTask().execute(mSearchCriteria);
         } else {
             final Intent queryIntent = getIntent();
@@ -235,6 +236,7 @@ public class SearchResultActivity extends ListActivity implements
             }
             
             mSearchCriteria.setAuthentication(mAuthentication);
+            setProgressBarIndeterminateVisibility(true);
             createSearchDrinksTask().execute(mSearchCriteria);
         }
         
@@ -464,6 +466,7 @@ public class SearchResultActivity extends ListActivity implements
 		                public void onClick(DialogInterface dialog, int which) {
 		                	switch(which) {
 		                	case Dialog.BUTTON_POSITIVE:
+		                		setProgressBarIndeterminateVisibility(true);
 		                		createSearchDrinksTask().execute(mSearchCriteria);
 			                    break;
 		                	case Dialog.BUTTON_NEGATIVE:
@@ -491,7 +494,8 @@ public class SearchResultActivity extends ListActivity implements
 					int sortMode = mSearchCriteria.getSortModeFromIndex(item);
 					mSearchCriteria.setSortMode(sortMode);
 					mSearchCriteria.setPage(1);
-					getApp().storeSearchSortMode(item);
+					getApp().storeSearchSortMode(mSearchCriteria.getClass(), item);
+					setProgressBarIndeterminateVisibility(true);
 		            createSearchDrinksTask().execute(mSearchCriteria);
 		            removeDialog(DIALOG_SELECT_SORTING);
 				}
@@ -543,6 +547,7 @@ public class SearchResultActivity extends ListActivity implements
                 mSearchCriteria.setPage(mPage.addAndGet(1));
                 SearchDrinksTask task = createSearchDrinksTask();
                 task.setSearchDrinkCompletedListener(this);
+                setProgressBarIndeterminateVisibility(true);
                 task.execute(mSearchCriteria);
             }
 
