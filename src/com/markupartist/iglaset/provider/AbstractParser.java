@@ -54,8 +54,7 @@ public abstract class AbstractParser<T> extends DefaultHandler {
     }
     
     public void endElement(String uri, String name, String qName) {
-    	String resultRaw = stringBuilder.toString().trim();
-    	String result = resultRaw.replace("\n", "").trim();
+    	String result = stringBuilder.toString().trim();
     	onEndElement(name, result);
     	stringBuilder.setLength(0);
     }
