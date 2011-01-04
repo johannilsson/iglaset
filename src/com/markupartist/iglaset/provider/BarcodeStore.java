@@ -57,7 +57,6 @@ public class BarcodeStore {
 
     public ArrayList<Drink> search(SearchCriteria searchCriteria)
             throws IOException {
-        final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
         String searchUri = String.format(BARCODE_SEARCH_URI, searchCriteria.getBarcode(), searchCriteria.getPage());
         if (searchCriteria.getAuthentication() != null
@@ -70,8 +69,6 @@ public class BarcodeStore {
         final HttpResponse response = HttpManager.execute(get);
         entity = response.getEntity();
         DrinksParser drinksParser = new DrinksParser();
-        drinksParser.parseDrinks(entity.getContent(), drinks);
-
-        return drinks;
+        return drinksParser.parse(entity.getContent());
     }
 }

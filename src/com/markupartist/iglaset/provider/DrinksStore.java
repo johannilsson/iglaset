@@ -51,16 +51,13 @@ public class DrinksStore {
 
     public ArrayList<Drink> searchDrinks(SearchCriteria searchCriteria)
             throws IOException {
-        final ArrayList<Drink> drinks = new ArrayList<Drink>();
         final HttpGet get = new HttpGet(buildSearchUri(searchCriteria));
         HttpEntity entity = null;
 
         final HttpResponse response = HttpManager.execute(get);
         entity = response.getEntity();
         DrinksParser drinksParser = new DrinksParser();
-        drinksParser.parseDrinks(entity.getContent(), drinks);
-
-        return drinks;
+        return drinksParser.parse(entity.getContent());
     }
 
     /**
@@ -72,7 +69,6 @@ public class DrinksStore {
     public ArrayList<Drink> findRecommendations(
             RecommendationSearchCriteria searchCriteria)
                 throws IOException {
-        final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
         StringBuilder builder = new StringBuilder(String.format(USER_RECOMMENDATIONS_URI, searchCriteria.getUserId()));
         builder.append("&user_credentials=").append(searchCriteria.getAuthentication().v2.token);
@@ -85,9 +81,7 @@ public class DrinksStore {
         final HttpResponse response = HttpManager.execute(get);
         entity = response.getEntity();
         DrinksParser drinksParser = new DrinksParser();
-        drinksParser.parseDrinks(entity.getContent(), drinks);
-
-        return drinks;
+        return drinksParser.parse(entity.getContent());
     }
 
     /**
@@ -98,7 +92,6 @@ public class DrinksStore {
      */
     public ArrayList<Drink> findRatedDrinks(RatingSearchCriteria searchCriteria)
             throws IOException {
-        final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
         StringBuilder builder = new StringBuilder(String.format(USER_RATINGS_URI, searchCriteria.getUserId()));
         builder.append("&user_credentials=").append(searchCriteria.getAuthentication().v2.token);
@@ -112,9 +105,7 @@ public class DrinksStore {
         final HttpResponse response = HttpManager.execute(get);
         entity = response.getEntity();
         DrinksParser drinksParser = new DrinksParser();
-        drinksParser.parseDrinks(entity.getContent(), drinks);
-
-        return drinks;
+        return drinksParser.parse(entity.getContent());
     }
     
     public Drink getDrink(int id) {
@@ -128,13 +119,13 @@ public class DrinksStore {
         }
 
         final HttpGet get = new HttpGet(searchUri);
-        final ArrayList<Drink> drinks = new ArrayList<Drink>();
+        ArrayList<Drink> drinks = new ArrayList<Drink>();
 
         try {
             final HttpResponse response = HttpManager.execute(get);
             HttpEntity entity = response.getEntity();
             DrinksParser drinksParser = new DrinksParser();
-            drinksParser.parseDrinks(entity.getContent(), drinks);
+            drinks = drinksParser.parse(entity.getContent());
         } catch (IOException e) {
             Log.e(TAG, "Failed to read data: " + e.getMessage());
         }
