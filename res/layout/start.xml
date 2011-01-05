@@ -71,20 +71,20 @@
                 />
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
                 android:layout_weight="1"
-                >
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
                 <TextView
+                    android:text="@string/scan_barcode"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="@string/scan_barcode"
                     />
                 <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
                     android:text="@string/scan_barcode_description"
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:id="@+id/scan_barcode_description_view"
                     />
             </LinearLayout>
         </TableRow>
