@@ -16,14 +16,14 @@ public class CommentsStore {
     private static String COMMENTS_BASE_URI = "http://www.iglaset.se/articles/%d/comments.xml";
 
     public ArrayList<Comment> getComments(Drink drink) {
-        final ArrayList<Comment> comments = new ArrayList<Comment>();
+        ArrayList<Comment> comments = null;
         final HttpGet get = new HttpGet(String.format(COMMENTS_BASE_URI, drink.getId()));
         HttpEntity entity = null;
         try {
             final HttpResponse response = HttpManager.execute(get);
             entity = response.getEntity();
             CommentsParser commentsParser = new CommentsParser();
-            commentsParser.parseComments(entity.getContent(), comments);
+            comments = commentsParser.parse(entity.getContent());
         } catch (IOException e) {
             Log.d(TAG, "Failed to read data: " + e.getMessage());
         }

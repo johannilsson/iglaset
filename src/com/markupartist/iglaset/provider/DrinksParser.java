@@ -1,31 +1,19 @@
 package com.markupartist.iglaset.provider;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.markupartist.iglaset.provider.Drink.Volume;
 
-class DrinksParser extends DefaultHandler {
-    private static final String TAG = DrinksParser.class.getSimpleName();
-    private ArrayList<Drink> mDrinks = null;
+class DrinksParser extends AbstractParser<Drink> {
+    private ArrayList<Drink> mDrinks = new ArrayList<Drink>();
     private Drink mCurrentDrink;
     private Volume mCurrentVolume = null;
     private Tag mCurrentTag = null;
-    private StringBuilder mTextBuffer = null;
     private int mArticleCount;
     public static int COUNT_UNDEFINED = -1;
 
@@ -33,36 +21,14 @@ class DrinksParser extends DefaultHandler {
     public void startDocument() throws SAXException {
         super.startDocument();
         mArticleCount = COUNT_UNDEFINED;
-        mTextBuffer = new StringBuilder();
     }
     
     public int getArticleCount() {
     	return mArticleCount;
     }
-    
-    public ArrayList<Drink> parseDrinks(InputStream in, ArrayList<Drink> drinks) {
-        try {
-            mDrinks = drinks;
-            InputSource inputSource = new InputSource(in);
-            inputSource.setEncoding("UTF-8");
 
-            SAXParserFactory spf = SAXParserFactory.newInstance();
-            SAXParser sp = spf.newSAXParser();
-            XMLReader xr = sp.getXMLReader();
-            xr.setContentHandler(this);
-            xr.parse(inputSource);
-        } catch (IOException e) {
-            Log.e(TAG, e.toString());
-        } catch (SAXException e) {
-            Log.e(TAG, e.toString());
-        } catch (ParserConfigurationException e) {
-            Log.e(TAG, e.toString());
-        }
-
-        return mDrinks;
-    }
-
-    public void startElement(String uri, String name, String qName, Attributes atts) {
+	@Override
+	public void onStartElement(String name, Attributes atts) {
     	if (name.equals("articles")) {
     		String articleCount = atts.getValue("total_articles");
     		if(!TextUtils.isEmpty(articleCount)) {
@@ -81,76 +47,75 @@ class DrinksParser extends DefaultHandler {
         	mCurrentTag = new Tag();
         	mCurrentTag.setId(Integer.parseInt(atts.getValue("id")));
         	mCurrentTag.setType(atts.getValue("type"));
+        } else if (name.equals("producer")) {
+        	String producerId = atts.getValue("id");
+        	if(producerId != null) {
+        		mCurrentDrink.setProducerId(Integer.parseInt(producerId.trim()));
+        	} else {
+        		mCurrentDrink.setProducerId(Producer.UNDEFINED_ID);
+        	}
         }
-    }
+	}
 
-    public void characters(char ch[], int start, int length) {
-    	mTextBuffer.append(ch, start, length);
-    }
-
-    public void endElement(String uri, String name, String qName)
-                throws SAXException {
-    	
-    	final String result = mTextBuffer.toString().replace("\n", "").trim();
+	@Override
+	public void onEndElement(String name, String result) {
+    	final String cleanedResult = result.replace("\n", "");
     	
         if (mCurrentDrink != null) {
             if (name.trim().equals("name")) {
-                mCurrentDrink.setName(result);
+                mCurrentDrink.setName(cleanedResult);
             } else if (name.equals("producer")) {
-                mCurrentDrink.setProducer(result);
+                mCurrentDrink.setProducer(cleanedResult);
             } else if (name.equals("supplier")) {
-                mCurrentDrink.setSupplier(result);
+                mCurrentDrink.setSupplier(cleanedResult);
             } else if (name.equals("origin")) {
-                mCurrentDrink.setOrigin(result);
+                mCurrentDrink.setOrigin(cleanedResult);
             } else if (name.equals("origin_country")) {
-                mCurrentDrink.setOriginCountry(result);
+                mCurrentDrink.setOriginCountry(cleanedResult);
             } else if (name.equals("alc_percent")) {
-                mCurrentDrink.setAlcoholPercent(result);
-            } else if (name.equals("year") && !TextUtils.isEmpty(result)) {
-                mCurrentDrink.setYear(Integer.parseInt(result));
+                mCurrentDrink.setAlcoholPercent(cleanedResult);
+            } else if (name.equals("year") && !TextUtils.isEmpty(cleanedResult)) {
+                mCurrentDrink.setYear(Integer.parseInt(cleanedResult));
             } else if (name.equals("volume")) {
-                mCurrentVolume.setVolume(Integer.parseInt(result));
+                mCurrentVolume.setVolume(Integer.parseInt(cleanedResult));
                 mCurrentDrink.addVolume(mCurrentVolume);
             } else if (name.equals("tag")) {      
-            	mCurrentTag.setName(result);
+            	mCurrentTag.setName(cleanedResult);
                 mCurrentDrink.addTag(mCurrentTag);
                 mCurrentTag = null;
             } else if (name.equals("commercial_desc")) {
             	// Use newline as <br>. That's why the distilled "result" variable
             	// cannot be used.
-                mCurrentDrink.setDescription(mTextBuffer.toString().trim().replaceAll("\n", "<br/>"));
-            } else if (name.equals("avg_rating") && result.length() > 0) {
-                mCurrentDrink.setAverageRating(Float.parseFloat(result));
+                mCurrentDrink.setDescription(result.replaceAll("\n", "<br/>"));
+            } else if (name.equals("avg_rating") && cleanedResult.length() > 0) {
+                mCurrentDrink.setAverageRating(Float.parseFloat(cleanedResult));
             } else if (name.equals("comments")) {
-            	mCurrentDrink.setCommentCount(Integer.parseInt(result));
-            } else if (name.equals("small")) {
-                if (!TextUtils.isEmpty(mTextBuffer)) {
-                    mCurrentDrink.setImageUrl(Drink.ImageSize.SMALL, result);
-                }
-            } else if (name.equals("medium")) {
-                if (!TextUtils.isEmpty(mTextBuffer)) {
-                    mCurrentDrink.setImageUrl(Drink.ImageSize.MEDIUM, result);
-                }
-            } else if (name.equals("large")) {
-                if (!TextUtils.isEmpty(mTextBuffer)) {
-                    mCurrentDrink.setImageUrl(Drink.ImageSize.LARGE, result);
-                }
-            } else if (name.equals("user_rating") && result.length() > 0) {
-            	mCurrentDrink.setUserRating(Float.parseFloat(result));
+            	mCurrentDrink.setCommentCount(Integer.parseInt(cleanedResult));
+            } else if (name.equals("small") && !TextUtils.isEmpty(cleanedResult)) {
+                mCurrentDrink.setImageUrl(Drink.ImageSize.SMALL, result);
+            } else if (name.equals("medium") && !TextUtils.isEmpty(cleanedResult)) {
+                mCurrentDrink.setImageUrl(Drink.ImageSize.MEDIUM, result);
+            } else if (name.equals("large") && !TextUtils.isEmpty(cleanedResult)) {
+                mCurrentDrink.setImageUrl(Drink.ImageSize.LARGE, cleanedResult);
+            } else if (name.equals("user_rating") && cleanedResult.length() > 0) {
+            	mCurrentDrink.setUserRating(Float.parseFloat(cleanedResult));
             } else if (name.equals("comments")) {
-            	mCurrentDrink.setCommentCount(Integer.parseInt(result));
+            	mCurrentDrink.setCommentCount(Integer.parseInt(cleanedResult));
             } else if (name.equals("ratings")) {
-            	mCurrentDrink.setRatingCount(Integer.parseInt(result));
-            } else if (name.equals("estimated_rating") && result.length() > 0) {
-            	mCurrentDrink.setEstimatedRating(Float.parseFloat(result));
+            	mCurrentDrink.setRatingCount(Integer.parseInt(cleanedResult));
+            } else if (name.equals("estimated_rating") && cleanedResult.length() > 0) {
+            	mCurrentDrink.setEstimatedRating(Float.parseFloat(cleanedResult));
             }
         }
 
         if (name.trim().equals("article")) {
             mDrinks.add(mCurrentDrink);
             mCurrentDrink = null;
-        }
-        
-        mTextBuffer.setLength(0);
-    }
+        } 
+	}
+
+	@Override
+	protected ArrayList<Drink> getContent() {
+		return mDrinks;
+	}
 }

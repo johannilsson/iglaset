@@ -3,7 +3,6 @@
     <string name="retry">Försök igen</string>
     <string name="logging_in">Loggar in...</string>
     <string name="app_name">iglaset</string>
-    <string name="sort_label">Sortering</string>
     <string name="search_label">Sök</string>
     <string name="search_description">Namn, artikelnummer eller valfri text</string>
     <string name="home_label">Hem</string>
@@ -74,4 +73,11 @@
     <string name="add_suggested_barcode">Den senast scannade streckkoden (%s) fanns inte i systemet. Vill du lägga in den nu?</string>
     <string name="add">Lägg in</string>
     <string name="forget_barcode">Glöm kod</string>
+    <string name="sort_label">Sortering</string>
+    <string name="sort_mode_none">Ingen</string>
+    <string name="sort_mode_name">Namn</string>
+    <string name="sort_mode_producer">Producent</string> 
+    <string name="sort_mode_recommendations">Rekommendationer</string>
+    <string name="sort_mode_rating">Betyg</string>
+    <string name="sort_mode_date">Datum</string>
 </resources>

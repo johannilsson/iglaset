@@ -51,16 +51,13 @@ public class DrinksStore {
 
     public ArrayList<Drink> searchDrinks(SearchCriteria searchCriteria)
             throws IOException {
-        final ArrayList<Drink> drinks = new ArrayList<Drink>();
         final HttpGet get = new HttpGet(buildSearchUri(searchCriteria));
         HttpEntity entity = null;
 
         final HttpResponse response = HttpManager.execute(get);
         entity = response.getEntity();
         DrinksParser drinksParser = new DrinksParser();
-        drinksParser.parseDrinks(entity.getContent(), drinks);
-
-        return drinks;
+        return drinksParser.parse(entity.getContent());
     }
 
     /**
@@ -72,20 +69,19 @@ public class DrinksStore {
     public ArrayList<Drink> findRecommendations(
             RecommendationSearchCriteria searchCriteria)
                 throws IOException {
-        final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
-        final HttpGet get = new HttpGet(
-        		String.format(USER_RECOMMENDATIONS_URI, searchCriteria.getUserId())
-        		+ "&user_credentials=" + searchCriteria.getAuthentication().v2.token
-        		+ "&page=" + searchCriteria.getPage());
+        StringBuilder builder = new StringBuilder(String.format(USER_RECOMMENDATIONS_URI, searchCriteria.getUserId()));
+        builder.append("&user_credentials=").append(searchCriteria.getAuthentication().v2.token);
+        builder.append("&page=").append(searchCriteria.getPage());
+        builder.append(getSortModeParameter(searchCriteria.getSortMode()));
+
+        final HttpGet get = new HttpGet(builder.toString());
         HttpEntity entity = null;
 
         final HttpResponse response = HttpManager.execute(get);
         entity = response.getEntity();
         DrinksParser drinksParser = new DrinksParser();
-        drinksParser.parseDrinks(entity.getContent(), drinks);
-
-        return drinks;
+        return drinksParser.parse(entity.getContent());
     }
 
     /**
@@ -96,20 +92,20 @@ public class DrinksStore {
      */
     public ArrayList<Drink> findRatedDrinks(RatingSearchCriteria searchCriteria)
             throws IOException {
-        final ArrayList<Drink> drinks = new ArrayList<Drink>();
 
-        final HttpGet get = new HttpGet(
-        		String.format(USER_RATINGS_URI, searchCriteria.getUserId())
-                + "&page=" + searchCriteria.getPage()
-                + "&user_credentials=" + searchCriteria.getAuthentication().v2.token);
+        StringBuilder builder = new StringBuilder(String.format(USER_RATINGS_URI, searchCriteria.getUserId()));
+        builder.append("&user_credentials=").append(searchCriteria.getAuthentication().v2.token);
+        builder.append("&page=").append(searchCriteria.getPage());
+        builder.append(getSortModeParameter(searchCriteria.getSortMode()));
+        Log.d(TAG, builder.toString());
+
+        final HttpGet get = new HttpGet(builder.toString());
         HttpEntity entity = null;
 
         final HttpResponse response = HttpManager.execute(get);
         entity = response.getEntity();
         DrinksParser drinksParser = new DrinksParser();
-        drinksParser.parseDrinks(entity.getContent(), drinks);
-
-        return drinks;
+        return drinksParser.parse(entity.getContent());
     }
     
     public Drink getDrink(int id) {
@@ -123,13 +119,13 @@ public class DrinksStore {
         }
 
         final HttpGet get = new HttpGet(searchUri);
-        final ArrayList<Drink> drinks = new ArrayList<Drink>();
+        ArrayList<Drink> drinks = new ArrayList<Drink>();
 
         try {
             final HttpResponse response = HttpManager.execute(get);
             HttpEntity entity = response.getEntity();
             DrinksParser drinksParser = new DrinksParser();
-            drinksParser.parseDrinks(entity.getContent(), drinks);
+            drinks = drinksParser.parse(entity.getContent());
         } catch (IOException e) {
             Log.e(TAG, "Failed to read data: " + e.getMessage());
         }
@@ -210,24 +206,7 @@ public class DrinksStore {
                 && !TextUtils.isEmpty(searchCriteria.getAuthentication().v2.token))
         	builder.append("&user_credentials=").append(searchCriteria.getAuthentication().v2.token);
         
-        // Append sorting
-    	int mode = searchCriteria.getSortMode();
-    	builder.append("&order_by=");
-    	switch(mode) {
-    	case SearchCriteria.SORT_MODE_NAME:
-    		builder.append("name");
-    		break;
-    	case SearchCriteria.SORT_MODE_PRODUCER:
-    		builder.append("producer");
-    		break;
-    	case SearchCriteria.SORT_MODE_RECOMMENDATION:
-    		builder.append("recommendation");
-    		break;
-    	case SearchCriteria.SORT_MODE_NONE:
-		default:
-			builder.append("default");
-			break;
-    	}
+        builder.append(getSortModeParameter(searchCriteria.getSortMode()));
 
         ArrayList<Integer> tags = searchCriteria.getTags();
         if (null != tags && tags.size() > 0) {
@@ -236,5 +215,34 @@ public class DrinksStore {
         }
         
         return builder.toString();
+    }
+    
+    private String getSortModeParameter(int mode) {
+    	String name = null;
+    	
+        // Append sorting
+    	switch(mode) {
+    	case SearchCriteria.SORT_MODE_NAME:
+    		name = "name";
+    		break;
+    	case SearchCriteria.SORT_MODE_RATING:
+    		name = "rating";
+    		break;
+    	case SearchCriteria.SORT_MODE_PRODUCER:
+    		name = "producer";
+    		break;
+    	case SearchCriteria.SORT_MODE_RECOMMENDATIONS:
+    		name = "recommendation";
+    		break;
+    	case SearchCriteria.SORT_MODE_DATE:
+    	    name = "time";
+    	    break;
+    	case SearchCriteria.SORT_MODE_NONE:
+    	default:
+    		name = null;
+    		break;
+    	}
+    	
+    	return (name != null ? "&order_by=" + name : "");
     }
 }

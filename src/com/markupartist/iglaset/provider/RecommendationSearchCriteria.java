@@ -1,7 +1,13 @@
 package com.markupartist.iglaset.provider;
 
 public class RecommendationSearchCriteria extends SearchCriteria {
-    private int mUserId;
+
+	private final static int[] SortModes = {
+		SearchCriteria.SORT_MODE_RATING,
+		SearchCriteria.SORT_MODE_NAME
+	};
+	
+	private int mUserId;
 
     public void setUserId(int userId) {
         this.mUserId = userId;
@@ -10,9 +16,14 @@ public class RecommendationSearchCriteria extends SearchCriteria {
     public int getUserId() {
         return mUserId;
     }
-    
-    @Override
-    public boolean supportsSorting() {
-    	return false;
-    }
+ 
+	@Override
+	public int[] getSortModes() {
+		return SortModes;
+	}
+
+	@Override
+	public int getDefaultSortMode() {
+		return SearchCriteria.SORT_MODE_RATING;
+	}
 }

@@ -1,7 +1,5 @@
 package com.markupartist.iglaset.provider;
 
-import java.util.Date;
-
 public class Comment {
     private int mDrinkId;
     private int mUserId;

@@ -30,6 +30,8 @@ Schedule
 Changelog
 ---------
 * Next
+    * Added sorting to Ratings and Recommendations.
+    * Minor UI tweaks.
 * 1.4.1
     * Fixed crash on 1.6 devices (thanks to Daniel Ekström for the report)
     * Minor comment layout fix

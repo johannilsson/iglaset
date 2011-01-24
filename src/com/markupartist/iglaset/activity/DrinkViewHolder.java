@@ -7,7 +7,6 @@ import com.markupartist.iglaset.provider.Drink;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
