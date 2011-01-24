@@ -131,7 +131,7 @@ public class SearchResultActivity extends ListActivity implements
         actionBar.setHomeAction(new IntentAction(this, StartActivity.createIntent(this), R.drawable.ic_actionbar_home_default));
         actionBar.addAction(new SearchAction() {
             @Override
-            public void performAction() {
+            public void performAction(View view) {
                 onSearchRequested();
             }
         });

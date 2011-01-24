@@ -147,7 +147,7 @@ public class DrinkDetailActivity extends ListActivity implements View.OnClickLis
         actionBar.setTitle(sDrink.getName());
         actionBar.addAction(new SearchAction() {
             @Override
-            public void performAction() {
+            public void performAction(View view) {
                 onSearchRequested();
             }
         });

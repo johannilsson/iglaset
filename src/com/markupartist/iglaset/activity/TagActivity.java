@@ -75,7 +75,7 @@ public class TagActivity extends ListActivity implements View.OnClickListener {
         actionBar.setTitle(extras.getString(EXTRA_CATEGORY_NAME));
         actionBar.addAction(new SearchAction() {
             @Override
-            public void performAction() {
+            public void performAction(View view) {
                 onSearchRequested();
             }
         });

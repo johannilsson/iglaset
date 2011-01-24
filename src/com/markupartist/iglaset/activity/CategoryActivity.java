@@ -27,7 +27,7 @@ public class CategoryActivity extends ListActivity {
         actionBar.setTitle(R.string.categories);
         actionBar.addAction(new SearchAction() {
             @Override
-            public void performAction() {
+            public void performAction(View view) {
                 onSearchRequested();
             }
         });
