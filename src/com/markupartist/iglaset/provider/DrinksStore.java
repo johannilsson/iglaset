@@ -231,9 +231,6 @@ public class DrinksStore {
     	case SearchCriteria.SORT_MODE_PRODUCER:
     		name = "producer";
     		break;
-    	case SearchCriteria.SORT_MODE_RECOMMENDATIONS:
-    		name = "recommendation";
-    		break;
     	case SearchCriteria.SORT_MODE_DATE:
     	    name = "time";
     	    break;
