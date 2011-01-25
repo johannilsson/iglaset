@@ -23,9 +23,8 @@ public abstract class SearchCriteria {
     public final static int SORT_MODE_NONE = 0;
     public final static int SORT_MODE_NAME = 1;
     public final static int SORT_MODE_PRODUCER = 2;
-    public final static int SORT_MODE_RECOMMENDATIONS = 3;
-    public final static int SORT_MODE_RATING = 4;
-    public final static int SORT_MODE_DATE = 5;
+    public final static int SORT_MODE_RATING = 3;
+    public final static int SORT_MODE_DATE = 4;
     private int mSortMode = SORT_MODE_NONE;
     
     public SearchCriteria() {
@@ -47,9 +46,6 @@ public abstract class SearchCriteria {
     				break;
     			case SORT_MODE_PRODUCER:
     				names.add(context.getText(R.string.sort_mode_producer));
-    				break;
-    			case SORT_MODE_RECOMMENDATIONS:
-    				names.add(context.getText(R.string.sort_mode_recommendations));
     				break;
     			case SORT_MODE_RATING:
     				names.add(context.getText(R.string.sort_mode_rating));
