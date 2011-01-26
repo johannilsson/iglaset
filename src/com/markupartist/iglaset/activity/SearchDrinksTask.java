@@ -45,7 +45,7 @@ public class SearchDrinksTask extends AsyncTask<SearchCriteria, Void, ArrayList<
             }
         } catch (Exception e) {
             mCaughtException = e;
-            Log.d(TAG, e.toString());
+            Log.d(TAG, e.toString(), e);
         }
         return null;
     }
