@@ -40,7 +40,10 @@ class DrinksParser extends AbstractParser<Drink> {
             mCurrentDrink.setSupplierUrl(atts.getValue("url").trim());
         } else if (name.equals("volume")) {
             mCurrentVolume = new Volume();
-            mCurrentVolume.setArticleId(Integer.parseInt(atts.getValue("sb_article_id").trim()));
+            String articleId = atts.getValue("sb_article_id").trim();
+            if (!TextUtils.isEmpty(articleId)) {
+                mCurrentVolume.setArticleId(Integer.parseInt(articleId));
+            }
             mCurrentVolume.setPriceSek(atts.getValue("price").trim());
             mCurrentVolume.setRetired(Integer.parseInt(atts.getValue("retired").trim()));
         } else if (name.equals("tag")) {
