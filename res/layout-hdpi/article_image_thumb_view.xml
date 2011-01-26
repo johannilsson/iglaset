@@ -4,7 +4,7 @@
 	<ImageView xmlns:android="http://schemas.android.com/apk/res/android" 
 	    android:id="@+id/drink_image"
 	    android:src="@drawable/noimage"
-	    android:background="@android:drawable/picture_frame"
+	    android:background="@drawable/picture_frame"
 	    android:layout_marginRight="5dip"
 	    android:layout_width="74px"
 	    android:layout_height="74px"
